@@ -1,0 +1,72 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <section id="faq-search-filter align-items-center">
+      <div class="d-flex justify-content-center align-items-center" 
+           style="/* background-color:#008CBA ;  */
+                  background-repeat: no-repeat; 
+                  background-size: cover; 
+                  background-position: center; 
+                  height: 100vh; 
+                  margin-top: -100px;
+                  position: relative;">
+        <!-- Capa de fondo con la imagen -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                    background-color: rgba(255, 255, 255, 0.1);"></div>
+                    
+        <!-- Tarjeta con fondo blanco y formulario -->
+        <div class="card-body text-center col-5 mt-3" style="position: relative; z-index: 2; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+          <h2 class="text-primary">Consulta tu estatus</h2>
+          <p class="card-text mb-2">Introduce tu folio para consultar el estatus:</p>
+          <form class="faq-search-input">
+            <!-- Campo de busqueda de folio -->
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                 <!--  <i data-feather="search"></i> -->
+                </div>
+              </div>
+              <input
+                type="number"
+                [(ngModel)]="searchText"
+                name="searchbar"
+                class="form-control"
+                placeholder="Introduce el folio..."
+              />
+            </div><br>
+  
+            <!-- Campo de contraseña -->
+            <p class="card-text mb-2">Introduce tu contraseña:</p>
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                </div>
+              </div>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                placeholder="Introduce la contraseña..."
+              />
+            </div><br>
+
+            <!-- Campo de CAPTCHA -->
+            <p class="card-text mb-2">Resuelve el captcha:</p>
+            <div class="input-group input-group-merge">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                </div>
+              </div>
+              <input
+                type="string"
+                name="captcha"
+                class="form-control"
+                placeholder="Introduce el captcha..."
+              />
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>  
+</div>

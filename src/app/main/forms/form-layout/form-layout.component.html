@@ -1,0 +1,401 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="basic-vertical-layouts">
+      <div class="row match-height">
+        <div class="col-12">
+          
+          <!-- Comienzo sección 1 -->
+          <core-card-snippet [snippetCode]="_snippetCodeVertical">
+            <h4 class="card-title">Crea tu denuncia</h4>
+            <div class="card-body">
+              <form class="form form-vertical">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
+                      <label for="first-name-vertical">Seleccione el medio por el cual está realizando la denuncia:</label><br><br>
+                      <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="first-name-vertical" data-bs-toggle="dropdown" aria-expanded="false">
+                          Seleccione una opción:
+                        </button>
+                        <ul class="dropdown-toggle" aria-labelledby="first-name-vertical">
+                          <li><a class="dropdown-item" href="#">Teléfono</a></li>
+                          <li><a class="dropdown-item" href="#">Correo electrónico</a></li>
+                        </ul>
+                      </div>                    
+                    </div> 
+                    <br>
+                  </div>
+
+                  <div class="col-12">
+                    <!-- <button type="submit" rippleEffect class="btn btn-outline-secondary">Submit</button> -->
+                    <!-- <button type="reset" rippleEffect class="btn btn-primary mr-1 ">Reset</button> -->
+                    <button class="btn btn-primary mr-1" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Siguiente</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </core-card-snippet>
+          <!-- Fin sección 1 -->
+
+<!-- *******************Comienzo sección 2 *****************************************************************************-->
+          <core-card-snippet [snippetCode]="_snippetCodeVertical">
+            <h4 class="card-title">Crea tu denuncia</h4>
+            <div class="card-body">
+              <form class="form form-vertical">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
+                      <label for="first-name-vertical">¿Qué desea denunciar?</label><br><br>
+                      <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="first-name-vertical" data-bs-toggle="dropdown" aria-expanded="false">
+                          Seleccione una opción:
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="first-name-vertical">
+                          <li><a class="dropdown-item" href="#">Abuso de autoridad</a></li>
+                          <li><a class="dropdown-item" href="#">Acoso laboral</a></li>
+                          <li><a class="dropdown-item" href="#">Acoso sexual</a></li>
+                          <li><a class="dropdown-item" href="#">Apropiación y uso indebido de activos o recursos</a></li>
+                          <li><a class="dropdown-item" href="#">Condiciones inseguras</a></li>
+                          <li><a class="dropdown-item" href="#">Conflicto de interés</a></li>
+                          <li><a class="dropdown-item" href="#">Corrupción, soborno o extorsión</a></li>
+                          <li><a class="dropdown-item" href="#">Desvío de recursos</a></li>
+                          <li><a class="dropdown-item" href="#">Discriminación</a></li>
+                          <li><a class="dropdown-item" href="#">Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)</a></li>
+                          <li><a class="dropdown-item" href="#">Incumplimiento de las políticas internas</a></li>
+                          <li><a class="dropdown-item" href="#">Manipulación de inventarios</a></li>
+                        </ul>
+                      </div>                    
+                    </div>
+                    <br>
+                  </div>
+                  <div class="col-12">
+                    <!-- <button type="submit" rippleEffect class="btn btn-outline-secondary">Submit</button> -->
+                    <!-- <button type="reset" rippleEffect class="btn btn-primary mr-1 ">Reset</button> -->
+                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Volver</button>
+                    <button class="btn btn-primary mr-1" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Siguiente</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </core-card-snippet>
+<!--********************************** Fin sección 2 ****************************************************-->
+
+<!-- *******************Comienzo sección 3 *****************************************************************************-->
+          <core-card-snippet [snippetCode]="_snippetCodeVertical">
+
+            <h4 class="card-title">Crea tu denuncia</h4>
+            <div class="card-body">
+              <form class="form form-vertical">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
+                      <label for="first-name-vertical">Selecciona la ubicación:</label><br><br>                       
+                    </div>
+                      <div class="card-body">
+                        <div class="demo-inline-spacing">
+                          <!-- OPC1 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio1"
+                              value="option1"
+                              checked
+                            />
+                            <label class="form-check-label" for="inlineRadio1">Corporativo</label>
+                          </div>
+                          <!-- OPC2 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio2"
+                              value="option2"
+                            />
+                            <label class="form-check-label" for="inlineRadio2">Cedis</label>
+                          </div>
+                          <!-- OPC3 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio3"
+                              value="option3"
+                            />
+                            <label class="form-check-label" for="inlineRadio3">Sucursales</label>
+                          </div>
+                          <!-- OPC4 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio4"
+                              value="option4"
+                            />
+                            <label class="form-check-label" for="inlineRadio4">Naves y anexas filiales</label>
+                          </div>
+                          <!-- OPC5 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio5"
+                              value="option5"
+                            />
+                            <label class="form-check-label" for="inlineRadio5">Innomex</label>
+                          </div>
+                          <!-- OPC6 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio6"
+                              value="option6"
+                            />
+                            <label class="form-check-label" for="inlineRadio6">TRATE</label>
+                          </div>
+                          <!-- OPC7 -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio7"
+                              value="option7"
+                            />
+                            <label class="form-check-label" for="inlineRadio7">Unidad transporte</label>
+                          </div>
+                        </div>
+                      </div>
+                    <br>
+                  </div>
+                  <div class="col-12">
+                    <!-- <button type="submit" rippleEffect class="btn btn-outline-secondary">Submit</button> -->
+                    <!-- <button type="reset" rippleEffect class="btn btn-primary mr-1 ">Reset</button> -->
+                    <button class="btn btn-outline-secondary" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Volver</button>
+                    <button class="btn btn-primary mr-1" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Siguiente</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </core-card-snippet>
+<!--********************************** Fin sección 3 ****************************************************-->
+
+<!-- *******************Begin section 4 *****************************************************************************-->
+          <core-card-snippet [snippetCode]="_snippetCodeVertical">
+              <h4 class="card-title">Crea tu denuncia</h4>
+              <div class="card-body">
+                <form class="form form-vertical">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <p><strong>Detalles del incidente:</strong></p>
+                        <label for="first-name-vertical">Selecciona alguna de las siguientes opciones según sea el caso:</label>                     
+                      </div>
+                      <div class="card-body">
+                        <!-- Date radio buttons -->
+                        <div class="demo-inline-spacing">
+                          <!-- OPC1 date -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio1"
+                              value="option1"
+                              checked
+                            />
+                            <label class="form-check-label" for="inlineRadio1">Fecha.</label>
+                          </div>
+                          <!-- OPC2 date -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio2"
+                              value="option2"
+                            />
+                            <label class="form-check-label" for="inlineRadio2">Periodo estimado de tiempo.</label>
+                          </div>
+                          <!-- OPC3 date -->
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              name="inlineRadioOptions"
+                              id="inlineRadio3"
+                              value="option3"
+                            />
+                            <label class="form-check-label" for="inlineRadio3">No cuento con fecha aproximada ni periodo estimado.</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Description div-->
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label for="contact-info-vertical">Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió.</label>
+                        <textarea type="textarea" id="contact-info-vertical" class="form-control" name="description" placeholder="Escriba aqui..."></textarea>
+                      </div>
+                    </div>
+                    <!-- Description report -->
+                    <div class="col-12">
+                      <p>¿Ha reportado este incidente previamente?</p>
+                      <!-- OPC1 reporte -->
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="inlineRadioOptions"
+                          id="inlineRadio1"
+                          value="option1"
+                          checked
+                        />
+                        <label class="form-check-label" for="inlineRadio1">Si.</label>
+                      </div>
+                      <!-- OPC2 reporte -->
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="inlineRadioOptions"
+                          id="inlineRadio2"
+                          value="option2"
+                        />
+                        <label class="form-check-label" for="inlineRadio2">No.</label>
+                      </div>
+                      <br><br>
+                    </div>
+                    <!-- Description report in case reported==yes -->
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label><strong>Descripción:</strong></label><br>
+                        <label for="contact-info-vertical">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación.</label>
+                        <textarea type="textarea" id="contact-info-vertical" class="form-control" name="description" placeholder="Escriba aqui..."></textarea>
+                      </div>
+                    </div><br>
+                    <!-- Update files div -->
+                    <p>Select files</p><br>
+                    <fieldset class="form-group"><br><br>
+                      <label for="file-upload-multiple">Multiple:</label>
+                      <div class="custom-file">
+                        <input
+                          type="file"
+                          class="custom-file-input"
+                          type="file"
+                          ng2FileSelect
+                          multiple
+                          id="file-upload-multiple"
+                        />
+                        <label class="custom-file-label">Choose file</label>
+                      </div>
+                    </fieldset>
+
+
+                    <div class="col-12">
+                      <!-- <button type="submit" rippleEffect class="btn btn-outline-secondary">Submit</button> -->
+                      <!-- <button type="reset" rippleEffect class="btn btn-primary mr-1 ">Reset</button> -->
+                      <button class="btn btn-outline-secondary" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Volver</button>
+                      <button class="btn btn-primary mr-1" type="button" onclick="mostrarSiguiente('sectionTipoDenuncia')" style="margin-left: 2%;">Siguiente</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </core-card-snippet>
+
+            
+<!--********************************** Fin sección 4 ****************************************************-->
+
+
+<!-- *******************Comienzo sección 5 *****************************************************************************-->
+          <core-card-snippet [snippetCode]="_snippetCodeVertical">
+            <h4 class="card-title">Crea tu denuncia</h4>
+            <div class="card-body">
+              <form class="form form-vertical">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <p><strong>Introduce la información de los involucrados:</strong></p>
+                    </div>
+                    <button class="btn btn-primary" type="button" style="border-radius: 60%;">+</button>
+                    <div class="card-body">
+                      <!-- Fila para los campos -->
+                      <div class="row">
+                        <!-- Nombre Completo -->
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="full-name-horizontal">Nombre Completo:</label>
+                            <input
+                              type="text"
+                              id="full-name-horizontal"
+                              class="form-control"
+                              name="full-name"
+                              placeholder="Nombre Completo"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <!-- Número de Empleado -->
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <label for="employee-id-horizontal">Número de Empleado:</label>
+                            <input
+                              type="number"
+                              id="employee-id-horizontal"
+                              class="form-control"
+                              name="employee-id"
+                              placeholder="Ej.335575"
+                            />
+                          </div>
+                        </div>
+
+                        <!-- Puesto -->
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <label for="position-horizontal">Puesto:</label>
+                            <input
+                              type="text"
+                              id="position-horizontal"
+                              class="form-control"
+                              name="position"
+                              placeholder="Puesto"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <!-- Botones de acción -->
+                    <button class="btn btn-outline-secondary" type="button" style="margin-left: 2%;">Volver</button>
+                    <button class="btn btn-primary mr-1" type="button" style="margin-left: 2%;">Siguiente</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </core-card-snippet>
+
+
+
+<!--********************************** Fin sección 5 ****************************************************-->
+
+        </div>
+      </div>
+    </section>   
+  </div>
+</div>

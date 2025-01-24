@@ -1,0 +1,77 @@
+<div *ngIf="horizontalMenu" class="navbar-header d-xl-block d-none">
+  <!-- Navbar brand -->
+  <ul class="nav navbar-nav flex-row">
+    <li class="nav-item">
+      <a class="navbar-brand" [routerLink]="['/']">
+        <span class="brand-logo">
+          <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" width="36" />
+        </span>
+        <h2 class="brand-text mb-0">{{ coreConfig.app.appName }}</h2>
+      </a>
+    </li>
+  </ul>
+  <!--/ Navbar brand -->
+</div>
+
+<div class="navbar-container d-flex content">
+  <div class="bookmark-wrapper d-flex align-items-center">
+    <!-- Menu Toggler | Menu icon will be hidden in case of layout without menu -->
+    <ul class="nav navbar-nav d-xl-none" *ngIf="!coreConfig.layout.menu.hidden">
+      <li class="nav-item">
+        <a class="nav-link menu-toggle" (click)="toggleSidebar('menu')">
+          <span [data-feather]="'menu'" [class]="'ficon'"></span>
+        </a>
+      </li>
+    </ul>
+    <!--/ Menu Toggler -->
+
+    <h5>Bienvenid@ {{ currentUser?.firstName }}!</h5>
+  </div>
+  
+  <ul class="nav navbar-nav align-items-center ml-auto">
+
+    <!-- Toggle skin -->
+    <li class="nav-item d-none d-lg-block">
+      <a class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
+        <span [ngClass]="currentSkin === 'dark' ? 'icon-sun' : 'icon-moon'" class="ficon font-medium-5 feather"></span>
+      </a>
+    </li>
+
+    <li>
+      <a class="btn mr-0 " routerLink="/pages/authentication/login-v1">Iniciar Sesión</a>
+    </li>
+
+    <!-- User Dropdown -->
+    <li ngbDropdown class="nav-item dropdown-user">
+      <a
+        class="nav-link dropdown-toggle dropdown-user-link"
+        id="dropdown-user"
+        ngbDropdownToggle
+        id="navbarUserDropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <ng-container *ngIf="this.currentUser">
+          <div class="user-nav d-sm-flex d-none">
+            <span class="user-name font-weight-bolder"
+              >{{ this.currentUser.firstName }} {{ this.currentUser.lastName }}</span
+            ><span class="user-status">{{ this.currentUser.role }}</span>
+          </div>
+          <span class="avatar"
+            ><img
+              class="round"
+              src="assets/images/portrait/small/{{ this.currentUser.avatar }}"
+              alt="avatar"
+              height="40"
+              width="40" /><span class="avatar-status-online"></span
+          ></span>
+        </ng-container>
+      </a>
+      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
+        <a ngbDropdownItem [routerLink]="['/pages/faq']"
+          ><span [data-feather]="'help-circle'" [class]="'mr-50'"></span> FAQ</a
+        ><a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Logout</a>
+      </div>
+    </li>
+  </ul>
+</div>
