@@ -44,6 +44,7 @@ export class AuthenticationService {
     return this.currentUser && this.currentUserSubject.value.role === Role.Client;
   }
 
+
   /**
    * User login
    *
@@ -53,7 +54,7 @@ export class AuthenticationService {
    */
   login(email: string, password: string) {
     return this._http
-      .post<any>(`${environment.apiUrl}/users/authenticate`, { email, password })
+      .post<any>(`${environment.apiUrl}/users/authenticate`, { email, password }) //Cambiar e mail por numero de empleado 
       .pipe(
         map(user => {
           // login successful if there's a jwt token in the response
@@ -64,10 +65,10 @@ export class AuthenticationService {
             // Display welcome toast!
             setTimeout(() => {
               this._toastrService.success(
-                'You have successfully logged in as an ' +
+                'Inicio de sesión exitoso bienvenid@ ' +
                   user.role +
-                  ' user to Vuexy. Now you can start to explore. Enjoy! 🎉',
-                '👋 Welcome, ' + user.firstName + '!',
+                  ' puedes comenzar a explorar la página 🎉',
+                '👋 Bienvenid@ , ' + user.firstName + '!', // Cambiar user.firstName por Número de empleado mas adelante.
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);

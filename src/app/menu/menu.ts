@@ -39,6 +39,6 @@ export const menu: CoreMenu[] = [
     title: 'Preguntas Frecuentes',
     /* role: ['User','Capturista'], */
     type: 'item',
-    url: 'pages/faq'
+    url: 'forms/faq'
   }
 ];

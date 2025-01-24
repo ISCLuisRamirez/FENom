@@ -34,7 +34,7 @@ export class FinalIndexComponent implements OnInit {
           hidden: false
         },
         menu: {
-          hidden: false
+          hidden: true
         },
         customizer: false,
         enableLocalStorage: true

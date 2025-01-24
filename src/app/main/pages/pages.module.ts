@@ -13,7 +13,7 @@ import { BlogModule } from './blog/blog.module';
 import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { ProfileModule } from './profile/profile.module';
 import { PricingModule } from './pricing/pricing.module';
-import { FaqModule } from 'app/main/pages/faq/faq.module';
+
 import { AccountSettingsModule } from './account-settings/account-settings.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
@@ -36,7 +36,6 @@ import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
     BlogModule,
     ProfileModule,
     KbModule,
-    FaqModule,
     AccountSettingsModule
   ],
 

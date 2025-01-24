@@ -5,9 +5,19 @@ import { FormElementsModule } from 'app/main/forms/form-elements/form-elements.m
 import { FormLayoutModule } from 'app/main/forms/form-layout/form-layout.module';
 import { FormValidationModule } from 'app/main/forms/form-validation/form-validation.module';
 import { FormWizardModule } from 'app/main/forms/form-wizard/form-wizard.module';
+import { FaqModule } from 'app/main/forms/faq/faq.module';
 
 @NgModule({
-  declarations: [],
-  imports: [FormElementsModule, FormLayoutModule, FormWizardModule, FormValidationModule, FormRepeaterModule]
+  declarations: [
+   
+  ],
+  imports: [
+    FaqModule,
+    FormElementsModule,
+    FormLayoutModule,
+    FormWizardModule,
+    FormValidationModule,
+    FormRepeaterModule
+  ]
 })
 export class FormsModule {}

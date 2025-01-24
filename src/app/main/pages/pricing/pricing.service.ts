@@ -9,23 +9,10 @@ export class PricingService implements Resolve<any> {
   rows: any;
   onPricingChanged: BehaviorSubject<any>;
 
-  /**
-   * Constructor
-   *
-   * @param {HttpClient} _httpClient
-   */
   constructor(private _httpClient: HttpClient) {
-    // Set the defaults
     this.onPricingChanged = new BehaviorSubject({});
   }
 
-  /**
-   * Resolver
-   *
-   * @param {ActivatedRouteSnapshot} route
-   * @param {RouterStateSnapshot} state
-   * @returns {Observable<any> | Promise<any> | any}
-   */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
     return new Promise<void>((resolve, reject) => {
       Promise.all([this.getDataTableRows()]).then(() => {
@@ -34,9 +21,6 @@ export class PricingService implements Resolve<any> {
     });
   }
 
-  /**
-   * Get rows
-   */
   getDataTableRows(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this._httpClient.get('api/pricing-data').subscribe((response: any) => {

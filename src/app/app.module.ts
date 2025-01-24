@@ -59,7 +59,7 @@ const appRoutes: Routes = [
   {
     path: 'extensions',
     loadChildren: () => import('./main/extensions/extensions.module').then(m => m.ExtensionsModule),
-    canActivate: [AuthGuard]
+    /* canActivate: [AuthGuard] */
   },
   {
     path: 'forms',
@@ -69,7 +69,7 @@ const appRoutes: Routes = [
   {
     path: 'tables',
     loadChildren: () => import('./main/tables/tables.module').then(m => m.TablesModule),
-    canActivate: [AuthGuard]
+    /* canActivate: [AuthGuard] */
   },
   {
     path: 'charts-and-maps',
@@ -78,7 +78,7 @@ const appRoutes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/Inicio',
+    redirectTo: '/pages/miscellaneous/final-index',
     pathMatch: 'full'
   },
   {
