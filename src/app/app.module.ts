@@ -34,7 +34,7 @@ import { SubMenuCustomContextMenuComponent } from './main/extensions/context-men
 const appRoutes: Routes = [
   {
     path: 'Inicio',
-    loadChildren: () => import('./main/dashboard/dashboard.module').then(m => m.DashboardModule)
+    redirectTo: '/pages/miscellaneous/final-index'
   },
 
   {
