@@ -92,7 +92,7 @@ export class AuthLoginV1Component implements OnInit {
     // Start loading and call the authentication service to log in
     this.loading = true;
     this._authenticationService
-      .login(this.f.email.value, this.f.password.value)
+      .login(this.f.employeenumber.value, this.f.password.value)
       .pipe(first())
       .subscribe(
         data => {
@@ -116,7 +116,7 @@ export class AuthLoginV1Component implements OnInit {
   ngOnInit(): void {
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      employeenumber: ['', [Validators.required]],
       password: ['', Validators.required]
     });
 

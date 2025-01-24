@@ -1,18 +1,14 @@
 import { Component, OnDestroy, OnInit, HostBinding, HostListener, ViewEncapsulation } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-
 import { AuthenticationService } from 'app/auth/service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
-
 import { User } from 'app/auth/models';
-
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
 
@@ -25,13 +21,10 @@ import { Router } from '@angular/router';
 export class NavbarComponent implements OnInit, OnDestroy {
   public horizontalMenu: boolean;
   public hiddenMenu: boolean;
-
   public coreConfig: any;
   public currentSkin: string;
   public prevSkin: string;
-
   public currentUser: User;
-
   public languageOptions: any;
   public navigation: any;
   public selectedLanguage: any;
@@ -86,22 +79,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
 
     this.languageOptions = {
-      en: {
-        title: 'English',
-        flag: 'us'
-      },
-      fr: {
-        title: 'French',
-        flag: 'fr'
-      },
-      de: {
-        title: 'German',
-        flag: 'de'
-      },
-      pt: {
-        title: 'Portuguese',
-        flag: 'pt'
-      }
+      en: { title: 'English', flag: 'us' },
+      fr: { title: 'French', flag: 'fr' },
+      de: { title: 'German', flag: 'de' },
+      pt: { title: 'Portuguese', flag: 'pt' }
     };
 
     // Set the private defaults
@@ -166,7 +147,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
    */
   logout() {
     this._authenticationService.logout();
-    this._router.navigate(['/pages/authentication/login-v2']);
+    this._router.navigate(['/pages/authentication/login-v1']);
+  }
+
+  // Helper method to check if the user is logged in
+  get isLoggedIn() {
+    return this._authenticationService.currentUserValue != null;
   }
 
   // Lifecycle Hooks

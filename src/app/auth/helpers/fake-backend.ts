@@ -1,11 +1,3 @@
-/**
- *  ? Tip:
- *
- * For Actual Node.js - Role Based Authorization Tutorial with Example API
- * Refer: https://jasonwatmore.com/post/2018/11/28/nodejs-role-based-authorization-tutorial-with-example-api
- * Running an Angular 9 client app with the Node.js Role Based Auth API
- */
-
 import { Injectable } from '@angular/core';
 import {
   HttpRequest,
@@ -24,7 +16,8 @@ import { User, Role } from 'app/auth/models';
 const users: User[] = [
   {
     id: 1,
-    email: 'admin@demo.com',
+    employeenumber: 100001, // Cambiado a 6 dígitos
+    email: 'admin@demo.com', // Añadido email
     password: 'admin',
     firstName: 'John',
     lastName: 'Doe',
@@ -33,7 +26,8 @@ const users: User[] = [
   },
   {
     id: 2,
-    email: 'client@demo.com',
+    employeenumber: 100002, // Cambiado a 6 dígitos
+    email: 'client@demo.com', // Añadido email
     password: 'client',
     firstName: 'Nataly',
     lastName: 'Doe',
@@ -42,7 +36,8 @@ const users: User[] = [
   },
   {
     id: 3,
-    email: 'user@demo.com',
+    employeenumber: 100003, // Cambiado a 6 dígitos
+    email: 'user@demo.com', // Añadido email
     password: 'user',
     firstName: 'Rose',
     lastName: 'Doe',
@@ -58,9 +53,6 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     // wrap in delayed observable to simulate server api call
     return of(null).pipe(mergeMap(handleRoute));
-    // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
-    // .pipe(delay(500))
-    // .pipe(dematerialize());
 
     function handleRoute() {
       switch (true) {
@@ -79,11 +71,17 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     // route functions
 
     function authenticate() {
-      const { email, password } = body;
-      const user = users.find(x => x.email === email && x.password === password);
-      if (!user) return error('Username or password is incorrect');
+      const { employeenumber, email, password } = body;
+
+      // Find user by either employeenumber or email
+      const user = users.find(x => 
+        (x.employeenumber === employeenumber || x.email === email) && x.password === password
+      );
+
+      if (!user) return error('Employee number or email or password is incorrect');
       return ok({
         id: user.id,
+        employeenumber: user.employeenumber,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,

@@ -44,8 +44,8 @@
     <li>
       <a class="btn mr-0 " routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
-    <li>
-      <a class="btn mr-0 " routerLink="/pages/authentication/login-v1">Iniciar Sesión</a>
+    <li *ngIf="!isLoggedIn">
+      <a class="btn mr-0" routerLink="/pages/authentication/login-v1">Iniciar Sesión</a>
     </li>
     <li class="nav-item d-none d-lg-block">
       <a class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
