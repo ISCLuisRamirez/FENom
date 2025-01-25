@@ -1,5 +1,4 @@
 <div *ngIf="horizontalMenu" class="navbar-header d-xl-block d-none">
-  <!-- Navbar brand -->
   <ul class="nav navbar-nav flex-row">
     <li class="nav-item">
       <a class="navbar-brand" [routerLink]="['/']">
@@ -10,12 +9,10 @@
       </a>
     </li>
   </ul>
-  <!--/ Navbar brand -->
 </div>
 
 <div class="navbar-container d-flex content">
   <div class="bookmark-wrapper d-flex align-items-center">
-    <!-- Menu Toggler | Menu icon will be hidden in case of layout without menu -->
     <ul class="nav navbar-nav d-xl-none" *ngIf="!coreConfig.layout.menu.hidden">
       <li class="nav-item">
         <a class="nav-link menu-toggle" (click)="toggleSidebar('menu')">
@@ -23,68 +20,83 @@
         </a>
       </li>
     </ul>
-    <!--/ Menu Toggler -->
-
     <h5>Bienvenid@ {{ currentUser?.firstName }}!</h5>
   </div>
-  
-  <ul class="nav navbar-nav align-items-center ml-auto">
 
-    <!-- Toggle skin -->
-    
+  <!-- Menú visible para los usuarios no logueados y los usuarios con rol 'Client', pero NO para los admins -->
+  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="!isLoggedIn || isClient">
     <li>
-      <a class="btn mr-0 " routerLink="/Inicio">Inicio</a>
+      <a class="btn mr-0" routerLink="/Inicio">Inicio</a>
     </li>
     <li>
-      <a class="btn mr-0 " routerLink="forms/form-wizard">Crear Denuncia</a>
+      <a class="btn mr-0" routerLink="forms/form-wizard">Crear Denuncia</a>
     </li>
     <li>
-      <a class="btn mr-0 " routerLink="pages/pricing">Consultar estatus</a>
+      <a class="btn mr-0" routerLink="pages/pricing">Consultar estatus</a>
     </li>
     <li>
-      <a class="btn mr-0 " routerLink="forms/faq">Preguntas Frecuentes</a>
+      <a class="btn mr-0" routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
+
+    <!-- Si el usuario NO está logueado, muestra el botón para iniciar sesión -->
     <li *ngIf="!isLoggedIn">
       <a class="btn mr-0" routerLink="/pages/authentication/login-v1">Iniciar Sesión</a>
     </li>
+
+    <!-- Si el usuario está logueado, muestra el botón de cambio de tema -->
     <li class="nav-item d-none d-lg-block">
       <a class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
         <span [ngClass]="currentSkin === 'dark' ? 'icon-sun' : 'icon-moon'" class="ficon font-medium-5 feather"></span>
       </a>
     </li>
 
-
-    <!-- User Dropdown -->
-    <li ngbDropdown class="nav-item dropdown-user">
-      <a
-        class="nav-link dropdown-toggle dropdown-user-link"
-        id="dropdown-user"
-        ngbDropdownToggle
-        id="navbarUserDropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <ng-container *ngIf="this.currentUser">
+    <!-- Dropdown para el usuario (solo si está logueado) -->
+    <li ngbDropdown class="nav-item dropdown-user" *ngIf="isLoggedIn">
+      <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+        <ng-container *ngIf="currentUser">
           <div class="user-nav d-sm-flex d-none">
-            <span class="user-name font-weight-bolder"
-              >{{ this.currentUser.firstName }} {{ this.currentUser.lastName }}</span
-            ><span class="user-status">{{ this.currentUser.role }}</span>
+            <span class="user-name font-weight-bolder">{{ currentUser.employeenumber }}</span>
+            <span class="user-status">{{ currentUser.role }}</span>
           </div>
-          <span class="avatar"
-            ><img
-              class="round"
-              src="assets/images/portrait/small/{{ this.currentUser.avatar }}"
-              alt="avatar"
-              height="40"
-              width="40" /><span class="avatar-status-online"></span
-          ></span>
+          <span class="avatar">
+            <img class="round" src="assets/images/portrait/small/{{ currentUser.avatar }}" alt="avatar" height="40" width="40" />
+            <span class="avatar-status-online"></span>
+          </span>
         </ng-container>
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
-        <a ngbDropdownItem [routerLink]="['/pages/faq']"
-          ><span [data-feather]="'help-circle'" [class]="'mr-50'"></span> FAQ</a
-        ><a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Logout</a>
+        <a ngbDropdownItem [routerLink]="['/forms/faq']"><span [data-feather]="'help-circle'" [class]="'mr-50'"></span> FAQ</a>
+        <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Logout</a>
       </div>
     </li>
+  </ul>
+
+  <!-- Menú específico para ADMINISTRADORES (solo se muestra si el usuario es admin) -->
+  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="isAdmin">
+    <li>
+      <a class="btn mr-0" routerLink="pages/profile">Inicio</a>
+    </li>
+    <li>
+      <a class="btn mr-0" routerLink="tables/datatables">Denuncias</a>
+    </li>
+      <!-- Dropdown para el usuario (solo si está logueado) -->
+      <li ngbDropdown class="nav-item dropdown-user" *ngIf="isLoggedIn">
+        <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+          <ng-container *ngIf="currentUser">
+            <div class="user-nav d-sm-flex d-none">
+              <span class="user-name font-weight-bolder">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+              <span class="user-status">{{ currentUser.role }}</span>
+            </div>
+            <span class="avatar">
+              <img class="round" src="assets/images/portrait/small/{{ currentUser.avatar }}" alt="avatar" height="40" width="40" />
+              <span class="avatar-status-online"></span>
+            </span>
+          </ng-container>
+        </a>
+        <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
+          <a ngbDropdownItem [routerLink]="['/forms/faq']"><span [data-feather]="'help-circle'" [class]="'mr-50'"></span> FAQ</a>
+          <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Logout</a>
+        </div>
+      </li>
   </ul>
 </div>

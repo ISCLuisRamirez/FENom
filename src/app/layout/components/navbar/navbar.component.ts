@@ -5,11 +5,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from 'app/auth/service';
-import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
 import { User } from 'app/auth/models';
-import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,15 +17,13 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  public horizontalMenu: boolean;
-  public hiddenMenu: boolean;
   public coreConfig: any;
   public currentSkin: string;
   public prevSkin: string;
   public currentUser: User;
   public languageOptions: any;
-  public navigation: any;
   public selectedLanguage: any;
+  public horizontalMenu: boolean;  // Retenido para el menú horizontal
 
   @HostBinding('class.fixed-top')
   public isFixed = false;
@@ -56,27 +52,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // Private
   private _unsubscribeAll: Subject<any>;
 
-  /**
-   * Constructor
-   *
-   * @param {Router} _router
-   * @param {AuthenticationService} _authenticationService
-   * @param {CoreConfigService} _coreConfigService
-   * @param {CoreSidebarService} _coreSidebarService
-   * @param {CoreMediaService} _coreMediaService
-   * @param {MediaObserver} _mediaObserver
-   * @param {TranslateService} _translateService
-   */
   constructor(
     private _router: Router,
     private _authenticationService: AuthenticationService,
     private _coreConfigService: CoreConfigService,
     private _coreMediaService: CoreMediaService,
-    private _coreSidebarService: CoreSidebarService,
     private _mediaObserver: MediaObserver,
     public _translateService: TranslateService
   ) {
-    this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+    this._authenticationService.currentUser.subscribe(x => {
+      this.currentUser = x;
+    });
 
     this.languageOptions = {
       en: { title: 'English', flag: 'us' },
@@ -93,34 +79,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
 
   /**
-   * Toggle sidebar open
-   *
-   * @param key
-   */
-  toggleSidebar(key): void {
-    this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
-  }
-
-  /**
-   * Set the language
-   *
-   * @param language
-   */
-  setLanguage(language): void {
-    // Set the selected language for the navbar on change
-    this.selectedLanguage = language;
-
-    // Use the selected language id for translations
-    this._translateService.use(language);
-
-    this._coreConfigService.setConfig({ app: { appLanguage: language } }, { emitEvent: true });
-  }
-
-  /**
    * Toggle Dark Skin
    */
   toggleDarkSkin() {
-    // Get the current skin
     this._coreConfigService
       .getConfig()
       .pipe(takeUntil(this._unsubscribeAll))
@@ -128,7 +89,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.currentSkin = config.layout.skin;
       });
 
-    // Toggle Dark skin with prevSkin skin
     this.prevSkin = localStorage.getItem('prevSkin');
 
     if (this.currentSkin === 'dark') {
@@ -155,6 +115,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return this._authenticationService.currentUserValue != null;
   }
 
+  // Helper method to check if the user is an admin
+  get isAdmin() {
+    return this._authenticationService.isAdmin;
+  }
+
+  // Helper method to check if the user is a client
+  get isClient() {
+    return this._authenticationService.isClient;
+  }
+
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
 
@@ -162,50 +132,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
-    // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // Subscribe to the config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
-      this.horizontalMenu = config.layout.type === 'horizontal';
-      this.hiddenMenu = config.layout.menu.hidden === true;
+      this.horizontalMenu = config.layout.type === 'horizontal'; // Aseguramos que el menú horizontal se mantenga
       this.currentSkin = config.layout.skin;
-
-      // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
-      if (this.coreConfig.layout.type === 'vertical') {
-        setTimeout(() => {
-          if (this.coreConfig.layout.navbar.type === 'fixed-top') {
-            this.isFixed = true;
-          }
-        }, 0);
-      }
     });
 
-    // Horizontal Layout Only: Add class fixed-top to navbar below large screen
-    if (this.coreConfig.layout.type == 'horizontal') {
-      // On every media(screen) change
-      this._coreMediaService.onMediaUpdate.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-        const isFixedTop = this._mediaObserver.isActive('bs-gt-xl');
-        if (isFixedTop) {
-          this.isFixed = false;
-        } else {
-          this.isFixed = true;
-        }
-      });
-    }
-
-    // Set the selected language from default languageOptions
-    this.selectedLanguage = _.find(this.languageOptions, {
-      id: this._translateService.currentLang
-    });
+    this.selectedLanguage = _.find(this.languageOptions, { id: this._translateService.currentLang });
   }
 
   /**
    * On destroy
    */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }
