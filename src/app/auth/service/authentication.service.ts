@@ -9,19 +9,16 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  //public
+  // public observable
   public currentUser: Observable<User>;
 
-  //private
+  // private subject
   private currentUserSubject: BehaviorSubject<User>;
 
-  /**
-   *
-   * @param {HttpClient} _http
-   * @param {ToastrService} _toastrService
-   */
   constructor(private _http: HttpClient, private _toastrService: ToastrService) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+    // Si no existe 'currentUser' en localStorage, inicializa con un objeto vacío
+    const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+    this.currentUserSubject = new BehaviorSubject<User>(storedUser ? storedUser : null);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -31,30 +28,31 @@ export class AuthenticationService {
   }
 
   /**
-   *  Confirms if user is admin
+   * Confirms if user is admin
    */
   get isAdmin() {
-    return this.currentUser && this.currentUserSubject.value.role === Role.Admin;
+    const user = this.currentUserValue; // Obtener el valor actual de currentUser
+    return user && user.role === Role.Admin;
   }
 
   /**
-   *  Confirms if user is client
+   * Confirms if user is client
    */
   get isClient() {
-    return this.currentUser && this.currentUserSubject.value.role === Role.Client;
+    const user = this.currentUserValue; // Obtener el valor actual de currentUser
+    return user && user.role === Role.Client;
   }
-
 
   /**
    * User login
-   *
+   * 
    * @param employeenumber
    * @param password
    * @returns user
    */
   login(employeenumber: number, password: string) {
     return this._http
-      .post<any>(`${environment.apiUrl}/users/authenticate`, { employeenumber, password }) //Cambiar e mail por numero de empleado 
+      .post<any>(`${environment.apiUrl}/users/authenticate`, { employeenumber, password })
       .pipe(
         map(user => {
           // login successful if there's a jwt token in the response
@@ -62,13 +60,13 @@ export class AuthenticationService {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(user));
 
-            // Display welcome toast!
+            // Display welcome toast
             setTimeout(() => {
               this._toastrService.success(
                 'Inicio de sesión exitoso bienvenid@ ' +
                   user.role +
                   ' puedes comenzar a explorar la página 🎉',
-                '👋 Bienvenid@ , ' + user.firstName + '!', // Cambiar user.firstName por Número de empleado mas adelante.
+                '👋 Bienvenid@ , ' + user.firstName + '!',
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);
@@ -84,7 +82,6 @@ export class AuthenticationService {
 
   /**
    * User logout
-   *
    */
   logout() {
     // remove user from local storage to log user out
