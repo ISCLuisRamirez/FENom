@@ -16,8 +16,8 @@ const routes: Routes = [
   {
     path: 'form-wizard',
     component: FormWizardComponent,
-    data: { animation: 'wizard' }
-  }
+    data: { animation: 'wizard' },
+  },
 ];
 
 @NgModule({
@@ -30,7 +30,8 @@ const routes: Routes = [
     CardSnippetModule,
     FormsModule,
     CoreDirectivesModule,
-    NgSelectModule
-  ]
+    NgSelectModule,
+  ],
+  exports: [FormWizardComponent], // Asegura que pueda usarse en otros módulos
 })
 export class FormWizardModule {}

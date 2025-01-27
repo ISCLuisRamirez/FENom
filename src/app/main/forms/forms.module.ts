@@ -8,14 +8,12 @@ import { FormWizardModule } from 'app/main/forms/form-wizard/form-wizard.module'
 import { FaqModule } from 'app/main/forms/faq/faq.module';
 
 @NgModule({
-  declarations: [
-   
-  ],
+  declarations: [],
   imports: [
     FaqModule,
     FormElementsModule,
     FormLayoutModule,
-    FormWizardModule,
+    FormWizardModule, // Importa el módulo corregido del FormWizard
     FormValidationModule,
     FormRepeaterModule
   ]
