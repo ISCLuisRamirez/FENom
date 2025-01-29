@@ -1,40 +1,47 @@
 <div class="content-wrapper container-xxl p-0">
   <div class="content-body">
-    <div class="row match-height">
-      <div class="col-xl-12 col-md-12 col-12">
+    <div class="row">
+      <!-- Sección del banner -->
+      <div class="col-12">
         <section id="faq-search-filter">
           <div class="card faq-search" style="position: relative; height: 20vh; background-image: url('assets/images/banner/banner.jpeg'); background-repeat: no-repeat; background-size: cover; background-position: center;">
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.7);"></div>
           </div>
         </section>
+      </div>
+    </div>
 
-        <div class="d-flex justify-content-between">
-          <div class="card card-statistics col-6">
-            <div class="card-header align-items-center">
-              <h4 class="card-title text-primary">Bienvenid@ al portal Denuncia Protegida</h4>
-              <div class="d-flex align-items-center justify-content-center">
-                <p>Esta plataforma ha sido creada para que todos los colaboradores puedan reportar cualquier acto o conducta no alineada a las políticas, código de conducta, reglamento interno del trabajo y legislación vigente.<br><br>¿Tienes alguna otra duda? No dudes en consultar nuestra sección de
-                  <a href="pages/faq" style="color: #008CBA; text-decoration: none;">preguntas frecuentes.</a></p>
-              </div>
-              <div class="d-flex justify-content-center w-100">
-                <button class="btn btn-primary" [routerLink]="'/forms/form-wizard'">Crea tu denuncia ahora</button>
-              </div>
+    <div class="row ">
+      <!-- Primera Tarjeta -->
+      <div class="col-md-6 d-flex justify-content-center row">
+        <div class="card w-100 d-flex flex-column">
+          <div class="card-header">
+            <h4 class="card-title text-primary justify-content-center">Bienvenid@ al portal Denuncia Protegida</h4>
+            <p>
+              <br>
+              Esta plataforma ha sido creada para que todos los colaboradores puedan reportar cualquier acto o conducta no alineada a las políticas, código de conducta, reglamento interno del trabajo y legislación vigente.
+              <br><br>¿Tienes alguna otra duda? No dudes en consultar nuestra sección de
+              <a href="pages/faq" class="text-primary">preguntas frecuentes.</a>
+            </p>
+          </div>
+          <div class="mt-5 text-center">
+            <button class="btn btn-primary" [routerLink]="'/forms/form-wizard'">Crea tu denuncia ahora</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segunda Tarjeta -->
+      <div class="col-md-6 d-flex">
+        <div class="card w-100 d-flex flex-column">
+          <div class="card-header text-center">
+            <div class="d-flex justify-content-center row">
+              <h4 class="card-title text-primary">¿Deseas consultar un estatus?</h4><br>
+              <p><br>Haz click en el siguiente botón, te redireccionará a una página para<br> consultar  el estatus de tu folio.</p>
+              <img src="assets/images/icons/indeximage.png" alt="Imagen descriptiva" class="img-fluid mb-1 w-25">
             </div>
           </div>
-
-          <div class="card card-statistics col-5">
-            <div class="card-header align-items-center text-center">
-              <h4 class="card-title text-primary">¿Deseas consultar un estatus?</h4>
-              <div class="d-flex justify-content-center">
-                <p class="text-center">Haz click en el siguiente botón para consultar el estatus de tu solicitud.</p>
-              </div>
-              <div class="d-flex justify-content-center">
-                <img src="assets/images/icons/indeximage.png" alt="Imagen descriptiva" class="img-fluid mb-1 w-50" />
-              </div>
-              <div class="d-flex justify-content-center w-100">
-                <button class="btn btn-primary" [routerLink]="'/pages/pricing'">Consultalo aquí</button>
-              </div>
-            </div>
+          <div class="mb-5 text-center">
+            <button class="btn btn-primary" [routerLink]="'/pages/pricing'">Consultalo aquí</button>
           </div>
         </div>
       </div>

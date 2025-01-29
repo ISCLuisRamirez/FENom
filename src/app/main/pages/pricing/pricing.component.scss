@@ -1,1 +1,15 @@
 @import '@core/scss/base/pages/page-pricing';
+.captcha-box {
+    font-family: 'Courier New', monospace;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #343a40, #6c757d);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    user-select: none; /* Evita que el texto sea seleccionado */
+    letter-spacing: 3px;
+    min-width: 120px;
+    text-align: center;
+  }

@@ -23,9 +23,9 @@ export class FormWizardComponent implements OnInit {
   public approximateDatePeriod: string = '';
   public specificDate: any;
   public datereport: string = '';
-  public descriptionVar: string; // Variable para la descripción del incidente
-  public previousReport: string; // Indica si el incidente fue reportado previamente ('si' o 'no')
-  public previousReportDetails: string; // Detalles del reporte previo
+  public descriptionVar: string;
+  public previousReport: string;
+  public previousReportDetails: string;
 
   public selectBasic = [
     { name: 'Teléfono' },
@@ -45,81 +45,58 @@ export class FormWizardComponent implements OnInit {
     { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)' },
   ];
 
-  public selectMultiSelected: any; // Variable para almacenar la selección de motivos
-  public isClient: boolean = true; // Indica si el cliente está habilitado
-  public isLoggedIn: boolean = true; // Indica si el usuario está logueado
-  public selectedFiles: File[] = []; // Archivos seleccionados por el usuario
+  public selectMultiSelected: any;
+  public isClient: boolean = true;
+  public isLoggedIn: boolean = true;
+  public selectedFiles: File[] = [];
+  public involvedList = [{ name: '', position: '', employeeNumber: '' }];
+  public witnessList = [];
 
-  public involvedList = [
-    { name: '', position: '', employeeNumber: '' }, // Estructura inicial
-  ];
+  public showAdditionalInfo: boolean = false;
 
-  public witnessList = []; // Lista de testigos (opcional)
-
-  public showAdditionalInfo: boolean = false; // Controla la visibilidad de los campos de "Información Adicional"
+  public showListbox: boolean = false;
+  public showInputBox: boolean = false;
+  public listboxOptions: string[] = [];
+  public customInputValue: string = '';
+  public dynamicLabel: string = ''; // Etiqueta dinámica
 
   // Private Variables
   private verticalWizardStepper: Stepper;
 
   constructor() {}
 
-  /**
-   * Avanza al siguiente paso del Vertical Wizard
-   */
   verticalWizardNext() {
     this.verticalWizardStepper.next();
   }
 
-  /**
-   * Regresa al paso anterior del Vertical Wizard
-   */
   verticalWizardPrevious() {
     this.verticalWizardStepper.previous();
   }
 
-  /**
-   * Añade un nuevo involucrado
-   */
   addInvolved() {
     this.involvedList.push({ name: '', position: '', employeeNumber: '' });
   }
 
-  /**
-   * Elimina un involucrado si hay más de uno
-   */
   removeInvolved() {
     if (this.involvedList.length > 1) {
       this.involvedList.pop();
     }
   }
 
-  /**
-   * Añade un nuevo testigo
-   */
   addWitness() {
     this.witnessList.push({ name: '', contact: '' });
   }
 
-  /**
-   * Elimina un testigo
-   */
   removeWitness() {
     if (this.witnessList.length > 0) {
       this.witnessList.pop();
     }
   }
 
-  /**
-   * Controla el cambio de estado de anonimato
-   * @param show Si es verdadero, muestra los campos adicionales
-   */
   toggleAnonimato(show: boolean) {
     this.showAdditionalInfo = show;
   }
 
-  /**
-   * Maneja los archivos seleccionados por el usuario
-   */
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files) {
@@ -129,8 +106,47 @@ export class FormWizardComponent implements OnInit {
   }
 
   /**
-   * Lógica al enviar el formulario
+   * Maneja los cambios de ubicación y actualiza las etiquetas dinámicas
    */
+  onUbicacionChange(ubicacion: string): void {
+    this.resetDynamicFields();
+
+    if (['corporativo', 'cedis', 'innomex', 'trate'].includes(ubicacion)) {
+      this.showListbox = true;
+      this.listboxOptions = this.getListboxOptions(ubicacion);
+      this.dynamicLabel = `Seleccione una opción de ${ubicacion}`;
+    }
+
+    if (ubicacion === 'sucursales') {
+      this.showInputBox = true;
+      this.dynamicLabel = 'Introduzca el número de sucursal... ';
+    } else if (ubicacion === 'navesAnexas') {
+      this.showInputBox = true;
+      this.dynamicLabel = 'Introduzca el nombre de la nave o anexo filial... ';
+    } else if (ubicacion === 'unidadTransporte') {
+      this.showInputBox = true;
+      this.dynamicLabel = 'Introduzca el número de la unidad de transporte... ';
+    }
+  }
+
+  getListboxOptions(ubicacion: string): string[] {
+    const options = {
+      corporativo: ['Podium', 'Mar Báltico', 'Pedro Loza', 'Oficinas de RRHH MTY'],
+      cedis: ['Occidente', 'Noreste', 'Centro'],
+      innomex: ['Embotelladora', 'Dispositivos Médicos'],
+      trate: ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'],
+    };
+    return options[ubicacion] || [];
+  }
+
+  resetDynamicFields(): void {
+    this.showListbox = false;
+    this.showInputBox = false;
+    this.listboxOptions = [];
+    this.customInputValue = '';
+    this.dynamicLabel = '';
+  }
+
   onSubmit() {
     alert(
       'Su formulario se ha enviado exitosamente su folio es: ###### y su contraseña dinámica es: ************ IMPORTANTE! Favor de no perder su contraseña ni su folio ya que no existe un método de recuperación'
@@ -142,19 +158,15 @@ export class FormWizardComponent implements OnInit {
     console.log('Involucrados:', this.involvedList);
     console.log('Testigos:', this.witnessList);
     console.log('Información Adicional Visible:', this.showAdditionalInfo);
+    console.log('Ubicación seleccionada:', this.customInputValue || this.listboxOptions);
   }
 
-  /**
-   * Inicializa el contenido del encabezado y los steppers
-   */
   ngOnInit() {
-    // Inicialización del Vertical Wizard
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: false,
       animation: true,
     });
 
-    // Configuración del contenido del encabezado
     this.contentHeader = {
       headerTitle: 'Crea tu denuncia',
       actionButton: true,
