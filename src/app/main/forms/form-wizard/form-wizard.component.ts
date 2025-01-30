@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FileUploader, FileItem } from 'ng2-file-upload';
+import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 
-const URL = 'https://your-url.com'; // Cambia esta URL por tu endpoint.
+const URL = 'http://localhost:5101'; // Cambia esta URL por tu endpoint.
 
 @Component({
   selector: 'app-form-wizard',
@@ -65,6 +66,7 @@ export class FormWizardComponent implements OnInit {
   public selectedFiles: FileItem[] = []; // Archivos seleccionados
   public involvedList = [{ name: '', position: '', employeeNumber: '' }]; // Lista de involucrados
   public witnessList = []; // Lista de testigos
+  public datos=[];
 
   public showAdditionalInfo = false; // Mostrar información adicional
   public showListbox = false; // Mostrar lista desplegable
@@ -76,10 +78,12 @@ export class FormWizardComponent implements OnInit {
   // Variables privadas
   private verticalWizardStepper: Stepper;
 
-  constructor() {}
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    // Inicializar el Stepper
+    this.cargarDatos();
+    
+   // Inicializar el Stepper
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: false,
       animation: true
@@ -137,6 +141,18 @@ export class FormWizardComponent implements OnInit {
         alert('Error desconocido al agregar el archivo.');
       }
     };
+  }
+
+  cargarDatos() {
+    this.apiService.getDatos().subscribe(
+      (response) => {
+        this.datos = response;
+        console.log('Datos recibidos:', this.datos);
+      },
+      (error) => {
+        console.error('Error al obtener datos', error);
+      }
+    );
   }
 
   fileOverBase(e: boolean): void {
