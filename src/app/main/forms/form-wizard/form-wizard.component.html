@@ -7,7 +7,7 @@
       <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
         <div class="bs-stepper-header">
           <!--Medio-->
-          <div *ngIf="isClient" class="step"  data-target="#account-details-vertical">
+          <div *ngIf="isClient" hidden="true" class="step"  data-target="#account-details-vertical">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">0</span>
               <span class="bs-stepper-label">
@@ -251,6 +251,17 @@
                   [(ngModel)]="customInputValue"
                   required
                 />
+              </div><br><br>
+
+              <div class="d-flex justify-content-between bottom:0">
+                <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                  <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                  <span class="align-middle d-sm-inline-block d-none">Anterior</span>
+                </button>
+                <button class="btn btn-primary btn-next" (click)="verticalWizardNext()" rippleEffect>
+                  <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
+                  <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -260,9 +271,10 @@
               <h5 class="mb-0">Detalles</h5>
               <small>Detalles de la denuncia.</small>
             </div>
+
+            <!-- Opciones de fecha -->
             <div class="col-12">
               <p>Por favor seleccione alguna de las siguientes opciones:</p>
-              <!-- Opciones de fecha -->
               <div class="form-check form-check-inline">
                 <input
                   class="form-check-input"
@@ -296,7 +308,7 @@
                 />
                 <label class="form-check-label" for="noDateOption">No cuento con fecha</label>
               </div>
-            
+
               <!-- Fecha específica -->
               <div *ngIf="datereport === 'date'" class="form-group mt-3">
                 <label for="specificDate">Seleccione la fecha específica:</label>
@@ -305,9 +317,11 @@
                   type="date"
                   id="specificDate"
                   [(ngModel)]="specificDate"
+                  [max]="today"
+                  required
                 />
               </div>
-            
+
               <!-- Periodo aproximado -->
               <div *ngIf="datereport === 'dateaprox'" class="form-group mt-3">
                 <label for="approximateDatePeriod">Periodo aproximado:</label>
@@ -317,101 +331,83 @@
                   class="form-control"
                   placeholder="Ejemplo: Mayo-Junio 2023"
                   [(ngModel)]="approximateDatePeriod"
+                  required
                 />
-              </div>
-            </div>
-            
-            
-
-
-            <!-- Descripción -->
-            <div class="col-12 mt-3">
-              <div class="form-group">
-                <label for="incidentDescription">
-                  Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico
-                  posible en cuanto a cómo, cuándo y dónde ocurrió.
-                </label>
-                <textarea
-                  id="incidentDescription"
-                  class="form-control"
-                  name="description"
-                  placeholder="Escriba aquí..."
-                  [(ngModel)]="descriptionVar"
-                ></textarea>
-              </div>
-            </div>
-
-            <!-- Reportado previamente -->
-            <div class="col-12">
-              <p>¿Ha reportado este incidente previamente?</p>
-              <div class="form-check form-check-inline">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="previousReportOptions"
-                  id="previousReportYes"
-                  value="si"
-                  [(ngModel)]="previousReport"
-                />
-                <label class="form-check-label" for="previousReportYes">Sí</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="previousReportOptions"
-                  id="previousReportNo"
-                  value="no"
-                  [(ngModel)]="previousReport"
-                />
-                <label class="form-check-label" for="previousReportNo">No</label>
-              </div>
-            </div>
-
-            <!-- Detalles del reporte previo -->
-            <div class="col-12" *ngIf="previousReport === 'si'">
-              <div class="form-group">
-                <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado:</label>
-                <textarea
-                  id="previousReportDetails"
-                  class="form-control"
-                  name="descriptionDetails"
-                  placeholder="Escriba aquí..."
-                  [(ngModel)]="previousReportDetails"
-                ></textarea>
               </div>
             </div>
 
             <!-- Subir archivo -->
-            <div class="col-12">
+            <div class="col-12 mt-3">
               <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
-              <p>
-                Te recomendamos subir los archivos más relevantes para poder ayudarte a solucionar tu caso. Límite: 5
-                archivos o 10MB.
-              </p>
+              <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 10 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
+
               <div class="custom-file">
                 <input
                   type="file"
-                  class="custom-file-input"
                   id="file-upload-multiple"
+                  class="custom-file-input"
                   (change)="onFileSelect($event)"
                   multiple
                 />
-                <label class="custom-file-label">Seleccionar archivo(s)</label>
+                <label class="custom-file-label" for="file-upload-multiple">
+                  {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
+                </label>
               </div>
-            </div>
+              <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
 
-            <!-- Navegación -->
-            <div class="d-flex justify-content-between mt-3">
+              <!-- Lista de archivos en cola -->
+              <div *ngIf="uploader.queue.length > 0" class="mt-3">
+                <h6>Archivos en cola:</h6>
+                <ul class="list-group">
+                  <li *ngFor="let item of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ item.file.name }} - {{ item.file.size / 1024 | number: '1.0-2' }} KB
+                    <span *ngIf="item.isUploading" class="badge badge-primary">Subiendo...</span>
+                    <span *ngIf="item.isSuccess" class="badge badge-success">Subido</span>
+                    <span *ngIf="item.isCancel" class="badge badge-warning">Cancelado</span>
+                    <span *ngIf="item.isError" class="badge badge-danger">Error</span>
+                  </li>
+                </ul>
+
+                <!-- Barra de progreso -->
+                <div class="progress mt-2">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    [style.width.%]="uploader.progress"
+                    aria-valuenow="{{ uploader.progress }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    {{ uploader.progress }}%
+                  </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="mt-3">
+                  <button class="btn btn-primary" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+                    Subir Todo
+                  </button>
+                  <button class="btn btn-warning" (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                    Cancelar Todo
+                  </button>
+                  <button class="btn btn-danger" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                    Limpiar Cola
+                  </button>
+                </div>
+              </div><br><br>
+
+            </div>
+            <div class="d-flex justify-content-between bottom:0">
               <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
-                <i class="feather icon-arrow-left align-middle mr-sm-25 mr-0"></i>
+                <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                 <span class="align-middle d-sm-inline-block d-none">Anterior</span>
               </button>
               <button class="btn btn-primary btn-next" (click)="verticalWizardNext()" rippleEffect>
                 <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
-                <i class="feather icon-arrow-right align-middle ml-sm-25 ml-0"></i>
+                <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
               </button>
             </div>
+
           </div>
 <!--************************** Div Involucrados ***********************************************************-->
           <div id="section_involved" class="content">
