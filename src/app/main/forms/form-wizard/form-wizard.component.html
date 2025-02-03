@@ -7,7 +7,7 @@
       <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
         <div class="bs-stepper-header">
           <!--Medio-->
-          <div *ngIf="isClient" hidden="true" class="step"  data-target="#account-details-vertical">
+          <div *ngIf="isCapturista" hidden="true" class="step"  data-target="#account-details-vertical">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">0</span>
               <span class="bs-stepper-label">
@@ -65,7 +65,7 @@
         </div>
         <div class="bs-stepper-content">
 <!--************************** Div medio ***********************************************************-->
-          <div *ngIf="isClient && isLoggedIn" id="account-details-vertical" class="content">
+          <div *ngIf="isCapturista && isLoggedIn" id="account-details-vertical" class="content">
             <div class="content-header">
               <h5 class="mb-0">Medio</h5>
               <small class="text-muted">Añada el medio por el cual está realizando la denuncia. </small>

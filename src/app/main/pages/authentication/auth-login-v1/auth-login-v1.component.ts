@@ -2,9 +2,13 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, first } from 'rxjs/operators';
+
 import { Subject } from 'rxjs';
 import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
+import { ApiService } from 'app/services/api.service';
+
+const URL = 'http://localhost:5101'; 
 
 @Component({
   selector: 'app-auth-login-v1',
@@ -21,6 +25,7 @@ export class AuthLoginV1Component implements OnInit {
   public returnUrl: string;
   public error = '';
   public loading = false;
+  public roles=[];
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -39,7 +44,8 @@ export class AuthLoginV1Component implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _authenticationService: AuthenticationService
+    private _authenticationService: AuthenticationService,
+    private apiService: ApiService
   ) {
     // Check if the user is already logged in, if so, redirect to the home page
     if (this._authenticationService.currentUserValue) {
@@ -114,6 +120,7 @@ export class AuthLoginV1Component implements OnInit {
    * On Init
    */
   ngOnInit(): void {
+    this.cargarRoles();
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({
       employeenumber: ['', [Validators.required]],
@@ -127,6 +134,18 @@ export class AuthLoginV1Component implements OnInit {
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
+  }
+
+  cargarRoles() {
+    this.apiService.getRoles().subscribe(
+      (response) => {
+        this.roles = response;
+        console.log('Datos recibidos:', this.roles);
+      },
+      (error) => {
+        console.error('Error al obtener datos', error);
+      }
+    );
   }
 
   /**

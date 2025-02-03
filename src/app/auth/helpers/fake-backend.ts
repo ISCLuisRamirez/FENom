@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/* import { Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpResponse,
@@ -92,7 +92,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function getUsers() {
-      if (!isAdmin()) return unauthorized();
+      if (!isComite()) return unauthorized();
       return ok(users);
     }
 
@@ -100,7 +100,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       if (!isLoggedIn()) return unauthorized();
 
       // only admins can access other user records
-      if (!isAdmin() && currentUser().id !== idFromUrl()) return unauthorized();
+      if (!isComite() && currentUser().id !== idFromUrl()) return unauthorized();
 
       const user = users.find(x => x.id === idFromUrl());
       return ok(user);
@@ -125,7 +125,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       return authHeader.startsWith('Bearer fake-jwt-token');
     }
 
-    function isAdmin() {
+    function isComite() {
       return isLoggedIn() && currentUser().role === Role.Admin;
     }
 
@@ -148,3 +148,4 @@ export const fakeBackendProvider = {
   useClass: FakeBackendInterceptor,
   multi: true
 };
+ */

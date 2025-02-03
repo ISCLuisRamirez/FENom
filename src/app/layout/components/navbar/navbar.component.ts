@@ -116,13 +116,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // Helper method to check if the user is an admin
-  get isAdmin() {
-    return this._authenticationService.isAdmin;
+  get isComite() {
+    return this._authenticationService.isComite;
   }
 
   // Helper method to check if the user is a client
-  get isClient() {
-    return this._authenticationService.isClient;
+  get isCapturista() {
+    return this._authenticationService.isCapturista;
   }
 
   // Lifecycle Hooks

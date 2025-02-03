@@ -30,6 +30,11 @@ export class AuthenticationService {
   /**
    * Confirms if user is admin
    */
+  get isComite() {
+    const user = this.currentUserValue; // Obtener el valor actual de currentUser
+    return user && user.role === Role.Comite;
+  }
+
   get isAdmin() {
     const user = this.currentUserValue; // Obtener el valor actual de currentUser
     return user && user.role === Role.Admin;
@@ -38,9 +43,9 @@ export class AuthenticationService {
   /**
    * Confirms if user is client
    */
-  get isClient() {
+  get isCapturista() {
     const user = this.currentUserValue; // Obtener el valor actual de currentUser
-    return user && user.role === Role.Client;
+    return user && user.role === Role.Capturista;
   }
 
   /**

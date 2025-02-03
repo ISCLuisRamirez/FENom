@@ -1,7 +1,7 @@
 ﻿export enum Role {
-  Admin = 'Comite',  /* Rol comité */
-  Client = 'Capturista',  /* Rol capturista */
-  User = 'User'  /* Rol usuario común */
+  Admin = 'admin',  /* ADMIN */
+  Comite = 'comite',  /* CLIENT */
+  Capturista = 'capturista'  /* USER */
 }
 
 

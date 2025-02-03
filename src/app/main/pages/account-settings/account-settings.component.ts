@@ -10,14 +10,14 @@ import { User } from 'app/auth/models';
 export class AccountSettingsComponent implements OnInit {
   // Public properties
   public currentUser: User;
-  public isAdmin: boolean;
-  public isClient: boolean;
+  public isComite: boolean;
+  public isCapturista: boolean;
 
   constructor(private _authenticationService: AuthenticationService) {
     // Subscribe to current user changes
     this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
-    this.isAdmin = this._authenticationService.isAdmin;
-    this.isClient = this._authenticationService.isClient;
+    this.isComite = this._authenticationService.isComite;
+    this.isCapturista = this._authenticationService.isCapturista;
   }
 
   ngOnInit(): void {

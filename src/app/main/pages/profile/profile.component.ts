@@ -51,12 +51,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this._authenticationService.currentUserValue != null;
   }
 
-  get isAdmin() {
-    return this._authenticationService.isAdmin;
+  get isComite() {
+    return this._authenticationService.isComite;
   }
 
-  get isClient() {
-    return this._authenticationService.isClient;
+  get isCapturista() {
+    return this._authenticationService.isCapturista;
   }
 
   // Lifecycle Hooks
@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     // Verificamos si el usuario tiene los permisos adecuados para ver la página
-    if (!(this.isAdmin || this.isClient)) {
+    if (!(this.isComite || this.isCapturista)) {
       this._router.navigate(['/']); // Redirigir a la página principal si no es admin ni client
       return;
     }

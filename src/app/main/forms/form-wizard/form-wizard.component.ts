@@ -61,7 +61,7 @@ export class FormWizardComponent implements OnInit {
   ];
 
   public selectMultiSelected: any; // Motivo seleccionado
-  public isClient = true; // Indica si es cliente
+  public isCapturista = true; // Indica si es cliente
   public isLoggedIn = true; // Indica si está autenticado
   public selectedFiles: FileItem[] = []; // Archivos seleccionados
   public involvedList = [{ name: '', position: '', employeeNumber: '' }]; // Lista de involucrados
@@ -144,7 +144,7 @@ export class FormWizardComponent implements OnInit {
   }
 
   cargarDatos() {
-    this.apiService.getDatos().subscribe(
+    this.apiService.getRoles().subscribe(
       (response) => {
         this.datos = response;
         console.log('Datos recibidos:', this.datos);
@@ -247,22 +247,60 @@ export class FormWizardComponent implements OnInit {
     }
   }
   
+  getLocationId(): number {
+    switch (this.customInputValue.toLowerCase()) {
+      case 'corporativo': return 1;
+      case 'cedis': return 2;
+      case 'sucursales': return 3;
+      case 'naves anexas': return 4;
+      case 'innomex': return 5;
+      case 'trate': return 6;
+      case 'unidad transporte': return 7;
+      default: return 0; // Valor por defecto si no se selecciona nada
+    }
+  }
+  
+  getSubLocationId(): number {
+    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
+  }
+  
 
   onSubmit() {
     if (this.specificDate && this.specificDate > this.today) {
       alert('La fecha seleccionada no puede ser en el futuro.');
       return;
     }
-
-    alert('Formulario enviado correctamente.');
-    console.log('Detalles del formulario:', {
-      date: this.specificDate || this.approximateDatePeriod || 'No especificado',
-      description: this.descriptionVar,
-      previousReport: this.previousReport,
-      previousReportDetails: this.previousReportDetails,
-      selectedFiles: this.selectedFiles.map((item) => item.file.name),
-      involvedList: this.involvedList,
-      witnessList: this.witnessList
-    });
+  
+    // Generar folio único (simplemente como ejemplo)
+    const folio = 'FOLIO-' + Math.floor(Math.random() * 1000000);
+  
+    // Contraseña para el seguimiento (opcional, puedes mejorar esta lógica)
+    const password = Math.random().toString(36).slice(-8);
+  
+    // Adaptación de los datos para el backend
+    const denunciaData = {
+      id_requesters: this.isLoggedIn ? 1 : 0,  // Suponiendo que obtienes este ID al iniciar sesión
+      id_reason: this.selectMultiSelected?.id || 0, // Debes tener el ID del motivo
+      id_location: this.getLocationId(), // Método para obtener ID de la ubicación
+      id_sublocation: this.getSubLocationId(), // ID de sububicación si aplica
+      date: this.specificDate || this.today, // Fecha de la denuncia
+      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '', // Nombre del primer archivo subido
+      folio: folio,
+      password: password,
+      status: 1 // Suponiendo que 1 es "pendiente" o "nuevo"
+    };
+  
+    // Envío de la denuncia al backend
+    this.apiService.enviarDenuncia(denunciaData).subscribe(
+      (response) => {
+        alert(`Denuncia enviada correctamente. Folio: ${folio}`);
+        console.log('Respuesta del servidor:', response);
+      },
+      (error) => {
+        alert('Error al enviar la denuncia.');
+        console.error('Error en el envío:', error);
+      }
+    );
   }
+  
 }

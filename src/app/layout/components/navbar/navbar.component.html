@@ -24,7 +24,7 @@
   </div>
 
   <!-- Menú visible para los usuarios no logueados y los usuarios con rol 'Client', pero NO para los admins -->
-  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="!isLoggedIn || isClient">
+  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="!isLoggedIn || isCapturista">
     <li>
       <a class="btn mr-0" routerLink="/Inicio">Inicio</a>
     </li>
@@ -38,12 +38,6 @@
       <a class="btn mr-0" routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
 
-    <!-- Si el usuario NO está logueado, muestra el botón para iniciar sesión -->
-    <li *ngIf="!isLoggedIn">
-      <a class="btn mr-0" routerLink="/pages/authentication/login-v1">Iniciar Sesión</a>
-    </li>
-
-    <!-- Si el usuario está logueado, muestra el botón de cambio de tema -->
     <li class="nav-item d-none d-lg-block">
       <a class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
         <span [ngClass]="currentSkin === 'dark' ? 'icon-sun' : 'icon-moon'" class="ficon font-medium-5 feather"></span>
@@ -72,7 +66,7 @@
   </ul>
 
   <!-- Menú específico para ADMINISTRADORES (solo se muestra si el usuario es admin) -->
-  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="isAdmin">
+  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="isComite">
     <li>
       <a class="btn mr-0" routerLink="pages/profile">Inicio</a>
     </li>
