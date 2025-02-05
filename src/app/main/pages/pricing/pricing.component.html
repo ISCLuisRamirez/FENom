@@ -1,21 +1,24 @@
-<div class="content-wrapper container-xxl p-0 mt-0" >
+<div class="content-wrapper container-xxl p-0 mt-0">
   <div class="content-body d-flex justify-content-center align-items-center min-vh-100">
     <section id="faq-search-filter" class="w-100">
-      <div class="card mx-auto col-12 col-md-6 p-3 shadow-sm ">
+      <div class="card mx-auto col-12 col-md-6 p-3 shadow-sm">
         <h2 class="text-primary text-center">Consulta tu estatus</h2>
         <p class="card-text text-center mb-2">Introduce tu folio para consultar el estatus:</p>
+
         <form class="faq-search-input">
           <!-- Campo de búsqueda de folio -->
-          <label>Introduce el número de folio:  </label>
-           <div class="mb-2">
-            <input
+          <label>Introduce el número de folio:</label>
+          <div class="mb-2">
+            <input 
               type="number"
-              [(ngModel)]="searchText"
-              name="searchbar"
+              [(ngModel)]="folio"
+              name="folio"
               class="form-control"
               placeholder="Introduce el folio..."
-            /> 
+              required
+            />
           </div>
+
           <!-- Campo de contraseña -->
           <div class="mb-2">
             <label class="d-flex align-items-center">
@@ -32,9 +35,11 @@
 
             <input
               type="password"
+              [(ngModel)]="password"
               name="password"
               class="form-control"
               placeholder="Introduce tu contraseña..."
+              required
             />
 
             <!-- Mensaje de información adicional -->
@@ -47,12 +52,22 @@
           <div class="text-center">
             <p class="card-text mb-2">Resuelve el captcha:</p>
             <div class="d-flex flex-column align-items-center">
-              <canvas #captchaCanvas width="200" height="70" class="mb-2 border border-secondary rounded"></canvas>
-              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="generateCaptcha()">
+              <canvas
+                #captchaCanvas
+                width="200"
+                height="70"
+                class="mb-2 border border-secondary rounded"
+              ></canvas>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="generateCaptcha()"
+              >
                 Recargar CAPTCHA
               </button>
             </div>
           </div>
+
           <div class="mt-1">
             <input
               type="text"
@@ -61,22 +76,26 @@
               class="form-control"
               placeholder="Introduce el captcha..."
               (input)="validateCaptcha()"
+              required
             />
-            <small *ngIf="captchaError" class="text-danger">El CAPTCHA no es válido. Inténtalo de nuevo.</small>
+            <small *ngIf="captchaError" class="text-danger">
+              El CAPTCHA no es válido. Inténtalo de nuevo.
+            </small>
           </div>
-          
 
           <!-- Botón de envío -->
           <div class="text-center mt-4">
             <button
               type="button"
               class="btn btn-primary w-100"
-              [disabled]="!isCaptchaValidated"
+              [disabled]="!isCaptchaValidated || !folio || !password"
               (click)="submitForm()"
             >
               Consultar Estatus
             </button>
-            <p class="card-text mt-0 mb-0" style="font-size: xx-small;">Responda correctamente el captcha y el boton de envio se activará,recuerde que el captcha es sensible a mayúsculas. </p>
+            <p class="card-text mt-0 mb-0" style="font-size: xx-small;">
+              Responda correctamente el captcha y el botón de envío se activará. Recuerde que el captcha es sensible a mayúsculas.
+            </p>
           </div>
         </form>
       </div>
