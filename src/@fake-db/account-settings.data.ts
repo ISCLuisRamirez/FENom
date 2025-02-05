@@ -5,7 +5,7 @@ export class accountSettingsFakeData {
         avatar: 'assets/images/portrait/small/avatar-s-11.jpg',
         username: 'johndoe',
         fullName: 'John Doe',
-        employeenumber:'123456',
+        employee_number:'123456',
         email: 'granger007@hogward.com',
         company: 'IBM Technology'
       },

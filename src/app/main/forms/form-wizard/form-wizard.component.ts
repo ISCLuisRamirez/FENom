@@ -27,8 +27,8 @@ export class FormWizardComponent implements OnInit {
   public today: string;
   public datereport: string = '';
   public selectedFiles: FileItem[] = [];
-  public involvedList = [{ name: '', position: '', employeeNumber: '' }];
-  public witnessList = [{ name: '', position: '', employeeNumber: '' }];
+  public involvedList = [{ name: '', position: '', employee_number: '' }];
+  public witnessList = [{ name: '', position: '', employee_number: '' }];
   public datos = [];
   public selectMultiSelected: any;
   public showValidation: boolean = false;
@@ -318,7 +318,7 @@ export class FormWizardComponent implements OnInit {
   }
 
   addInvolved() {
-    this.involvedList.push({ name: '', position: '', employeeNumber: '' });
+    this.involvedList.push({ name: '', position: '', employee_number: '' });
   }
 
   removeInvolved() {
@@ -328,7 +328,7 @@ export class FormWizardComponent implements OnInit {
   }
 
   addWitness() {
-    this.witnessList.push({ name: '', position: '', employeeNumber: '' });
+    this.witnessList.push({ name: '', position: '', employee_number: '' });
   }
 
   removeWitness() {

@@ -16,7 +16,7 @@ import { User, Role } from 'app/auth/models';
 const users: User[] = [
   {
     id: 1,
-    employeenumber: 100001, // Cambiado a 6 dígitos
+    employee_number: 100001, // Cambiado a 6 dígitos
     email: 'admin@demo.com', // Añadido email
     password: 'admin',
     firstName: 'John',
@@ -26,7 +26,7 @@ const users: User[] = [
   },
   {
     id: 2,
-    employeenumber: 100002, // Cambiado a 6 dígitos
+    employee_number: 100002, // Cambiado a 6 dígitos
     email: 'client@demo.com', // Añadido email
     password: 'client',
     firstName: 'Nataly',
@@ -36,7 +36,7 @@ const users: User[] = [
   },
   {
     id: 3,
-    employeenumber: 100003, // Cambiado a 6 dígitos
+    employee_number: 100003, // Cambiado a 6 dígitos
     email: 'user@demo.com', // Añadido email
     password: 'user',
     firstName: 'Rose',
@@ -71,17 +71,17 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     // route functions
 
     function authenticate() {
-      const { employeenumber, email, password } = body;
+      const { employee_number, email, password } = body;
 
-      // Find user by either employeenumber or email
+      // Find user by either employee_number or email
       const user = users.find(x => 
-        (x.employeenumber === employeenumber || x.email === email) && x.password === password
+        (x.employee_number === employee_number || x.email === email) && x.password === password
       );
 
       if (!user) return error('Employee number or email or password is incorrect');
       return ok({
         id: user.id,
-        employeenumber: user.employeenumber,
+        employee_number: user.employee_number,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,

@@ -2,7 +2,7 @@
 
 export class User {
   id: number;
-  employeenumber: number;
+  employee_number: number;
   email: string; 
   password: string;
   firstName: string;

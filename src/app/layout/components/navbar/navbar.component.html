@@ -20,11 +20,11 @@
         </a>
       </li>
     </ul>
-    <h5>Bienvenid@ {{ currentUser?.employeenumber }}!</h5>
+    <h5>Bienvenid@ {{ currentUser?.employee_number || ''}}!</h5>
   </div>
 
   <!-- Menú visible para los usuarios no logueados y los usuarios con rol 'Client', pero NO para los admins -->
-  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="!isLoggedIn || isCapturista">
+  <ul class="nav navbar-nav align-items-center ml-auto" *ngIf="isLoggedIn || isCapturista">
     <li>
       <a class="btn mr-0" routerLink="/Inicio">Inicio</a>
     </li>
