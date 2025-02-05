@@ -263,8 +263,8 @@
                   <input
                     type="radio"
                     name="ubicacion"
-                    value="navesAnexas"
-                    (change)="onUbicacionChange('navesAnexas')"
+                    value="navesanexas"
+                    (change)="onUbicacionChange('navesanexas')"
                     [(ngModel)]="selectedUbicacion"
                     required
                   />
@@ -296,8 +296,8 @@
                   <input
                     type="radio"
                     name="ubicacion"
-                    value="unidadTransporte"
-                    (change)="onUbicacionChange('unidadTransporte')"
+                    value="unidadtransporte"
+                    (change)="onUbicacionChange('unidadtransporte')"
                     [(ngModel)]="selectedUbicacion"
                     required
                   />
@@ -306,35 +306,36 @@
               </div>
 
               <!-- Contenedor dinámico -->
-              <div id="ubicacionContainer" *ngIf="showListbox || showInputBox" class="mt-3">
-                <!-- Etiqueta dinámica -->
-                <label *ngIf="dynamicLabel">{{ dynamicLabel }}</label>
+              <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
+                <!-- Listbox para opciones predefinidas -->
+                <div *ngIf="showListbox">
+                  <label>{{locationLabel}}</label>
+                  <select
+                    id="ubicacionListbox"
+                    class="form-control"
+                    [(ngModel)]="customInputValue"
+                    required
+                  >
+                    <option value="" disabled selected>Seleccione una opción</option>
+                    <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
 
-                <!-- Listbox -->
-                <select
-                  id="ubicacionListbox"
-                  class="form-control"
-                  *ngIf="showListbox"
-                  [(ngModel)]="customInputValue"
-                  required
-                >
-                  <option value="" disabled selected>Seleccione una opción</option>
-                  <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
-                </select>
+                <!-- Input Box para texto libre -->
+                <div *ngIf="showInputBox">
+                  <label>{{locationLabel}}</label>
+                  <input
+                    type="text"
+                    id="customInput"
+                    class="form-control"
+                    [(ngModel)]="customInputValue"
+                    [placeholder]="locationLabel"
+                    required
+                  />
+                </div>
+              </div>
 
-                <!-- Input Box -->
-                <input
-                  *ngIf="showInputBox"
-                  type="text"
-                  id="customInput"
-                  class="form-control mt-2"
-                  [placeholder]="dynamicLabel"
-                  [(ngModel)]="customInputValue"
-                  required
-                />
-              </div><br><br>
-
-              <div class="d-flex justify-content-between bottom:0">
+              <div class="d-flex justify-content-between mt-3">
                 <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Anterior</span>

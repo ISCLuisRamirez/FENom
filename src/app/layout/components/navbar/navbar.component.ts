@@ -9,6 +9,10 @@ import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
 import { User } from 'app/auth/models';
 import { Router } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ApiService } from 'app/services/api.service';
+
+const URL = 'http://localhost:5101';
 
 @Component({
   selector: 'app-navbar',
