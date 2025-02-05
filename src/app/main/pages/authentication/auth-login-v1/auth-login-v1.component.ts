@@ -98,19 +98,18 @@ export class AuthLoginV1Component implements OnInit {
     // Start loading and call the authentication service to log in
     this.loading = true;
     this._authenticationService
-      .login(this.f.employeenumber.value, this.f.password.value)
+      .login(this.f.employee_number.value, this.f.password.value)
       .pipe(first())
       .subscribe(
         data => {
-          // Navigate to the returnUrl or default to the home page
           this._router.navigate([this.returnUrl]);
         },
         error => {
-          // Display error if login fails
           this.error = error;
           this.loading = false;
         }
       );
+    
   }
 
   // Lifecycle Hooks
@@ -120,10 +119,10 @@ export class AuthLoginV1Component implements OnInit {
    * On Init
    */
   ngOnInit(): void {
-    this.cargarRoles();
+    
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({
-      employeenumber: ['', [Validators.required]],
+      employee_number: ['', [Validators.required]],
       password: ['', Validators.required]
     });
 
@@ -134,18 +133,6 @@ export class AuthLoginV1Component implements OnInit {
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
-  }
-
-  cargarRoles() {
-    this.apiService.getRoles().subscribe(
-      (response) => {
-        this.roles = response;
-        console.log('Datos recibidos:', this.roles);
-      },
-      (error) => {
-        console.error('Error al obtener datos', error);
-      }
-    );
   }
 
   /**

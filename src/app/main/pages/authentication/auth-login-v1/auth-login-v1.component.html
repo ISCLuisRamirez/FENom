@@ -16,18 +16,18 @@
           <div class="form-group">
             <label for="login-email" class="form-label">Número de empleado:</label>
             <input
-              type="number"
-              formControlName="employeenumber"
+              type="text"
+              formControlName="employee_number"
               class="form-control"
               placeholder="333333"
               aria-describedby="login-email"
               tabindex="1"
               autofocus
-              [ngClass]="{ 'is-invalid': submitted && f.employeenumber.errors }"
+              [ngClass]="{ 'is-invalid': submitted && f.employee_number.errors }"
             />
-            <div *ngIf="submitted && f.employeenumber.errors" class="invalid-feedback">
-              <div *ngIf="f.employeenumber.errors.required">Número de empleado es un campo obligatorio.</div>
-              <div *ngIf="f.employeenumber.errors.email">Número de empleado debe ser un campo válido.</div>
+            <div *ngIf="submitted && f.employee_number.errors" class="invalid-feedback">
+              <div *ngIf="f.employee_number.errors.required">Número de empleado es un campo obligatorio.</div>
+              <div *ngIf="f.employee_number.errors.email">Número de empleado debe ser un campo válido.</div>
             </div>
           </div>
 
