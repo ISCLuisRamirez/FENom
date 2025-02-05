@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
+import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs/operators';
 import { PricingService } from 'app/main/pages/pricing/pricing.service';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-pricing',
@@ -26,7 +27,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _unsubscribeAll: Subject<any> = new Subject();
 
-  constructor(private _pricingService: PricingService) {}
+  constructor(private _pricingService: PricingService) { }
 
   ngOnInit(): void {
     this._pricingService.onPricingChanged
@@ -129,18 +130,55 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
         this._pricingService.searchStatus(this.folio, this.password).subscribe({
           next: (response) => {
             this.statusResponse = response;
-            alert('Consulta realizada con éxito.');
+            if (response.requestStatus == 1) {
+              Swal.fire({
+                title: 'Consulta realizada con éxito.',
+                text: 'Tu solicitud está en espera de revisión.',
+                icon: 'info',
+                confirmButtonText: 'Entendido'
+              });
+            }else{
+              if (response.requestStatus == 2) {
+                Swal.fire({
+                  title: 'Consulta realizada con éxito.',
+                  text: 'Tu solicitud está siendo revisada.',
+                  icon: 'question',
+                  confirmButtonText: 'Entendido'
+                });
+              }else{
+                Swal.fire({
+                  title: 'Consulta realizada con éxito.',
+                  text: 'Tu solicitud resuelta.',
+                  icon: 'success',
+                  confirmButtonText: 'Entendido'
+                });
+              }
+            }
           },
           error: (error) => {
-            console.error('Error en la consulta:', error);
-            alert('Hubo un error al consultar el estatus. Inténtalo de nuevo.');
+            Swal.fire({
+              title: 'Error.',
+              text: 'Hubo un error al consultar el estatus. Inténtalo de nuevo.',
+              icon: 'error',
+              confirmButtonText: 'Reintentar'
+            });
           }
         });
       } else {
-        alert('Debe ingresar el folio y la contraseña.');
+        Swal.fire({
+          title: 'Completa los campos',
+          text: 'Debe ingresar el folio y la contraseña.',
+          icon: 'warning',
+          confirmButtonText: 'Reintentar'
+        });
       }
     } else {
-      alert('El CAPTCHA no es válido. Inténtalo de nuevo.');
+      Swal.fire({
+        title: '¿Eres un robot?',
+        text: 'El CAPTCHA no es válido. Inténtalo de nuevo.',
+        icon: 'warning',
+        confirmButtonText: 'Reintentar'
+      });
     }
   }
 
