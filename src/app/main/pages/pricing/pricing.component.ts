@@ -18,15 +18,17 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   public captchaError: boolean = false;
   public isCaptchaValidated: boolean = false;
 
-  // Propiedades para manejar información adicional
-  public showInfo: boolean = false;
+  public folio: string = '';        // Campo para el folio
+  public password: string = '';     // Campo para la contraseña
+  public statusResponse: any;       // Respuesta del backend
+
+  public showInfo: boolean = false; // ✅ Propiedad para controlar la visibilidad de la información
 
   private _unsubscribeAll: Subject<any> = new Subject();
 
   constructor(private _pricingService: PricingService) {}
 
   ngOnInit(): void {
-    // Suscribirse a los datos del servicio
     this._pricingService.onPricingChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
@@ -35,13 +37,16 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Generar el CAPTCHA al cargar la vista del componente
     this.generateCaptcha();
   }
 
   /**
-   * Genera un nuevo CAPTCHA y lo renderiza en el canvas.
+   * ✅ Método para alternar la visibilidad de la información adicional.
    */
+  toggleInfo(): void {
+    this.showInfo = !this.showInfo;
+  }
+
   generateCaptcha(): void {
     const canvas = this.captchaCanvas.nativeElement;
     const context = canvas.getContext('2d');
@@ -51,40 +56,26 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Generar texto CAPTCHA
     this.captcha = this.generateRandomCaptcha();
-
-    // Dibujar el CAPTCHA
     this.drawCaptchaBackground(context, canvas);
     this.drawCaptchaText(context);
     this.drawNoise(context, canvas);
-
-    // Reiniciar validación y entrada del usuario
     this.resetCaptchaValidation();
   }
 
-  /**
-   * Genera un texto CAPTCHA aleatorio.
-   */
   private generateRandomCaptcha(): string {
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'; // Sin caracteres confusos
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
     return Array.from({ length: 6 }, () =>
       characters.charAt(Math.floor(Math.random() * characters.length))
     ).join('');
   }
 
-  /**
-   * Dibuja el fondo del CAPTCHA.
-   */
   private drawCaptchaBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillStyle = '#f1f1f1';
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  /**
-   * Dibuja el texto del CAPTCHA de manera distorsionada.
-   */
   private drawCaptchaText(context: CanvasRenderingContext2D): void {
     context.font = '30px Arial';
     context.fillStyle = '#000';
@@ -102,9 +93,6 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  /**
-   * Dibuja líneas y puntos aleatorios en el canvas como ruido.
-   */
   private drawNoise(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
     for (let i = 0; i < 5; i++) {
       context.strokeStyle = `rgba(0, 0, 0, ${Math.random()})`;
@@ -122,46 +110,41 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  /**
-   * Valida si la entrada del usuario coincide con el CAPTCHA.
-   */
   validateCaptcha(): void {
     this.captchaError = this.captchaInput.trim().toUpperCase() !== this.captcha.toUpperCase();
     this.isCaptchaValidated = !this.captchaError;
   }
 
-  /**
-   * Reinicia los valores relacionados con la validación del CAPTCHA.
-   */
   private resetCaptchaValidation(): void {
     this.captchaInput = '';
     this.captchaError = false;
     this.isCaptchaValidated = false;
   }
 
-  /**
-   * Alterna la visibilidad de la información adicional.
-   */
-  toggleInfo(): void {
-    this.showInfo = !this.showInfo;
-  }
-
-  /**
-   * Envía el formulario después de validar el CAPTCHA.
-   */
   submitForm(): void {
     this.validateCaptcha();
 
     if (this.isCaptchaValidated) {
-      alert('CAPTCHA válido. Procesando la consulta...');
-      // Aquí puedes continuar con la lógica para consultar el estatus
+      if (this.folio.trim() && this.password.trim()) {
+        this._pricingService.searchStatus(this.folio, this.password).subscribe({
+          next: (response) => {
+            this.statusResponse = response;
+            alert('Consulta realizada con éxito.');
+          },
+          error: (error) => {
+            console.error('Error en la consulta:', error);
+            alert('Hubo un error al consultar el estatus. Inténtalo de nuevo.');
+          }
+        });
+      } else {
+        alert('Debe ingresar el folio y la contraseña.');
+      }
     } else {
       alert('El CAPTCHA no es válido. Inténtalo de nuevo.');
     }
   }
 
   ngOnDestroy(): void {
-    // Cancelar todas las suscripciones
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

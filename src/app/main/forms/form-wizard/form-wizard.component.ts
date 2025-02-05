@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FileUploader, FileItem } from 'ng2-file-upload';
+import Swal from 'sweetalert2';
 import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 
-const URL = 'http://localhost:5101'; // Cambia esta URL por tu endpoint.
+const URL = 'http://localhost:5101';
 
 @Component({
   selector: 'app-form-wizard',
@@ -13,40 +14,35 @@ const URL = 'http://localhost:5101'; // Cambia esta URL por tu endpoint.
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
-  // Variables públicas
-  public contentHeader: object; // Configuración del encabezado
-  public TDNameVar = ''; // Nombre
-  public TDEmailVar = ''; // Correo
-  public TDFirstNameVar = ''; // Primer nombre
-  public TDLastNameVar = ''; // Apellido
-  public twitterVar = ''; // Twitter
-  public facebookVar = ''; // Facebook
-  public googleVar = ''; // Google
-  public linkedinVar = ''; // LinkedIn
-  public landmarkVar = ''; // Punto de referencia
-  public addressVar = ''; // Dirección
-  public approximateDatePeriod = ''; // Periodo aproximado
-  public specificDate: string = ''; // Fecha específica
-  public today: string; // Fecha actual para restringir fechas futuras
-  public datereport: string = ''; // Tipo de fecha seleccionada
-  public descriptionVar: string = ''; // Descripción
-  public previousReport: string = ''; // Reporte previo
-  public previousReportDetails: string = ''; // Detalles del reporte previo
-  public hasAnotherDropZoneOver = false; // Zona de drop secundaria
-  public hasBaseDropZoneOver = false; // Zona de drop principal
-
-  public uploader: FileUploader = new FileUploader({
-    url: URL,
-    isHTML5: true,
-    allowedFileType: ['image', 'pdf', 'doc', 'docx'], // Tipos de archivos permitidos
-    maxFileSize: 10 * 1024 * 1024 // Tamaño máximo permitido: 10 MB
-  });
-
+  public contentHeader: object;
+  public TDNameVar = '';
+  public TDEmailVar = '';
+  public telefono: string = '';
+  public selectedUbicacion: string = '';
+  public selectedMedio: string = '';
+  public email: string = '';
+  public approximateDatePeriod = '';
+  public specificDate: string = '';
+  public today: string;
+  public datereport: string = '';
+  public selectedFiles: FileItem[] = [];
+  public involvedList = [{ name: '', position: '', employeeNumber: '' }];
+  public witnessList = [{ name: '', position: '', employeeNumber: '' }];
+  public datos = [];
+  public selectMultiSelected: any;
+  public showValidation: boolean = false;
+  public showAdditionalInfo = false;
+  public showListbox = false;
+  public showInputBox = false;
+  public listboxOptions: string[] = [];
+  public customInputValue = '';
+  public dynamicLabel = '';
+  
   public selectBasic = [
     { name: 'Teléfono' },
     { name: 'Correo' }
   ];
-
+  
   public selectMulti = [
     { name: 'Abuso de autoridad' },
     { name: 'Acoso laboral' },
@@ -59,108 +55,146 @@ export class FormWizardComponent implements OnInit {
     { name: 'Discriminación' },
     { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)' }
   ];
-
-  public selectMultiSelected: any; // Motivo seleccionado
-  public isCapturista = true; // Indica si es cliente
-  public isLoggedIn = true; // Indica si está autenticado
-  public selectedFiles: FileItem[] = []; // Archivos seleccionados
-  public involvedList = [{ name: '', position: '', employeeNumber: '' }]; // Lista de involucrados
-  public witnessList = []; // Lista de testigos
-  public datos=[];
-
-  public showAdditionalInfo = false; // Mostrar información adicional
-  public showListbox = false; // Mostrar lista desplegable
-  public showInputBox = false; // Mostrar caja de texto
-  public listboxOptions: string[] = []; // Opciones dinámicas
-  public customInputValue = ''; // Valor personalizado
-  public dynamicLabel = ''; // Etiqueta dinámica
-
-  // Variables privadas
+  
+  public isLoggedIn = true;
+  
   private verticalWizardStepper: Stepper;
+
+  public uploader: FileUploader = new FileUploader({
+    url: URL,
+    isHTML5: true,
+    allowedFileType: ['image', 'pdf', 'doc', 'docx'],
+    maxFileSize: 10 * 1024 * 1024
+  });
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
     this.cargarDatos();
-    
-   // Inicializar el Stepper
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: false,
       animation: true
     });
 
-    // Configurar fecha actual
-    const currentDate = new Date();
-    this.today = currentDate.toISOString().split('T')[0];
-
-    // Configurar encabezado
-    this.contentHeader = {
-      headerTitle: 'Crea tu denuncia',
-      actionButton: true,
-      breadcrumb: {
-        type: '',
-        links: [
-          { name: 'Inicio', isLink: true, link: '/' },
-          { name: 'Crear Denuncia', isLink: true, link: '/crear-denuncia' },
-          { name: 'Formulario', isLink: false }
-        ]
-      }
-    };
-
-    // Configurar uploader
-    this.configureUploader();
+    this.today = new Date().toISOString().split('T')[0];
   }
 
-  configureUploader() {
-    // Configurar eventos del uploader
-    this.uploader.onAfterAddingFile = (file) => {
-      file.withCredentials = false; // Evitar envío de credenciales CORS
-      this.selectedFiles = this.uploader.queue;
-      console.log('Archivo agregado:', file.file.name);
-    };
-
-    this.uploader.onProgressAll = (progress) => {
-      console.log(`Progreso total: ${progress}%`);
-    };
-
-    this.uploader.onCompleteItem = (item, response, status) => {
-      console.log(`Archivo subido: ${item.file.name}, Estado: ${status}`);
-    };
-
-    this.uploader.onCompleteAll = () => {
-      console.log('Todos los archivos han sido subidos.');
-      alert('Todos los archivos han sido subidos correctamente.');
-    };
-
-    this.uploader.onWhenAddingFileFailed = (item, filter) => {
-      if (filter.name === 'fileSize') {
-        alert('El archivo excede el tamaño máximo permitido de 10 MB.');
-      } else if (filter.name === 'fileType') {
-        alert('El tipo de archivo no es permitido.');
-      } else {
-        alert('Error desconocido al agregar el archivo.');
-      }
-    };
+  validateAndProceed() {
+    this.showValidation = true;
+    if (this.isStepValid()) {
+      this.verticalWizardNext();
+    } else {
+      Swal.fire({
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos obligatorios antes de continuar.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+    }
   }
 
-  cargarDatos() {
-    this.apiService.getRoles().subscribe(
+  isStepValid(): boolean {
+    const currentStep = (this.verticalWizardStepper as any).currentStep;
+
+    switch (currentStep) {
+      case 0:
+        return this.selectedMedio && (
+          (this.selectedMedio === 'Teléfono' && this.telefono.length === 10) ||
+          (this.selectedMedio === 'Correo' && this.email.includes('@'))
+        );
+
+      case 1:
+        return !!this.selectMultiSelected;
+
+      case 2:
+        return this.isUbicacionValid();
+
+      case 3:
+        return !!this.datereport && (
+          (this.datereport === 'date' && !!this.specificDate) ||
+          (this.datereport === 'dateaprox' && !!this.approximateDatePeriod) ||
+          (this.datereport === 'NA')
+        );
+
+      case 4:
+        return this.involvedList.every(person => person.name.trim() !== '');
+
+      case 5:
+        if (this.showAdditionalInfo) {
+          return !!this.TDNameVar && !!this.TDEmailVar && !!this.telefono;
+        }
+        return true;
+
+      default:
+        return true;
+    }
+  }
+
+  isUbicacionValid(): boolean {
+    if (!this.selectedUbicacion) return false;
+    if (this.showListbox && !this.customInputValue) return false;
+    if (this.showInputBox && !this.customInputValue.trim()) return false;
+    return true;
+  }
+
+  getListboxOptions(ubicacion: string): string[] {
+    switch (ubicacion.toLowerCase()) {
+      case 'corporativo':
+        return ['Piso 1', 'Piso 2', 'Piso 3'];
+      case 'cedis':
+        return ['Área A', 'Área B', 'Área C'];
+      case 'innomex':
+        return ['Zona 1', 'Zona 2', 'Zona 3'];
+      case 'trate':
+        return ['Sección 1', 'Sección 2', 'Sección 3'];
+      default:
+        return [];
+    }
+  }
+
+  onSubmit() {
+    if (!this.isStepValid()) {
+      Swal.fire({
+        title: '❌ Campos Incompletos',
+        text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+
+    const denunciaData = {
+      id_requesters: this.isLoggedIn ? 1 : 0,
+      id_reason: this.selectMultiSelected?.id || 0,
+      id_location: this.getLocationId(),
+      id_sublocation: this.getSubLocationId(),
+      date: this.specificDate || this.today,
+      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
+      status: 1
+    };
+
+    this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
-        this.datos = response;
-        console.log('Datos recibidos:', this.datos);
+        Swal.fire({
+          title: '¡Denuncia Enviada!',
+          html: `
+            <strong>Folio:</strong> ${response.folio}<br>
+            <strong>Contraseña:</strong> ${response.password}<br>
+            <em><strong>IMPORTANTE:</strong> Guarda bien estos datos, no hay recuperación.</em>
+          `,
+          icon: 'success',
+          confirmButtonText: 'Entendido'
+        });
       },
       (error) => {
-        console.error('Error al obtener datos', error);
+        Swal.fire({
+          title: '❌ Error',
+          text: 'Hubo un problema al enviar la denuncia.',
+          icon: 'error',
+          confirmButtonText: 'Reintentar'
+        });
       }
     );
-  }
-
-  fileOverBase(e: boolean): void {
-    this.hasBaseDropZoneOver = e;
-  }
-
-  fileOverAnother(e: boolean): void {
-    this.hasAnotherDropZoneOver = e;
   }
 
   verticalWizardNext() {
@@ -169,6 +203,70 @@ export class FormWizardComponent implements OnInit {
 
   verticalWizardPrevious() {
     this.verticalWizardStepper.previous();
+  }
+
+  cargarDatos() {
+    this.apiService.getRoles().subscribe(
+      (response) => {
+        this.datos = response;
+      },
+      (error) => {
+        console.error('Error al obtener datos', error);
+      }
+    );
+  }
+
+  onUbicacionChange(ubicacion: string): void {
+    this.resetDynamicFields();
+    this.selectedUbicacion = ubicacion;
+
+    if (['corporativo', 'cedis', 'innomex', 'trate'].includes(ubicacion)) {
+      this.showListbox = true;
+      this.listboxOptions = this.getListboxOptions(ubicacion);
+    } else {
+      this.showInputBox = true;
+    }
+  }
+
+  resetDynamicFields(): void {
+    this.showListbox = false;
+    this.showInputBox = false;
+    this.listboxOptions = [];
+    this.customInputValue = '';
+  }
+
+  getLocationId(): number {
+    switch (this.selectedUbicacion.toLowerCase()) {
+      case 'corporativo': return 1;
+      case 'cedis': return 2;
+      case 'sucursales': return 3;
+      case 'naves anexas': return 4;
+      case 'innomex': return 5;
+      case 'trate': return 6;
+      case 'unidad transporte': return 7;
+      default: return 0;
+    }
+  }
+
+  getSubLocationId(): number {
+    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
+  }
+
+  onMedioChange(event: any) {
+    this.selectedMedio = event.name;
+    this.telefono = '';
+    this.email = '';
+    this.showValidation = false;
+  }
+
+  onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const files = Array.from(input.files);
+      files.forEach((file) => {
+        this.uploader.addToQueue([file]);
+      });
+    }
   }
 
   addInvolved() {
@@ -182,125 +280,16 @@ export class FormWizardComponent implements OnInit {
   }
 
   addWitness() {
-    this.witnessList.push({ name: '', contact: '' });
+    this.witnessList.push({ name: '', position: '', employeeNumber: '' });
   }
 
   removeWitness() {
-    if (this.witnessList.length > 0) {
+    if (this.witnessList.length > 1) {
       this.witnessList.pop();
     }
   }
 
-  toggleAnonimato(show: boolean) {
-    this.showAdditionalInfo = show;
+  toggleAnonimato(value: boolean) {
+    this.showAdditionalInfo = value;
   }
-
-  onUbicacionChange(ubicacion: string): void {
-    this.resetDynamicFields();
-
-    if (['corporativo', 'cedis', 'innomex', 'trate'].includes(ubicacion)) {
-      this.showListbox = true;
-      this.listboxOptions = this.getListboxOptions(ubicacion);
-      this.dynamicLabel = `Seleccione una opción de ${ubicacion}`;
-    }
-
-    if (ubicacion === 'sucursales') {
-      this.showInputBox = true;
-      this.dynamicLabel = 'Introduzca el número de sucursal...';
-    } else if (ubicacion === 'navesAnexas') {
-      this.showInputBox = true;
-      this.dynamicLabel = 'Introduzca el nombre de la nave o anexo filial...';
-    } else if (ubicacion === 'unidadTransporte') {
-      this.showInputBox = true;
-      this.dynamicLabel = 'Introduzca el número de la unidad de transporte...';
-    }
-  }
-
-  getListboxOptions(ubicacion: string): string[] {
-    const options = {
-      corporativo: ['Podium', 'Mar Báltico', 'Pedro Loza', 'Oficinas de RRHH MTY'],
-      cedis: ['Occidente', 'Noreste', 'Centro'],
-      innomex: ['Embotelladora', 'Dispositivos Médicos'],
-      trate: ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua']
-    };
-    return options[ubicacion] || [];
-  }
-
-  resetDynamicFields(): void {
-    this.showListbox = false;
-    this.showInputBox = false;
-    this.listboxOptions = [];
-    this.customInputValue = '';
-    this.dynamicLabel
-     = '';
-  }
-
-  onFileSelect(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const files = Array.from(input.files);
-      files.forEach((file) => {
-        // Crear un objeto FileItem manualmente y añadirlo a la cola
-        const fileItem = this.uploader.addToQueue([file]);
-        console.log('Archivo añadido a la cola:', file.name);
-      });
-    }
-  }
-  
-  getLocationId(): number {
-    switch (this.customInputValue.toLowerCase()) {
-      case 'corporativo': return 1;
-      case 'cedis': return 2;
-      case 'sucursales': return 3;
-      case 'naves anexas': return 4;
-      case 'innomex': return 5;
-      case 'trate': return 6;
-      case 'unidad transporte': return 7;
-      default: return 0; // Valor por defecto si no se selecciona nada
-    }
-  }
-  
-  getSubLocationId(): number {
-    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
-  }
-  
-
-  onSubmit() {
-    if (this.specificDate && this.specificDate > this.today) {
-      alert('La fecha seleccionada no puede ser en el futuro.');
-      return;
-    }
-  
-    // Generar folio único (simplemente como ejemplo)
-    const folio = 'FOLIO-' + Math.floor(Math.random() * 1000000);
-  
-    // Contraseña para el seguimiento (opcional, puedes mejorar esta lógica)
-    const password = Math.random().toString(36).slice(-8);
-  
-    // Adaptación de los datos para el backend
-    const denunciaData = {
-      id_requesters: this.isLoggedIn ? 1 : 0,  // Suponiendo que obtienes este ID al iniciar sesión
-      id_reason: this.selectMultiSelected?.id || 0, // Debes tener el ID del motivo
-      id_location: this.getLocationId(), // Método para obtener ID de la ubicación
-      id_sublocation: this.getSubLocationId(), // ID de sububicación si aplica
-      date: this.specificDate || this.today, // Fecha de la denuncia
-      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '', // Nombre del primer archivo subido
-      folio: folio,
-      password: password,
-      status: 1 // Suponiendo que 1 es "pendiente" o "nuevo"
-    };
-  
-    // Envío de la denuncia al backend
-    this.apiService.enviarDenuncia(denunciaData).subscribe(
-      (response) => {
-        alert(`Denuncia enviada correctamente. Folio: ${folio}`);
-        console.log('Respuesta del servidor:', response);
-      },
-      (error) => {
-        alert('Error al enviar la denuncia.');
-        console.error('Error en el envío:', error);
-      }
-    );
-  }
-  
 }
