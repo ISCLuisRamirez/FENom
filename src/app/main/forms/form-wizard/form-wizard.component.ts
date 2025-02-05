@@ -14,6 +14,7 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
+  public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
   public TDEmailVar = '';
@@ -128,25 +129,22 @@ export class FormWizardComponent implements OnInit {
       default:
         return true;
     }
-  }
-
-  isUbicacionValid(): boolean {
-    if (!this.selectedUbicacion) return false;
-    if (this.showListbox && !this.customInputValue) return false;
-    if (this.showInputBox && !this.customInputValue.trim()) return false;
-    return true;
-  }
+  } 
 
   getListboxOptions(ubicacion: string): string[] {
     switch (ubicacion.toLowerCase()) {
       case 'corporativo':
-        return ['Piso 1', 'Piso 2', 'Piso 3'];
+        return ['Podium', 'Edificio Mar Baltico', 'Pedro Loza', 'Oficinas de RRHH MTY','E Diaz' ];
+  
       case 'cedis':
-        return ['Área A', 'Área B', 'Área C'];
+        return ['Occidente', 'Noreste', 'Centro'];
+  
       case 'innomex':
-        return ['Zona 1', 'Zona 2', 'Zona 3'];
+        return ['Embotelladora', 'Dispositivos Médicos'];
+  
       case 'trate':
-        return ['Sección 1', 'Sección 2', 'Sección 3'];
+        return ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
+  
       default:
         return [];
     }
@@ -180,7 +178,7 @@ export class FormWizardComponent implements OnInit {
           html: `
             <strong>Folio:</strong> ${response.folio}<br>
             <strong>Contraseña:</strong> ${response.password}<br>
-            <em><strong>IMPORTANTE:</strong> Guarda bien estos datos, no hay recuperación.</em>
+            <em><strong>❌ IMPORTANTE:❌ </strong> Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
           `,
           icon: 'success',
           confirmButtonText: 'Entendido'
@@ -217,14 +215,64 @@ export class FormWizardComponent implements OnInit {
   }
 
   onUbicacionChange(ubicacion: string): void {
-    this.resetDynamicFields();
     this.selectedUbicacion = ubicacion;
+    this.customInputValue = ''; // Reset el valor
+    this.showListbox = false;
+    this.showInputBox = false;
 
-    if (['corporativo', 'cedis', 'innomex', 'trate'].includes(ubicacion)) {
-      this.showListbox = true;
-      this.listboxOptions = this.getListboxOptions(ubicacion);
-    } else {
-      this.showInputBox = true;
+    switch (ubicacion.toLowerCase()) {
+      case 'sucursales':
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
+        break;
+      case 'navesanexas':
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la nave';
+        break;
+      case 'unidadtransporte':
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el número de la unidad';
+        break;
+      case 'corporativo':
+        this.showListbox = true;
+        this.locationLabel = 'Seleccione el área del corporativo';
+        this.listboxOptions = ['Edificio principal', 'Área de estacionamiento', 'Jardines', 'Comedor', 'Recepción'];
+        break;
+      case 'cedis':
+        this.showListbox = true;
+        this.locationLabel = 'Seleccione el área del CEDIS';
+        this.listboxOptions = ['Área de carga', 'Almacén principal', 'Área de picking', 'Oficinas administrativas', 'Patio de maniobras'];
+        break;
+      case 'innomex':
+        this.showListbox = true;
+        this.locationLabel = 'Seleccione el área de INNOMEX';
+        this.listboxOptions = ['Planta de producción', 'Laboratorio', 'Almacén de materias primas', 'Área de empaque', 'Control de calidad'];
+        break;
+      case 'trate':
+        this.showListbox = true;
+        this.locationLabel = 'Seleccione el área de TRATE';
+        this.listboxOptions = ['Taller mecánico', 'Área de lavado', 'Patio de maniobras', 'Oficinas administrativas', 'Almacén de refacciones'];
+        break;
+    }
+  }
+
+  isUbicacionValid(): boolean {
+    if (!this.selectedUbicacion) return false;
+
+    switch (this.selectedUbicacion.toLowerCase()) {
+      case 'sucursales':
+      case 'navesanexas':
+      case 'unidadtransporte':
+        return !!this.customInputValue?.trim();
+
+      case 'corporativo':
+      case 'cedis':
+      case 'innomex':
+      case 'trate':
+        return !!this.customInputValue;
+
+      default:
+        return false;
     }
   }
 
