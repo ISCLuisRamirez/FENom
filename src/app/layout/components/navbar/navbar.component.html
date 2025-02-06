@@ -35,10 +35,10 @@
     <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
       <a class="btn mr-0" routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
-    <li *ngIf="isComite">
+    <li *ngIf="isLoggedIn && isComite">
       <a class="btn mr-0" routerLink="pages/profile">Inicio</a>
     </li>
-    <li *ngIf="isComite">
+    <li *ngIf="isLoggedIn && isComite">
       <a class="btn mr-0" routerLink="tables/datatables">Denuncias</a>
     </li>
     <li class="nav-item d-none d-lg-block">
