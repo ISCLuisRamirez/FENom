@@ -7,7 +7,7 @@
       <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
         <div class="bs-stepper-header">
           <!--Medio-->
-          <div  class="step"  data-target="#account-details-vertical">
+          <div  class="step"  data-target="#account-details-vertical" *ngif="isCapturista">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">0</span>
               <span class="bs-stepper-label">
