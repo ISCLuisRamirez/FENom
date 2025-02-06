@@ -9,10 +9,6 @@ import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
 import { User } from 'app/auth/models';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiService } from 'app/services/api.service';
-
-const URL = 'http://localhost:5101';
 
 @Component({
   selector: 'app-navbar',
@@ -24,10 +20,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public coreConfig: any;
   public currentSkin: string;
   public prevSkin: string;
-  public currentUser: User;
+  public currentUser: User | null = null;
   public languageOptions: any;
   public selectedLanguage: any;
-  public horizontalMenu: boolean;  // Retenido para el menú horizontal
+  public horizontalMenu: boolean;
 
   @HostBinding('class.fixed-top')
   public isFixed = false;
@@ -35,7 +31,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @HostBinding('class.navbar-static-style-on-scroll')
   public windowScrolled = false;
 
-  // Add .navbar-static-style-on-scroll on scroll using HostListener & HostBinding
   @HostListener('window:scroll', [])
   onWindowScroll() {
     if (
@@ -54,7 +49,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // Private
-  private _unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   constructor(
     private _router: Router,
@@ -63,11 +58,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _coreMediaService: CoreMediaService,
     private _mediaObserver: MediaObserver,
     public _translateService: TranslateService
-  ) {
-    this._authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
+  ) {}
+
+  // ✅ Obtener información del usuario al inicializar el navbar
+  ngOnInit(): void {
+    // 📌 Suscribirse a `currentUser$` para obtener el usuario en tiempo real
+    this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
+      this.currentUser = user;
+    });
+    
+    // 📌 Obtener configuración de la aplicación
+    this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
+      this.coreConfig = config;
+      this.horizontalMenu = config.layout.type === 'horizontal';
+      this.currentSkin = config.layout.skin;
     });
 
+    // 📌 Configurar opciones de idioma
     this.languageOptions = {
       en: { title: 'English', flag: 'us' },
       fr: { title: 'French', flag: 'fr' },
@@ -75,23 +82,34 @@ export class NavbarComponent implements OnInit, OnDestroy {
       pt: { title: 'Portuguese', flag: 'pt' }
     };
 
-    // Set the private defaults
-    this._unsubscribeAll = new Subject();
+    this.selectedLanguage = _.find(this.languageOptions, { id: this._translateService.currentLang });
   }
 
-  // Public Methods
-  // -----------------------------------------------------------------------------------------------------
+  // ✅ Obtener si el usuario está logueado
+  get isCapturista(): boolean {
+    return this._authenticationService.isCapturista;
+  }
+
+  get isLoggedIn() {
+    return this._authenticationService.currentUserValue != null;
+  }
+  
+
+  get isComite(): boolean {
+    return this._authenticationService.isComite;
+  }
+
+  get isAdmin(): boolean {
+    return this._authenticationService.isAdmin;
+  }
 
   /**
-   * Toggle Dark Skin
+   * Método para alternar entre modo oscuro y claro
    */
   toggleDarkSkin() {
-    this._coreConfigService
-      .getConfig()
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(config => {
-        this.currentSkin = config.layout.skin;
-      });
+    this._coreConfigService.getConfig().pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
+      this.currentSkin = config.layout.skin;
+    });
 
     this.prevSkin = localStorage.getItem('prevSkin');
 
@@ -107,48 +125,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Logout method
+   * Método para cerrar sesión
    */
   logout() {
     this._authenticationService.logout();
     this._router.navigate(['/pages/authentication/login-v1']);
   }
 
-  // Helper method to check if the user is logged in
-  get isLoggedIn() {
-    return this._authenticationService.currentUserValue != null;
-  }
-
-  // Helper method to check if the user is an admin
-  get isComite() {
-    return this._authenticationService.isComite;
-  }
-
-  // Helper method to check if the user is a client
-  get isCapturista() {
-    return this._authenticationService.isCapturista;
-  }
-
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-
   /**
-   * On init
-   */
-  ngOnInit(): void {
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
-      this.coreConfig = config;
-      this.horizontalMenu = config.layout.type === 'horizontal'; // Aseguramos que el menú horizontal se mantenga
-      this.currentSkin = config.layout.skin;
-    });
-
-    this.selectedLanguage = _.find(this.languageOptions, { id: this._translateService.currentLang });
-  }
-
-  /**
-   * On destroy
+   * Método para limpiar suscripciones al destruir el componente
    */
   ngOnDestroy(): void {
     this._unsubscribeAll.next();

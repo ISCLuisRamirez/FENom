@@ -28,7 +28,7 @@ export class CoreMenuService {
    * @param {AuthenticationService} _authenticationService
    */
   constructor(private _router: Router, private _authenticationService: AuthenticationService) {
-    this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+    this._authenticationService.currentUser$.subscribe(x => (this.currentUser = x));
 
     // Set defaults
     this.onItemCollapsed = new Subject();

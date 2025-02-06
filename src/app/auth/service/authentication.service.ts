@@ -1,83 +1,75 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-
 import { map } from 'rxjs/operators';
-
 import { environment } from 'environments/environment';
-import { User, Role } from 'app/auth/models';
+import { User } from 'app/auth/models';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  // public observable
-  public currentUser: Observable<User>;
+  // Observable público para el usuario actual
+  public currentUser$: Observable<User | null>;
 
-  // private subject
-  private currentUserSubject: BehaviorSubject<User>;
+  // BehaviorSubject privado para manejar el usuario autenticado
+  private currentUserSubject: BehaviorSubject<User | null>;
 
   constructor(private _http: HttpClient, private _toastrService: ToastrService) {
-    // Si no existe 'currentUser' en localStorage, inicializa con un objeto vacío
-    const storedUser = JSON.parse(localStorage.getItem('currentUser'));
-    this.currentUserSubject = new BehaviorSubject<User>(storedUser ? storedUser : null);
-    this.currentUser = this.currentUserSubject.asObservable();
+    // Obtener usuario almacenado en localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<User | null>(storedUser ? JSON.parse(storedUser) : null);
+    this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
-  // getter: currentUserValue
-  public get currentUserValue(): User {
+  // Getter: obtiene el usuario autenticado actual
+  public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
-  /**
-   * Confirms if user is admin
-   */
-  get isComite() {
-    const user = this.currentUserValue; // Obtener el valor actual de currentUser
-    return user && user.role === Role.Comite;
+  
+
+  // Validaciones de roles
+  get isLoggedIn(): boolean {
+    return this.currentUserValue !== null;
   }
 
-  get isAdmin() {
-    const user = this.currentUserValue; // Obtener el valor actual de currentUser
-    return user && user.role === Role.Admin;
+  get isCapturista(): boolean {
+    return this.currentUserValue.role === 'Capturista';
   }
 
-  /**
-   * Confirms if user is client
-   */
-  get isCapturista() {
-    const user = this.currentUserValue; // Obtener el valor actual de currentUser
-    return user && user.role === Role.Capturista;
+  get isComite(): boolean {
+    return this.currentUserValue.role === 'Comite';
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUserValue.role === 'Admin';
   }
 
   /**
-   * User login
-   * 
-   * @param employee_number
-   * @param password
-   * @returns user
+   * Método de Login
    */
   login(employee_number: string, password: string) {
     return this._http
       .post<any>(`${environment.apiUrl}/login`, { employee_number, password })
       .pipe(
         map(user => {
-          // login successful if there's a jwt token in the response
           if (user && user.token) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
+          
+            user.role = user.role || user.role || 'Usuario Desconocido';
+
+            // Guardar usuario en localStorage
             localStorage.setItem('currentUser', JSON.stringify(user));
 
-            // Display welcome toast
+            // Notificación de bienvenida
             setTimeout(() => {
               this._toastrService.success(
-                'Inicio de sesión exitoso bienvenid@ ' +
-                  user.role +
-                  ' puedes comenzar a explorar la página 🎉',
-                '👋 Bienvenid@ , ' + user.firstName + '!',
+                `Inicio de sesión exitoso. Bienvenido ${this.currentUserValue.role}!`,
+                '👋 Bienvenid@, ' + (user.employee_number) + '!',
                 { toastClass: 'toast ngx-toastr', closeButton: true }
               );
             }, 2500);
 
-            // notify
+            // Actualizar el BehaviorSubject con el usuario autenticado
             this.currentUserSubject.next(user);
           }
 
@@ -87,12 +79,10 @@ export class AuthenticationService {
   }
 
   /**
-   * User logout
+   * Método de Logout
    */
   logout() {
-    // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
-    // notify
     this.currentUserSubject.next(null);
   }
 }

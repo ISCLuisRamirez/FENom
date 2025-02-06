@@ -20,23 +20,23 @@
         </a>
       </li>
     </ul>
-    <h5>Bienvenid@ {{ currentUser?.employee_number || ''}}!</h5>
+    <h5>Bienvenid@ {{ currentUser?.employee_number || ''}}</h5>
   </div>
   <ul class="nav navbar-nav align-items-center ml-auto" >
-    <li *ngIf="!isLoggedIn || isCapturista">
+    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
       <a class="btn mr-0" routerLink="/Inicio">Inicio</a>
+    </li>
+    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
+      <a class="btn mr-0" routerLink="forms/form-wizard">Crear Denuncia</a>
+    </li>
+    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
+      <a class="btn mr-0" routerLink="pages/pricing">Consultar estatus</a>
+    </li>
+    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
+      <a class="btn mr-0" routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
     <li *ngIf="isComite">
       <a class="btn mr-0" routerLink="pages/profile">Inicio</a>
-    </li>
-    <li *ngIf="!isLoggedIn || isCapturista">
-      <a class="btn mr-0" routerLink="forms/form-wizard">Crear Denuncia</a>
-    </li>
-    <li *ngIf="!isLoggedIn || isCapturista">
-      <a class="btn mr-0" routerLink="pages/pricing">Consultar estatus</a>
-    </li>
-    <li *ngIf="!isLoggedIn || isCapturista">
-      <a class="btn mr-0" routerLink="forms/faq">Preguntas Frecuentes</a>
     </li>
     <li *ngIf="isComite">
       <a class="btn mr-0" routerLink="tables/datatables">Denuncias</a>
@@ -55,7 +55,7 @@
             <span class="user-status">{{ currentUser.role }}</span>
           </div>
           <span class="avatar">
-            <img class="round" src="assets/images/portrait/small/{{ currentUser.avatar }}" alt="avatar" height="40" width="40" />
+            <img class="round" src="assets/images/icons/perfil.webp" alt="avatar" height="40" width="40" />
             <span class="avatar-status-online"></span>
           </span>
         </ng-container>

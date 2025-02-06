@@ -15,7 +15,7 @@ export class AccountSettingsComponent implements OnInit {
 
   constructor(private _authenticationService: AuthenticationService) {
     // Subscribe to current user changes
-    this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+    this._authenticationService.currentUser$.subscribe(x => (this.currentUser = x));
     this.isComite = this._authenticationService.isComite;
     this.isCapturista = this._authenticationService.isCapturista;
   }

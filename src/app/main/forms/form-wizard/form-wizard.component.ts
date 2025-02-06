@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FileUploader, FileItem } from 'ng2-file-upload';
 import Swal from 'sweetalert2';
+import { AuthenticationService } from 'app/auth/service';
 import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
-
+import { User } from 'app/auth/models';
 
 const URL = 'http://localhost:5101';
 
@@ -15,6 +16,8 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
+  
+  public currentUser: User;
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
@@ -28,8 +31,8 @@ export class FormWizardComponent implements OnInit {
   public today: string;
   public datereport: string = '';
   public selectedFiles: FileItem[] = [];
-  public involvedList = [{ name: '', position: '', employee_number: '' }];
-  public witnessList = [{ name: '', position: '', employee_number: '' }];
+  public involvedList = [{ name: '', position: '', employeeNumber: '' }];
+  public witnessList = [{ name: '', position: '', employeeNumber: '' }];
   public datos = [];
   public selectMultiSelected: any;
   public showValidation: boolean = false;
@@ -39,6 +42,7 @@ export class FormWizardComponent implements OnInit {
   public listboxOptions: string[] = [];
   public customInputValue = '';
   public dynamicLabel = '';
+  
   
   public selectBasic = [
     { name: 'Teléfono' },
@@ -57,9 +61,6 @@ export class FormWizardComponent implements OnInit {
     { name: 'Discriminación' },
     { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)' }
   ];
-  
-  public isLoggedIn = true;
-  
   private verticalWizardStepper: Stepper;
 
   public uploader: FileUploader = new FileUploader({
@@ -69,9 +70,25 @@ export class FormWizardComponent implements OnInit {
     maxFileSize: 10 * 1024 * 1024
   });
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private _authenticationService: AuthenticationService
+
+  ) {}
+
+  
+  
+  get isCapturista(): boolean {
+    return this._authenticationService.isCapturista;
+  }
+
+  get isLoggedIn() {
+    return this._authenticationService.currentUserValue != null;
+  }
+  
 
   ngOnInit() {
+
     this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: false,
@@ -130,7 +147,8 @@ export class FormWizardComponent implements OnInit {
       default:
         return true;
     }
-  } 
+  }
+
 
   getListboxOptions(ubicacion: string): string[] {
     switch (ubicacion.toLowerCase()) {
@@ -224,7 +242,7 @@ export class FormWizardComponent implements OnInit {
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':
         this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
+        this.locationLabel = 'Ingrese el nombre de la sucursal';
         break;
       case 'navesanexas':
         this.showInputBox = true;
@@ -232,7 +250,7 @@ export class FormWizardComponent implements OnInit {
         break;
       case 'unidadtransporte':
         this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número de la unidad';
+        this.locationLabel = 'Ingrese el número económico de la unidad';
         break;
       case 'corporativo':
         this.showListbox = true;
@@ -319,7 +337,7 @@ export class FormWizardComponent implements OnInit {
   }
 
   addInvolved() {
-    this.involvedList.push({ name: '', position: '', employee_number: '' });
+    this.involvedList.push({ name: '', position: '', employeeNumber: '' });
   }
 
   removeInvolved() {
@@ -329,7 +347,7 @@ export class FormWizardComponent implements OnInit {
   }
 
   addWitness() {
-    this.witnessList.push({ name: '', position: '', employee_number: '' });
+    this.witnessList.push({ name: '', position: '', employeeNumber: '' });
   }
 
   removeWitness() {
