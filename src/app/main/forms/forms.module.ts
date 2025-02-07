@@ -13,7 +13,7 @@ import { FaqModule } from 'app/main/forms/faq/faq.module';
     FaqModule,
     FormElementsModule,
     FormLayoutModule,
-    FormWizardModule, // Importa el módulo corregido del FormWizard
+    FormWizardModule, 
     FormValidationModule,
     FormRepeaterModule
   ]

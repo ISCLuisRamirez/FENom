@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FileUploader, FileItem } from 'ng2-file-upload';
 import Swal from 'sweetalert2';
 import { AuthenticationService } from 'app/auth/service';
@@ -16,8 +16,8 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
-  
-  public currentUser: User;
+
+  public currentUser: User | null = null;
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
@@ -42,13 +42,12 @@ export class FormWizardComponent implements OnInit {
   public listboxOptions: string[] = [];
   public customInputValue = '';
   public dynamicLabel = '';
-  
-  
+
   public selectBasic = [
     { name: 'Teléfono' },
     { name: 'Correo' }
   ];
-  
+
   public selectMulti = [
     { name: 'Abuso de autoridad' },
     { name: 'Acoso laboral' },
@@ -61,6 +60,7 @@ export class FormWizardComponent implements OnInit {
     { name: 'Discriminación' },
     { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)' }
   ];
+
   private verticalWizardStepper: Stepper;
 
   public uploader: FileUploader = new FileUploader({
@@ -72,12 +72,10 @@ export class FormWizardComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private _authenticationService: AuthenticationService
-
+    private _authenticationService: AuthenticationService,
+    private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
   ) {}
 
-  
-  
   get isCapturista(): boolean {
     return this._authenticationService.isCapturista;
   }
@@ -85,10 +83,13 @@ export class FormWizardComponent implements OnInit {
   get isLoggedIn() {
     return this._authenticationService.currentUserValue != null;
   }
-  
+
+  get isComite(): boolean {
+    return this._authenticationService.isComite;
+  }
 
   ngOnInit() {
-
+    console.log('currentUserValue:', this._authenticationService.currentUserValue?.role);
     this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: false,
@@ -149,21 +150,20 @@ export class FormWizardComponent implements OnInit {
     }
   }
 
-
   getListboxOptions(ubicacion: string): string[] {
     switch (ubicacion.toLowerCase()) {
       case 'corporativo':
-        return ['Podium', 'Edificio Mar Baltico', 'Pedro Loza', 'Oficinas de RRHH MTY','E Diaz' ];
-  
+        return ['Podium', 'Edificio Mar Baltico', 'Pedro Loza', 'Oficinas de RRHH MTY', 'E Diaz'];
+
       case 'cedis':
         return ['Occidente', 'Noreste', 'Centro'];
-  
+
       case 'innomex':
         return ['Embotelladora', 'Dispositivos Médicos'];
-  
+
       case 'trate':
         return ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
-  
+
       default:
         return [];
     }
@@ -195,12 +195,12 @@ export class FormWizardComponent implements OnInit {
         Swal.fire({
           title: '¡Denuncia Enviada!',
           html: `
-            <strong>Folio:</strong> ${response.folio}<br>
-            <strong>Contraseña:</strong> ${response.password}<br>
-            <em><strong>❌ IMPORTANTE:❌ </strong> Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
+            <strong>Folio:</strong> ${response.folio}<br><br>
+            <strong>Contraseña:</strong> ${response.password}<br><br>
+            <em><strong> IMPORTANTE: </strong> Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
           `,
           icon: 'success',
-          confirmButtonText: 'Entendido'
+          confirmButtonText: 'Cerrar'
         });
       },
       (error) => {
@@ -216,16 +216,19 @@ export class FormWizardComponent implements OnInit {
 
   verticalWizardNext() {
     this.verticalWizardStepper.next();
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   verticalWizardPrevious() {
     this.verticalWizardStepper.previous();
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   cargarDatos() {
     this.apiService.getRoles().subscribe(
       (response) => {
         this.datos = response;
+        this.cdr.detectChanges(); // Forzar la detección de cambios
       },
       (error) => {
         console.error('Error al obtener datos', error);
@@ -255,24 +258,25 @@ export class FormWizardComponent implements OnInit {
       case 'corporativo':
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área del corporativo';
-        this.listboxOptions = ['Edificio principal', 'Área de estacionamiento', 'Jardines', 'Comedor', 'Recepción'];
+        this.listboxOptions = ['E Diaz', 'Mar Báltico', 'Podium', 'Pedro Loza', 'Oficinas de RRHH MTY'];
         break;
       case 'cedis':
         this.showListbox = true;
-        this.locationLabel = 'Seleccione el área del CEDIS';
-        this.listboxOptions = ['Área de carga', 'Almacén principal', 'Área de picking', 'Oficinas administrativas', 'Patio de maniobras'];
+        this.locationLabel = 'Seleccione el CEDIS';
+        this.listboxOptions = ['Occidente', 'Noreste', 'Centro'];
         break;
       case 'innomex':
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de INNOMEX';
-        this.listboxOptions = ['Planta de producción', 'Laboratorio', 'Almacén de materias primas', 'Área de empaque', 'Control de calidad'];
+        this.listboxOptions = ['Embotelladora', 'Dispositivos Médicos'];
         break;
       case 'trate':
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de TRATE';
-        this.listboxOptions = ['Taller mecánico', 'Área de lavado', 'Patio de maniobras', 'Oficinas administrativas', 'Almacén de refacciones'];
+        this.listboxOptions = ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
         break;
     }
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   isUbicacionValid(): boolean {
@@ -300,6 +304,7 @@ export class FormWizardComponent implements OnInit {
     this.showInputBox = false;
     this.listboxOptions = [];
     this.customInputValue = '';
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   getLocationId(): number {
@@ -324,6 +329,7 @@ export class FormWizardComponent implements OnInit {
     this.telefono = '';
     this.email = '';
     this.showValidation = false;
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   onFileSelect(event: Event): void {
@@ -333,30 +339,36 @@ export class FormWizardComponent implements OnInit {
       files.forEach((file) => {
         this.uploader.addToQueue([file]);
       });
+      this.cdr.detectChanges(); // Forzar la detección de cambios
     }
   }
 
   addInvolved() {
     this.involvedList.push({ name: '', position: '', employeeNumber: '' });
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   removeInvolved() {
-    if (this.involvedList.length > 1) {
+    if (this.involvedList.length > 0) {
       this.involvedList.pop();
+      this.cdr.detectChanges(); // Forzar la detección de cambios
     }
   }
 
   addWitness() {
     this.witnessList.push({ name: '', position: '', employeeNumber: '' });
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   removeWitness() {
     if (this.witnessList.length > 1) {
       this.witnessList.pop();
+      this.cdr.detectChanges(); // Forzar la detección de cambios
     }
   }
 
   toggleAnonimato(value: boolean) {
     this.showAdditionalInfo = value;
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 }

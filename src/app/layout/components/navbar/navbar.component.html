@@ -26,8 +26,11 @@
     <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
       <a class="btn mr-0" routerLink="/Inicio">Inicio</a>
     </li>
-    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
+    <li *ngIf="!isLoggedIn">
       <a class="btn mr-0" routerLink="forms/form-wizard">Crear Denuncia</a>
+    </li>
+    <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
+      <a class="btn mr-0" routerLink="/form-capt">Crear Denuncia</a>
     </li>
     <li *ngIf="!isLoggedIn || (isLoggedIn && isCapturista)">
       <a class="btn mr-0" routerLink="pages/pricing">Consultar estatus</a>
