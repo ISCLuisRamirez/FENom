@@ -6,6 +6,7 @@ import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 import { User } from 'app/auth/models';
 import { NgForm } from '@angular/forms'; // Importa NgForm
+import { Router } from '@angular/router';
 
 const URL = 'http://localhost:5101';
 
@@ -72,6 +73,7 @@ export class FormWizardComponent implements OnInit {
   });
 
   constructor(
+    private _router: Router,
     private apiService: ApiService,
     private _authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
@@ -289,7 +291,7 @@ export class FormWizardComponent implements OnInit {
           confirmButtonText: 'Cerrar'
         }).then((result) => {
           if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this.router.navigate(['/Inicio']);
+            this._router.navigate(['/Inicio']);
           }
         });
       },
