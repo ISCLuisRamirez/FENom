@@ -6,16 +6,6 @@
       <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
       <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
         <div class="bs-stepper-header">
-          <!-- Medio -->
-          <div *ngif="isLoggedIn && isCapturista" class="step" data-target="#account-details-vertical" >
-            <button type="button" class="step-trigger">
-              <span class="bs-stepper-box">0</span>
-              <span class="bs-stepper-label">
-                <span class="bs-stepper-title">Medio</span>
-                <span class="bs-stepper-subtitle">Añada el medio de la denuncia.</span>
-              </span>
-            </button>
-          </div>
           <!-- Motivo -->
           <div class="step" data-target="#personal-info-vertical">
             <button type="button" class="step-trigger">
@@ -68,91 +58,6 @@
           </div>
         </div>
         <div class="bs-stepper-content">
-          <!-- Div Medio -->
-          <div id="account-details-vertical" class="content">
-            <form #form="ngForm">
-              <div class="content-header">
-                <h5 class="mb-0">Medio</h5>
-                <small class="text-muted">Añada el medio por el cual está realizando la denuncia.</small>
-                <span style="color: #F44336;">*</span>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-10">
-                  <label class="form-label" for="medio">Seleccione el medio por el cual se está realizando la denuncia.</label>
-                  <ng-select
-                    [items]="selectBasic"
-                    [multiple]="false"
-                    [closeOnSelect]="true"
-                    [searchable]="false"
-                    bindLabel="name"
-                    name="medio"
-                    placeholder="Seleccione un medio"
-                    [(ngModel)]="selectedMedio"
-                    (change)="onMedioChange($event)"
-                    [clearable]="false"
-                    required
-                  >
-                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
-                      <span class="ng-value-label">{{ item.name }}</span>
-                    </ng-template>
-                  </ng-select>
-                  <div *ngIf="showValidation && !selectedMedio" class="text-danger mt-1">
-                    Debe seleccionar un medio.
-                  </div>
-                </div>
-              </div>
-              <!-- Campo dinámico basado en la selección -->
-              <div *ngIf="selectedMedio === 'Teléfono'" class="form-group col-md-10 mt-2">
-                <label class="form-label">Número de Teléfono <span style="color: #F44336;">*</span></label>
-                <input
-                  type="tel"
-                  class="form-control"
-                  placeholder="Ingrese su número de teléfono"
-                  [(ngModel)]="telefono"
-                  name="telefono"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
-                  required
-                  #telefonoInput="ngModel"
-                />
-                <small class="text-muted">Ingrese un número de 10 dígitos.</small>
-                <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
-                  El número de teléfono es obligatorio y debe tener 10 dígitos.
-                </div>
-              </div>
-              <div *ngIf="selectedMedio === 'Correo'" class="form-group col-md-10 mt-2">
-                <label class="form-label">Correo Electrónico <span style="color: #F44336;">*</span></label>
-                <input
-                  type="email"
-                  class="form-control"
-                  placeholder="Ingrese su correo electrónico"
-                  [(ngModel)]="email"
-                  name="email"
-                  required
-                  #emailInput="ngModel"
-                />
-                <small class="text-muted">Ejemplo: usuario@correo.com</small>
-                <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger mt-1">
-                  El correo electrónico es obligatorio.
-                </div>
-              </div>
-              <br />
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-outline-secondary btn-prev" disabled>
-                  <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Anterior</span>
-                </button>
-                <button
-                  class="btn btn-primary btn-next"
-                  (click)="verticalWizardNext()"
-                  [disabled]="!form.valid"
-                >
-                  <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
-                  <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
-                </button>
-              </div>
-            </form>
-          </div>
           <!-- Div Motivo -->
           <div id="personal-info-vertical" class="content">
             <form #form="ngForm">
