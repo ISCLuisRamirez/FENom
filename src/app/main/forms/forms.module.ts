@@ -6,9 +6,12 @@ import { FormLayoutModule } from 'app/main/forms/form-layout/form-layout.module'
 import { FormValidationModule } from 'app/main/forms/form-validation/form-validation.module';
 import { FormWizardModule } from 'app/main/forms/form-wizard/form-wizard.module';
 import { FaqModule } from 'app/main/forms/faq/faq.module';
+import { FormCaptComponent } from './form-capt/form-capt.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    FormCaptComponent
+  ],
   imports: [
     FaqModule,
     FormElementsModule,
