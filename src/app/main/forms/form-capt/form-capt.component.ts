@@ -92,7 +92,7 @@ export class FormCaptComponent implements OnInit {
     console.log('currentUserValue:', this._authenticationService.currentUserValue?.role);
     this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
-      linear: false,
+      linear: true,
       animation: true
     });
 
@@ -245,7 +245,7 @@ export class FormCaptComponent implements OnInit {
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':
         this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre de la sucursal';
+        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
         break;
       case 'navesanexas':
         this.showInputBox = true;
@@ -253,7 +253,7 @@ export class FormCaptComponent implements OnInit {
         break;
       case 'unidadtransporte':
         this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número económico de la unidad';
+        this.locationLabel = 'Ingrese el número de la unidad';
         break;
       case 'corporativo':
         this.showListbox = true;
@@ -361,7 +361,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   removeWitness() {
-    if (this.witnessList.length > 1) {
+    if (this.witnessList.length > 0) {
       this.witnessList.pop();
       this.cdr.detectChanges(); // Forzar la detección de cambios
     }

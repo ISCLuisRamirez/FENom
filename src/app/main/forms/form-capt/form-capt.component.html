@@ -348,7 +348,7 @@
                     id="specificDateOption"
                     value="date"
                     [(ngModel)]="datereport"
-                  /><span style="color: #F44336;">*</span>
+                  />
                   <label class="form-check-label" for="specificDateOption">Fecha específica</label>
                 </div>
                 <div class="form-check form-check-inline">
@@ -359,7 +359,7 @@
                     id="approximateDateOption"
                     value="dateaprox"
                     [(ngModel)]="datereport"
-                  /><span style="color: #F44336;">*</span>
+                  />
                   <label class="form-check-label" for="approximateDateOption">Periodo aproximado</label>
                 </div>
                 <div class="form-check form-check-inline">
@@ -374,7 +374,7 @@
                   <label class="form-check-label" for="noDateOption">No cuento con fecha</label>
                 </div>
                 <div *ngIf="datereport === 'date'" class="form-group mt-3">
-                  <label for="specificDate">Seleccione la fecha específica:</label>
+                  <label for="specificDate">Seleccione la fecha específica:</label><span style="color: #F44336;">*</span>
                   <input
                     class="form-control"
                     type="date"
@@ -385,7 +385,7 @@
                   />
                 </div>
                 <div *ngIf="datereport === 'dateaprox'" class="form-group mt-3">
-                  <label for="approximateDatePeriod">Periodo aproximado:</label>
+                  <label for="approximateDatePeriod">Periodo aproximado:</label><span style="color: #F44336;">*</span>
                   <input
                     type="text"
                     id="approximateDatePeriod"
