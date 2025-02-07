@@ -65,7 +65,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private generateRandomCaptcha(): string {
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789';
     return Array.from({ length: 6 }, () =>
       characters.charAt(Math.floor(Math.random() * characters.length))
     ).join('');
@@ -132,25 +132,22 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
             this.statusResponse = response;
             if (response.requestStatus == 1) {
               Swal.fire({
-                title: 'Consulta realizada con éxito.',
-                text: 'Tu solicitud está en espera de revisión.',
-                icon: 'info',
-                confirmButtonText: 'Entendido'
+                titleText: 'Tu solicitud se encuentra:',
+                html: '<span style="color: blue; font-size: 28px;"><strong>En proceso.</strong></span> <br>',
+                confirmButtonText: 'Cerrar'
               });
             }else{
               if (response.requestStatus == 2) {
                 Swal.fire({
-                  title: 'Consulta realizada con éxito.',
-                  text: 'Tu solicitud está siendo revisada.',
-                  icon: 'question',
-                  confirmButtonText: 'Entendido'
+                  title: 'Tu solicitud se encuentra:',
+                  html: '<span style="color: yellow; font-size: 28px;"><strong>Abierta.</strong></span> <br>',
+                  confirmButtonText: 'Cerrar'
                 });
               }else{
                 Swal.fire({
-                  title: 'Consulta realizada con éxito.',
-                  text: 'Tu solicitud resuelta.',
-                  icon: 'success',
-                  confirmButtonText: 'Entendido'
+                  title: 'Tu solicitud se encuentra:',
+                  html: '<span style="color: green; font-size: 28px;"><strong>Cerrada.</strong></span> <br>',
+                  confirmButtonText: 'Cerrar'
                 });
               }
             }
@@ -158,7 +155,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
           error: (error) => {
             Swal.fire({
               title: 'Error.',
-              text: 'Hubo un error al consultar el estatus. Inténtalo de nuevo.',
+              text: 'Hubo un error al consultar el estatus. Folio o contraseña inexistentes. Inténtalo de nuevo.',
               icon: 'error',
               confirmButtonText: 'Reintentar'
             });
