@@ -412,7 +412,6 @@
               <div class="content-header d-flex flex-column align-items-start">
                 <h5 class="mb-0">Testigos</h5><br>
                 <div class="d-flex">
-                  <label class="form-label">De no contar con testigos, seleccione el boton "-", si desea añadir más de un testigo presione el botón "+"</label>
                   <button class="btn btn-sm btn-primary mr-2" (click)="addWitness()">
                     <i class="fa fa-plus"></i>
                   </button>
@@ -420,6 +419,7 @@
                     <i class="fa fa-minus"></i>
                   </button>
                 </div>
+                <label class="form-label">De no contar con testigos, seleccione el boton "-", si desea añadir más de un testigo presione el botón "+"</label>
               </div>
               <div *ngFor="let witness of witnessList; let i = index" class="row">
                 <div class="form-group col-md-4">

@@ -287,10 +287,6 @@ export class FormWizardComponent implements OnInit {
           `,
           icon: 'success',
           confirmButtonText: 'Cerrar'
-        }).then((result) => {
-          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this.router.navigate(['/Inicio']);
-          }
         });
       },
       (error) => {
