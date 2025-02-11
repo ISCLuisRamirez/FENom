@@ -20,10 +20,13 @@ const URL = 'http://localhost:5101';
 export class FormWizardComponent implements OnInit {
 
   public currentUser: User | null = null;
+  public isAnonymous: boolean = true; 
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
   public TDEmailVar = '';
+  public phone: string ='';
+  public employee_number: string ='';
   public telefono: string = '';
   public selectedUbicacion: string = '';
   public selectedMedio: string = '';
@@ -252,9 +255,11 @@ export class FormWizardComponent implements OnInit {
 
   // Función para manejar el anonimato
   toggleAnonimato(value: boolean) {
+    this.isAnonymous = !value; 
     this.showAdditionalInfo = value;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
+
 
   // Función para enviar el formulario
   onSubmit() {
@@ -267,9 +272,17 @@ export class FormWizardComponent implements OnInit {
       });
       return;
     }
-
-    const denunciaData = {
-      id_requesters: this.isLoggedIn ? 1 : 0,
+  
+    console.log("📌 Valores antes de enviar:");
+    console.log("Nombre:", this.TDNameVar);
+    console.log("Puesto:", this.TDEmailVar);
+    console.log("Número de empleado:", this.employee_number);
+    console.log("Teléfono:", this.phone);
+    console.log("Email:", this.email);
+    console.log("¿Es anónimo?", this.isAnonymous);
+  
+    // 📌 Datos base de la denuncia
+    const denunciaData: any = {
       id_reason: this.selectMultiSelected?.id || 0,
       id_location: this.getLocationId(),
       id_sublocation: this.getSubLocationId(),
@@ -277,34 +290,54 @@ export class FormWizardComponent implements OnInit {
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
+  
+    this.apiService.enviarDenuncia(denunciaData).subscribe((response) => {
+      console.log("✅ Respuesta de la denuncia:", response);
 
-    this.apiService.enviarDenuncia(denunciaData).subscribe(
-      (response) => {
-        Swal.fire({
-          title: '¡Denuncia Enviada!',
-          html: `
-            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
-          `,
-          icon: 'success',
-          confirmButtonText: 'Cerrar'
-        }).then((result) => {
-          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this._router.navigate(['/Inicio']);
+      if (!this.isAnonymous) {
+        const requesterData = {
+          id_request: response.id,
+          name: this.TDNameVar,
+          position: this.TDEmailVar,
+          employee_number: this.employee_number, 
+          phone: this.phone,  
+          email: this.email
+        };
+  
+        console.log("📤 Enviando datos del requester:", requesterData);
+  
+        this.apiService.enviarDatosPersonales(requesterData).subscribe(
+          (res) => {
+            console.log("✅ Requester guardado:", res);
+          },
+          (err) => {
+            console.error("❌ Error al guardar requester:", err);
           }
-        });
-      },
-      (error) => {
-        Swal.fire({
-          title: '❌ Error',
-          text: 'Hubo un problema al enviar la denuncia.',
-          icon: 'error',
-          confirmButtonText: 'Reintentar'
-        });
+        );
       }
-    );
+  
+      // 📌 Mostrar mensaje y esperar a que el usuario presione "Cerrar"
+      Swal.fire({
+        title: '¡Denuncia Enviada!',
+        html: `<strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br><br>
+               <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br><br>
+               <em><span style="color: red;"><strong>IMPORTANTE.</strong></span> Favor de guardar bien estos datos.</em>`,
+        icon: 'success',
+        confirmButtonText: 'Cerrar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this._router.navigate(['/Inicio']); // 🔥 Redirige SOLO cuando presione "Cerrar"
+        }
+      });
+  
+    });
   }
+  
+  
+  
+  
+  
+  
 
   // Función para validar el paso actual
   isStepValid(): boolean {
