@@ -91,9 +91,9 @@
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false" [canAutoResize]="false">
-            <ng-template ngx-datatable-cell-template>
+            <ng-template ngx-datatable-cell-template let-row="row">
               <div class="d-flex align-items-center">
-                <button class="btn btn-primary" [routerLink]="'/apps/user/user-view'">Revisar</button>
+                <button class="btn btn-primary" [routerLink]="['/apps/user/user-view/', row.id]">Revisar</button>
               </div>              
             </ng-template>
           </ngx-datatable-column>

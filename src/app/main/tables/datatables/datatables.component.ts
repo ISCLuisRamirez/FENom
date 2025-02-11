@@ -203,8 +203,7 @@ export class DatatablesComponent implements OnInit {
    */
   ngOnInit() {
     this._datatablesService.onDatatablessChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
-      console.log(response)
-      this.rows = response;
+      this.rows = response.datos;
       this.tempData = this.rows;
       this.kitchenSinkRows = this.rows;
       this.exportCSVData = this.rows;
