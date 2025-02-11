@@ -67,18 +67,16 @@
           (activate)="onActivate($event)"
           (select)="onSelect($event)"
         >
-          <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+          <ngx-datatable-column name="ID" prop="id" [sortable]="true" [draggable]="false" [resizeable]="false" [width]="80" [canAutoResize]="false">
           </ngx-datatable-column>
-          <ngx-datatable-column name="Folio" prop="email" [width]="250"></ngx-datatable-column>
-          <ngx-datatable-column name="Fecha" prop="start_date" [width]="120"></ngx-datatable-column>
-          <ngx-datatable-column name="Estatus" prop="status" [width]="120">
+          <ngx-datatable-column name="Folio" prop="folio" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
+          <ngx-datatable-column name="Fecha" prop="date" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
+          <ngx-datatable-column name="Estatus" prop="status" [draggable]="false" [resizeable]="false">
             <ng-template let-status="value" ngx-datatable-cell-template>
               <div class="badge badge-pill" [ngClass]="{
                 'badge-light-primary': status == '1',
                 'badge-light-success': status == '2',
-                'badge-light-danger': status == '3',
-                'badge-light-warning': status == '4',
-                'badge-light-info': status == '5'
+                'badge-light-danger': status == '3'
               }">
                 {{
                   status == 1
@@ -87,12 +85,12 @@
                     ? 'Abierto'
                     : status == 3
                     ? 'Cerrado'
-                    : 'En proceso'
+                    : 'ERROR'
                 }}
               </div>
             </ng-template>
           </ngx-datatable-column>
-          <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false">
+          <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false" [canAutoResize]="false">
             <ng-template ngx-datatable-cell-template>
               <div class="d-flex align-items-center">
                 <button class="btn btn-primary" [routerLink]="'/apps/user/user-view'">Revisar</button>

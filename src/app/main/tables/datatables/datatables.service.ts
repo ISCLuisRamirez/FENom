@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-
+import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
@@ -39,8 +39,9 @@ export class DatatablesService implements Resolve<any> {
    */
   getDataTableRows(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this._httpClient.get('api/datatable-rows').subscribe((response: any) => {
-        this.rows = response;
+      this._httpClient.get(`${environment.apiUrl}/api/requests`).subscribe((response: any) => {
+        console.log(response)
+        this.rows = response.datos;
         this.onDatatablessChanged.next(this.rows);
         resolve(this.rows);
       }, reject);
