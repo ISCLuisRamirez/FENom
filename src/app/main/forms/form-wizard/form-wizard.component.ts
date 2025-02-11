@@ -5,7 +5,7 @@ import { AuthenticationService } from 'app/auth/service';
 import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 import { User } from 'app/auth/models';
-import { NgForm } from '@angular/forms'; // Importa NgForm
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 const URL = 'http://localhost:5101';
@@ -69,14 +69,14 @@ export class FormWizardComponent implements OnInit {
     url: URL,
     isHTML5: true,
     allowedFileType: ['image', 'pdf', 'doc', 'docx'],
-    maxFileSize: 10 * 1024 * 1024
+    maxFileSize: 10 * 1024 * 1024 // 10 MB
   });
 
   constructor(
     private _router: Router,
     private apiService: ApiService,
     private _authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   get isCapturista(): boolean {
@@ -100,13 +100,16 @@ export class FormWizardComponent implements OnInit {
     });
 
     this.today = new Date().toISOString().split('T')[0];
+
+    this.uploader.onAfterAddingFile = (fileItem) => {
+      fileItem.withCredentials = false;
+    };
   }
 
-  // Función para avanzar al siguiente paso
   verticalWizardNext(form: NgForm) {
     if (form.valid) {
       this.verticalWizardStepper.next();
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges();
     } else {
       Swal.fire({
         title: 'Campos incompletos',
@@ -117,18 +120,16 @@ export class FormWizardComponent implements OnInit {
     }
   }
 
-  // Función para retroceder al paso anterior
   verticalWizardPrevious() {
     this.verticalWizardStepper.previous();
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para cargar datos
   cargarDatos() {
     this.apiService.getRoles().subscribe(
       (response) => {
         this.datos = response;
-        this.cdr.detectChanges(); // Forzar la detección de cambios
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error al obtener datos', error);
@@ -136,10 +137,9 @@ export class FormWizardComponent implements OnInit {
     );
   }
 
-  // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset el valor
+    this.customInputValue = '';
     this.showListbox = false;
     this.showInputBox = false;
 
@@ -177,10 +177,9 @@ export class FormWizardComponent implements OnInit {
         this.listboxOptions = ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
         break;
     }
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para validar la ubicación
   isUbicacionValid(): boolean {
     if (!this.selectedUbicacion) return false;
 
@@ -201,16 +200,14 @@ export class FormWizardComponent implements OnInit {
     }
   }
 
-  // Función para manejar el cambio de medio
   onMedioChange(event: any) {
     this.selectedMedio = event.name;
     this.telefono = '';
     this.email = '';
     this.showValidation = false;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para manejar la selección de archivos
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -218,95 +215,121 @@ export class FormWizardComponent implements OnInit {
       files.forEach((file) => {
         this.uploader.addToQueue([file]);
       });
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
-  // Función para agregar involucrados
   addInvolved() {
     this.involvedList.push({ name: '', position: '', employeeNumber: '' });
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para eliminar involucrados
   removeInvolved() {
     if (this.involvedList.length > 0) {
       this.involvedList.pop();
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
-  // Función para agregar testigos
   addWitness() {
     this.witnessList.push({ name: '', position: '', employeeNumber: '' });
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para eliminar testigos
   removeWitness() {
     if (this.witnessList.length > 0) {
       this.witnessList.pop();
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
-  // Función para manejar el anonimato
   toggleAnonimato(value: boolean) {
     this.showAdditionalInfo = value;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
-  // Función para enviar el formulario
-  onSubmit() {
-    if (!this.isStepValid()) {
-      Swal.fire({
-        title: '❌ Campos Incompletos',
-        text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.',
-        icon: 'warning',
-        confirmButtonText: 'Entendido'
-      });
-      return;
-    }
+  async onSubmit(form: NgForm) {
+    try {
+      // 1️⃣ Crear la denuncia
+      const requestData = {
+        id_reason: this.selectMultiSelected?.id || 0,
+        id_location: this.getLocationId(),
+        id_sublocation: this.getSubLocationId(),
+        name_sublocation: this.customInputValue,
+        date: this.specificDate,
+        period: this.approximateDatePeriod,
+        status: 1
+      };
 
-    const denunciaData = {
-      id_requesters: this.isLoggedIn ? 1 : 0,
-      id_reason: this.selectMultiSelected?.id || 0,
-      id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
-      date: this.specificDate || this.today,
-      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
-      status: 1
-    };
-
-    this.apiService.enviarDenuncia(denunciaData).subscribe(
-      (response) => {
-        Swal.fire({
-          title: '¡Denuncia Enviada!',
-          html: `
-            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
-          `,
-          icon: 'success',
-          confirmButtonText: 'Cerrar'
-        }).then((result) => {
-          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this._router.navigate(['/Inicio']);
-          }
-        });
-      },
-      (error) => {
-        Swal.fire({
-          title: '❌ Error',
-          text: 'Hubo un problema al enviar la denuncia.',
-          icon: 'error',
-          confirmButtonText: 'Reintentar'
-        });
+      const requestResponse = await this.apiService.enviarDenuncia(requestData).toPromise();
+      if (!requestResponse || !requestResponse.id) {
+        throw new Error('Error al obtener el ID de la denuncia');
       }
-    );
+      const id_request = requestResponse.id;
+
+      // 2️⃣ Guardar datos del solicitante (si aplica)
+      if (this.TDNameVar && this.TDEmailVar && this.telefono) {
+        await this.apiService.guardarSolicitante({
+          id_request,
+          name: this.TDNameVar,
+          position: this.TDEmailVar,
+          employee_number: this.telefono,
+          phone: this.telefono,
+          email: this.email
+        }).toPromise();
+      }
+
+      // 3️⃣ Guardar involucrados
+      for (const person of this.involvedList) {
+        await this.apiService.guardarInvolucrado({
+          id_request,
+          name: person.name,
+          position: person.position,
+          employee_number: person.employeeNumber,
+          phone: this.telefono,
+          email: this.email
+        }).toPromise();
+      }
+
+      // 4️⃣ Guardar testigos
+      for (const witness of this.witnessList) {
+        await this.apiService.guardarTestigo({
+          id_request,
+          name: witness.name,
+          position: witness.position,
+          employee_number: witness.employeeNumber,
+          phone: this.telefono,
+          email: this.email
+        }).toPromise();
+      }
+
+      // 5️⃣ Subir archivos
+      for (const fileItem of this.uploader.queue) {
+        const file = fileItem._file;
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        formData.append('id_request', id_request.toString());
+        await this.apiService.subirArchivo(formData).toPromise();
+      }
+
+      // 6️⃣ Mostrar mensaje de éxito
+      Swal.fire({
+        title: '¡Denuncia Enviada! ✅',
+        html: `
+          <strong>Folio:</strong> <span style="color: green;">${requestResponse.folio}</span><br>
+          <strong>Contraseña:</strong> <span style="color: green;">${requestResponse.password}</span><br>
+          <em><strong style="color: red;">IMPORTANTE:</strong> Guarda estos datos, no hay recuperación.</em>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Cerrar'
+      }).then(() => this._router.navigate(['/Inicio']));
+
+    } catch (error) {
+      console.error('Error al enviar datos', error);
+      Swal.fire('Error', 'No se pudo enviar la denuncia. Intenta de nuevo.', 'error');
+    }
   }
 
-  // Función para validar el paso actual
   isStepValid(): boolean {
     const currentStep = (this.verticalWizardStepper as any).currentStep;
 
@@ -344,22 +367,12 @@ export class FormWizardComponent implements OnInit {
     }
   }
 
-  // Función para obtener el ID de la ubicación
   getLocationId(): number {
-    switch (this.selectedUbicacion.toLowerCase()) {
-      case 'corporativo': return 1;
-      case 'cedis': return 2;
-      case 'sucursales': return 3;
-      case 'naves anexas': return 4;
-      case 'innomex': return 5;
-      case 'trate': return 6;
-      case 'unidad transporte': return 7;
-      default: return 0;
-    }
+    const locations = { corporativo: 1, cedis: 2, sucursales: 3, navesanexas: 4, innomex: 5, trate: 6, unidadtransporte: 7 };
+    return locations[this.selectedUbicacion.toLowerCase()] || 0;
   }
 
-  // Función para obtener el ID de la sububicación
   getSubLocationId(): number {
-    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
+    return this.customInputValue ? this.customInputValue.length : 0;
   }
 }

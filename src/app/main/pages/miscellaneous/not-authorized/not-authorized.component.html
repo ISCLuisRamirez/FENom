@@ -4,24 +4,16 @@
     <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="28" />
     <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }}</h2></a
   >
-  <div class="misc-inner p-2 p-sm-3">
+  <div class="misc-inner p-2 p-sm-3 mt-4">
     <div class="w-100 text-center">
-      <h2 class="mb-1">You are not authorized! 🔐</h2>
+      <h2 class="mb-1">🔐</h2>
+      <h2 class="mb-1">¡Lo sentimos, no tiene autorización para acceder a esta página!</h2>
       <p class="mb-2">
-        The Webtrends Marketing Lab website in IIS uses the default IUSR account credentials to access the web pages it
-        serves.
+        Para mayor información porfavor contacte a su administrador.
       </p>
-      <a class="btn btn-primary mb-1 btn-sm-block" routerLink="/pages/authentication/login-v2" rippleEffect
-        >Back to home</a
-      ><img
-        class="img-fluid"
-        [src]="
-          coreConfig.layout.skin === 'dark'
-            ? 'assets/images/pages/not-authorized-dark.svg'
-            : 'assets/images/pages/not-authorized.svg'
-        "
-        alt="Not authorized page"
-      />
+      <a class="btn btn-primary mb-1 btn-sm-block" routerLink="/pages/authentication/login-v1" rippleEffect
+        >Regresar a inicio</a
+      >
     </div>
   </div>
 </div>

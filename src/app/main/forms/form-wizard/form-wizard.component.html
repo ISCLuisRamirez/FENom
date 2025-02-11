@@ -398,13 +398,13 @@
                   />
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="form-label" for="employee_number-{{ i }}">Número de empleado:</label>
+                  <label class="form-label" for="employeeNumber-{{ i }}">Número de empleado:</label>
                   <input
                     type="text"
-                    id="employee_number-{{ i }}"
+                    id="employeeNumber-{{ i }}"
                     class="form-control"
                     placeholder="112233"
-                    [(ngModel)]="person.employee_number"
+                    [(ngModel)]="person.employeeNumber"
                   />
                 </div>
               </div>
@@ -434,23 +434,23 @@
                   />
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="form-label" for="witness-contact-{{ i }}">Puesto:</label>
+                  <label class="form-label" for="witness-position-{{ i }}">Puesto:</label>
                   <input
                     type="text"
-                    id="witness-contact-{{ i }}"
+                    id="witness-position-{{ i }}"
                     class="form-control"
                     placeholder="Ej. Operador"
-                    [(ngModel)]="witness.contact"
+                    [(ngModel)]="witness.position"
                   />
                 </div>
                 <div class="form-group col-md-4">
-                  <label class="form-label" for="witness-contact-{{ i }}">Número de empleado:</label>
+                  <label class="form-label" for="witness-employeeNumber-{{ i }}">Número de empleado:</label>
                   <input
                     type="number"
-                    id="witness-contact-{{ i }}"
+                    id="witness-employeeNumber-{{ i }}"
                     class="form-control"
                     placeholder="445566"
-                    [(ngModel)]="witness.contact"
+                    [(ngModel)]="witness.employeeNumber"
                   />
                 </div>
               </div>
@@ -567,7 +567,7 @@
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                 </button>
-                <button class="btn btn-success btn-submit" rippleEffect (click)="onSubmit()" [disabled]="!form.valid">Enviar</button>
+                <button class="btn btn-success btn-submit" rippleEffect (click)="onSubmit(form)" [disabled]="!form.valid">Enviar</button>
               </div>
             </form>
           </div>
