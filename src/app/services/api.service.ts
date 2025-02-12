@@ -20,10 +20,9 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/api/requests`, data);
   }
   // Método para guardar los datos en `requesters`
-    enviarDatosPersonales(data: any): Observable<any> {
-      return this.http.post(`${this.apiUrl}/api/requesters`, data);
-    }
-
+  enviarDatosPersonales(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/requesters`, data);
+  }
 
 
   // Método para enviar datos (POST)

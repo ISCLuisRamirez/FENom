@@ -18,6 +18,8 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
+  public selectedLocationId: number = 0;
+  public selectedSubLocationId: number = 0;
 
   public currentUser: User | null = null;
   public isAnonymous: boolean = true; 
@@ -47,6 +49,7 @@ export class FormWizardComponent implements OnInit {
   public listboxOptions: string[] = [];
   public customInputValue = '';
   public dynamicLabel = '';
+  
 
   public selectBasic = [
     { name: 'Teléfono' },
@@ -142,46 +145,89 @@ export class FormWizardComponent implements OnInit {
   // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset el valor
+    this.customInputValue = '';
     this.showListbox = false;
     this.showInputBox = false;
+    this.selectedSubLocationId = 0;
 
     switch (ubicacion.toLowerCase()) {
-      case 'sucursales':
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
-        break;
-      case 'navesanexas':
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la nave';
-        break;
-      case 'unidadtransporte':
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número de la unidad';
-        break;
       case 'corporativo':
+        this.selectedLocationId = 1;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área del corporativo';
         this.listboxOptions = ['E Diaz', 'Mar Báltico', 'Podium', 'Pedro Loza', 'Oficinas de RRHH MTY'];
         break;
+
       case 'cedis':
+        this.selectedLocationId = 2;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el CEDIS';
         this.listboxOptions = ['Occidente', 'Noreste', 'Centro'];
         break;
+
+      case 'sucursales':
+        this.selectedLocationId = 3;
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
+        break;
+
+      case 'naves y anexas filiales':
+      case 'navesanexas':
+        this.selectedLocationId = 4;
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la nave';
+        break;
+
       case 'innomex':
+        this.selectedLocationId = 5;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de INNOMEX';
         this.listboxOptions = ['Embotelladora', 'Dispositivos Médicos'];
         break;
+
       case 'trate':
+        this.selectedLocationId = 6;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de TRATE';
-        this.listboxOptions = ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
+        this.listboxOptions = ['Occidente', 'Noreste'];
         break;
+
+      case 'unidad de transporte':
+      case 'unidadtransporte':
+        this.selectedLocationId = 7;
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el número de la unidad';
+        break;
+
+      default:
+        this.selectedLocationId = 0;
     }
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+
+    this.cdr.detectChanges();
   }
+
+  onSubLocationChange(event: any): void {
+    const subLocationMap: { [key: string]: number } = {
+      'E Diaz': 1,
+      'Mar Báltico': 2,
+      'Podium': 3,
+      'Pedro Loza': 4,
+      'Oficinas de RRHH MTY': 5,
+      'Occidente': 6,
+      'Noreste': 7,
+      'Centro': 8,
+      'Embotelladora': 9,
+      'Dispositivos Médicos': 10
+    };
+
+    this.selectedSubLocationId = subLocationMap[event.target.value] || 0;
+    console.log("📌 SubUbicación seleccionada:", event.target.value);
+    console.log("📌 ID de la SubUbicación:", this.selectedSubLocationId);
+}
+
+
+
+
 
   // Función para validar la ubicación
   isUbicacionValid(): boolean {

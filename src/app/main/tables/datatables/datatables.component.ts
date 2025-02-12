@@ -41,6 +41,7 @@ export class DatatablesComponent implements OnInit {
   public chkBoxSelected = [];
   public SelectionType = SelectionType;
   public exportCSVData;
+  
 
   // Filtro por estatus
   public selectedStatus: string = ''; // Valor inicial vacío para que no haya filtro

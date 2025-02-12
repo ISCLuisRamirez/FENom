@@ -115,123 +115,61 @@
                 <h5 class="mb-0">Ubicación</h5>
                 <small>Añada la ubicación.</small>
               </div>
+          
               <div class="section" id="sectionUbicacion" data-previous="sectionTipoDenuncia">
                 <p><strong>Selecciona la ubicación:</strong><span style="color: #F44336;">*</span></p>
                 <div class="form-group" aria-required="true">
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="corporativo"
-                      (change)="onUbicacionChange('corporativo')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="corporativo" (change)="onUbicacionChange('corporativo')" [(ngModel)]="selectedUbicacion" required />
                     Corporativo
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="cedis"
-                      (change)="onUbicacionChange('cedis')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="cedis" (change)="onUbicacionChange('cedis')" [(ngModel)]="selectedUbicacion" required />
                     Cedis
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="sucursales"
-                      (change)="onUbicacionChange('sucursales')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="sucursales" (change)="onUbicacionChange('sucursales')" [(ngModel)]="selectedUbicacion" required />
                     Sucursales
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="navesanexas"
-                      (change)="onUbicacionChange('navesanexas')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="navesanexas" (change)="onUbicacionChange('navesanexas')" [(ngModel)]="selectedUbicacion" required />
                     Naves y anexas filiales
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="innomex"
-                      (change)="onUbicacionChange('innomex')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="innomex" (change)="onUbicacionChange('innomex')" [(ngModel)]="selectedUbicacion" required />
                     Innomex
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="trate"
-                      (change)="onUbicacionChange('trate')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')" [(ngModel)]="selectedUbicacion" required />
                     TRATE
                   </label><br />
                   <label>
-                    <input
-                      type="radio"
-                      name="ubicacion"
-                      value="unidadtransporte"
-                      (change)="onUbicacionChange('unidadtransporte')"
-                      [(ngModel)]="selectedUbicacion"
-                      required
-                    />
+                    <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')" [(ngModel)]="selectedUbicacion" required />
                     Unidad transporte
                   </label><br />
                 </div>
+          
                 <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
                   <div *ngIf="showListbox">
                     <label>{{locationLabel}}</label>
-                    <select
-                      id="ubicacionListbox"
-                      class="form-control"
-                      [(ngModel)]="customInputValue"
-                      required
-                    >
+                    <select id="ubicacionListbox" class="form-control" name="subUbicacion" [(ngModel)]="selectedSubLocation" (change)="onSubLocationChange($event)">
                       <option value="" disabled selected>Seleccione una opción</option>
                       <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
                     </select>
                   </div>
+          
                   <div *ngIf="showInputBox">
                     <label>{{locationLabel}}</label>
-                    <input
-                      type="text"
-                      id="customInput"
-                      class="form-control"
-                      [(ngModel)]="customInputValue"
-                      [placeholder]="locationLabel"
-                      required
-                    />
+                    <input type="text" id="customInput" class="form-control" name="subUbicacion" [(ngModel)]="customInputValue" [placeholder]="locationLabel" required />
                   </div>
                 </div>
+          
                 <div class="d-flex justify-content-between mt-3">
                   <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                     <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                     <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                   </button>
-                  <button 
-                    class="btn btn-primary btn-next" 
-                    (click)="verticalWizardNext(form)" 
-                    rippleEffect
-                    [disabled]="!form.valid"
-                  >
+                  <button class="btn btn-primary btn-next" (click)="verticalWizardNext(form)" rippleEffect [disabled]="!form.valid">
                     <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
                     <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                   </button>
@@ -239,6 +177,7 @@
               </div>
             </form>
           </div>
+          
           <!-- Div Detalles -->
           <div id="social-links-vertical" class="content">
             <form #form="ngForm">
