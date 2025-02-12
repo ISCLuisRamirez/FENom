@@ -307,10 +307,10 @@ export class FormWizardComponent implements OnInit {
           html: `
             <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
             <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
+            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
           `,
           icon: 'success',
-          confirmButtonText: 'Cerrar'
+          confirmButtonText:'Cerrar'
         }).then((result) => {
           if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
             this._router.navigate(['/Inicio']);
