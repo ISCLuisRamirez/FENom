@@ -2,17 +2,16 @@
   <div class="content-body">
     <!-- page denuncia view start -->
     <section class="app-denuncia-view">
-      
+
       <!-- Denuncia Info Section and Denuncia Status Section in a Row -->
       <div class="row">
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Información de la Denuncia</h5>
-                <div class="d-flex flex-wrap my-50">
-                      <span class="card-text font-weight-bold mb-0"><strong>Folio:</strong></span>
-                      <p class="card-text mb-0">123456</p>
-                </div>
+              <div class="d-flex flex-wrap my-50">
+                <span class="card-text font-weight-bold mb-0"><strong>Folio: </strong>{{data.folio}}</span>
+              </div>
               <hr>
 
               <!-- Denuncia Details -->
@@ -20,41 +19,44 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Medio de denuncia:</strong> </span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Medio de
+                        denuncia:</strong> {{data.id_via}}</span>
                   </div>
-                  <p class="card-text mb-0">Vía telefónica</p>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="check" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Tipo de denuncia: </strong></span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Tipo de denuncia:
+                      </strong> {{data.id_reason}}</span>
                   </div>
-                  <p class="card-text mb-0">Acoso laboral</p>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Ubicación:</strong> </span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Ubicación:
+                      </strong>{{data.id_location}}
+                    </span>
                   </div>
-                  <p class="card-text mb-0">Sucursal 12</p>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Fecha del suceso:</strong> </span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Fecha del suceso:
+                      </strong> {{data.date}}
+                    </span>
                   </div>
-                  <p class="card-text mb-0">2024-12-15</p>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del incidente: </strong></span><br>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del incidente:
+                      </strong></span><br>
                   </div>
-                  <p class="card-text mb-0">El empleado fue víctima de acoso por parte de su supervisor durante una reunión en la que se hicieron comentarios inapropiados.</p>
+                  <p class="card-text mb-0">{{data.description}}</p>
                 </div>
               </div>
               <!-- End Denuncia Details -->
@@ -72,16 +74,17 @@
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0">Estatus actual: </span>
-                </div><br>
-                <p class="card-text"><strong>Pendiente</strong></p>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">Estatus actual:
+                  </span><strong>{{data.status}}</strong>
+                </div>
               </div>
 
               <!-- Previous Report Status -->
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="file-text" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0">¿Se ha reportado previamente?</span><br>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">¿Se ha reportado
+                    previamente?</span><br>
                 </div>
                 <p class="card-text mb-0">No</p>
               </div>
@@ -89,12 +92,13 @@
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="info" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del reporte: </strong></span><br>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del reporte:
+                    </strong></span><br>
                 </div>
                 <p class="card-text mb-0">No Aplica</p>
               </div>
 
-              
+
             </div>
           </div>
         </div>
@@ -138,25 +142,27 @@
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
               <!-- Listbox to change the status of the denuncia -->
-              <div class="d-flex flex-wrap my-50">
-                <div class="denuncia-info-title">
-                  <i data-feather="settings" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0">Cambiar Estatus de la Denuncia: </span>
+              <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="settings" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">Cambiar Estatus de la Denuncia:
+                    </span>
+                  </div>
+                  <div>
+                    <select class="custom-listbox" id="denunciaStatus" formControlName="status">
+                      <option value="2">Abierto</option>
+                      <option value="3">Cerrado</option>
+                      <option value="1">En proceso</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <select class="custom-listbox" id="denunciaStatus" name="denunciaStatus">
-                    <option value="active">Abierto</option>
-                    <option value="inactive">Cerrado</option>
-                    <option value="pending">En proceso</option>
-                  </select>
+                <div class="d-flex justify-content-end mt-3">
+                  <button type="button" class="btn btn-secondary mr-2" id="cancelBtn"
+                    [routerLink]="['/tables/datatables']">Cancelar</button>
+                  <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
                 </div>
-              </div>
-
-              <!-- Buttons to Save or Cancel -->
-              <div class="d-flex justify-content-end mt-3">
-                <button type="button" class="btn btn-secondary mr-2" id="cancelBtn" [routerLink]="['/tables/datatables']">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="saveBtn">Guardar</button>
-              </div>
+              </form>
             </div>
           </div>
         </div>

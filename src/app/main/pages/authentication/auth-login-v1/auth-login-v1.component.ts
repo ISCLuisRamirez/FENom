@@ -8,7 +8,7 @@ import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
 import { ApiService } from 'app/services/api.service';
 
-const URL = 'http://localhost:5101'; 
+const URL = 'http://localhost:5101';
 
 @Component({
   selector: 'app-auth-login-v1',
@@ -25,7 +25,7 @@ export class AuthLoginV1Component implements OnInit {
   public returnUrl: string;
   public error = '';
   public loading = false;
-  public roles=[];
+  public roles = [];
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -102,14 +102,22 @@ export class AuthLoginV1Component implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          this._router.navigate([this.returnUrl]);
+          switch (data.role) {
+            case 'Comite':
+              console.log('Comite');
+              this._router.navigate(['/pages/profile']);
+              break;
+            default:
+              this._router.navigate([this.returnUrl]);
+              break;
+          }
         },
         error => {
           this.error = error;
           this.loading = false;
         }
       );
-    
+
   }
 
   // Lifecycle Hooks
@@ -119,7 +127,7 @@ export class AuthLoginV1Component implements OnInit {
    * On Init
    */
   ngOnInit(): void {
-    
+
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({
       employee_number: ['', [Validators.required]],
