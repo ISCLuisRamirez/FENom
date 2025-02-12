@@ -5,6 +5,7 @@ import { AuthenticationService } from 'app/auth/service';
 import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 import { User } from 'app/auth/models';
+import { Router } from '@angular/router';
 
 const URL = 'http://localhost:5101';
 
@@ -16,7 +17,10 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormCaptComponent implements OnInit {
-
+  public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
+  public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
+  public selectedRegion: string = ''; // Para almacenar la región seleccionada
+  
   public currentUser: User | null = null;
   public locationLabel: string = '';
   public contentHeader: object;
@@ -72,6 +76,7 @@ export class FormCaptComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private _router: Router,
     private _authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
   ) {}
@@ -97,6 +102,13 @@ export class FormCaptComponent implements OnInit {
     });
 
     this.today = new Date().toISOString().split('T')[0];
+
+    Swal.fire({
+      title: '<span style="color: red;">IMPORTANTE</span>',
+      html: 'Antes de comenzar tu denuncia, ten en cuenta que al finalizar se te asignará un folio y una contraseña únicos. <br><br><strong> Es crucial que los resguardes en un lugar seguro, ya que <strong style="color: red;">NO</strong> podrán recuperarse.</strong>',
+      icon: 'info',
+      confirmButtonText: 'Entendido'
+    });
   }
 
   validateAndProceed() {
@@ -195,12 +207,16 @@ export class FormCaptComponent implements OnInit {
         Swal.fire({
           title: '¡Denuncia Enviada!',
           html: `
-            <strong>Folio:</strong> ${response.folio}<br><br>
-            <strong>Contraseña:</strong> ${response.password}<br><br>
-            <em><strong> IMPORTANTE: </strong> Favor de guardar bien estos datos, ya que no existe ningun método de recuperación.</em>
+            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
+            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
+            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
           `,
           icon: 'success',
-          confirmButtonText: 'Cerrar'
+          confirmButtonText:'Cerrar'
+        }).then((result) => {
+          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+            this._router.navigate(['/Inicio']);
+          }
         });
       },
       (error) => {
@@ -236,11 +252,21 @@ export class FormCaptComponent implements OnInit {
     );
   }
 
+  onRegionChange(region: string): void {
+    this.selectedRegion = region;
+    this.showTransportInput = !!region; // Si hay una región seleccionada, mostrar el input
+    this.cdr.detectChanges();
+  }
+
+  // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset el valor
+    this.customInputValue = ''; // Reset del valor
     this.showListbox = false;
     this.showInputBox = false;
+    this.showTransportOptions = false; // Ocultar regiones al cambiar de ubicación
+    this.showTransportInput = false; // Ocultar input al cambiar de ubicación
+    this.selectedRegion = ''; // Resetear región cuando se cambia de ubicación
 
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':
@@ -252,8 +278,8 @@ export class FormCaptComponent implements OnInit {
         this.locationLabel = 'Ingrese el nombre o número de la nave';
         break;
       case 'unidadtransporte':
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número de la unidad';
+        this.showTransportOptions = true; // Mostrar radios de región
+        this.locationLabel = 'Seleccione la región y luego ingrese la unidad de transporte';
         break;
       case 'corporativo':
         this.showListbox = true;

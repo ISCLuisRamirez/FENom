@@ -120,48 +120,82 @@
                 <p><strong>Selecciona la ubicación:</strong><span style="color: #F44336;">*</span></p>
                 <div class="form-group" aria-required="true">
                   <label>
-                    <input type="radio" name="ubicacion" value="corporativo" (change)="onUbicacionChange('corporativo')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="corporativo" (change)="onUbicacionChange('corporativo')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Corporativo
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="cedis" (change)="onUbicacionChange('cedis')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="cedis" (change)="onUbicacionChange('cedis')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Cedis
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="sucursales" (change)="onUbicacionChange('sucursales')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="sucursales" (change)="onUbicacionChange('sucursales')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Sucursales
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="navesanexas" (change)="onUbicacionChange('navesanexas')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="navesanexas" (change)="onUbicacionChange('navesanexas')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Naves y anexas filiales
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="innomex" (change)="onUbicacionChange('innomex')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="innomex" (change)="onUbicacionChange('innomex')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Innomex
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')"
+                      [(ngModel)]="selectedUbicacion" required />
                     TRATE
                   </label><br />
                   <label>
-                    <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')" [(ngModel)]="selectedUbicacion" required />
+                    <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')"
+                      [(ngModel)]="selectedUbicacion" required />
                     Unidad transporte
                   </label><br />
                 </div>
           
                 <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
                   <div *ngIf="showListbox">
-                    <label>{{locationLabel}}</label>
-                    <select id="ubicacionListbox" class="form-control" name="subUbicacion" [(ngModel)]="selectedSubLocation" (change)="onSubLocationChange($event)">
+                    <label>{{ locationLabel }}</label>
+                    <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" required>
                       <option value="" disabled selected>Seleccione una opción</option>
                       <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
                     </select>
                   </div>
           
                   <div *ngIf="showInputBox">
-                    <label>{{locationLabel}}</label>
-                    <input type="text" id="customInput" class="form-control" name="subUbicacion" [(ngModel)]="customInputValue" [placeholder]="locationLabel" required />
+                    <label>{{ locationLabel }}</label>
+                    <input type="text" id="customInput" class="form-control" [(ngModel)]="customInputValue"
+                      [placeholder]="locationLabel" required />
                   </div>
+                </div>
+          
+                <!-- ✅ Nueva sección: Selección de región cuando es "Unidad Transporte" -->
+                <div *ngIf="selectedUbicacion === 'unidadtransporte'" class="mt-3">
+                  <p><strong>Selecciona la región:</strong></p>
+                  <label>
+                    <input type="radio" name="regionTransporte" value="norte" (change)="onRegionChange('norte')"
+                      [(ngModel)]="selectedRegion" required />
+                    Norte
+                  </label><br />
+                  <label>
+                    <input type="radio" name="regionTransporte" value="centro" (change)="onRegionChange('centro')"
+                      [(ngModel)]="selectedRegion" required />
+                    Centro
+                  </label><br />
+                  <label>
+                    <input type="radio" name="regionTransporte" value="sur" (change)="onRegionChange('sur')"
+                      [(ngModel)]="selectedRegion" required />
+                    Sur
+                  </label><br />
+                </div>
+          
+                <div *ngIf="showTransportInput" class="mt-3">
+                  <label>Ingrese el número de la unidad de transporte:</label>
+                  <input type="text" id="customInput" class="form-control" [(ngModel)]="customInputValue"
+                    placeholder="# de unidad de transporte" required />
                 </div>
           
                 <div class="d-flex justify-content-between mt-3">
@@ -169,7 +203,8 @@
                     <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                     <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                   </button>
-                  <button class="btn btn-primary btn-next" (click)="verticalWizardNext(form)" rippleEffect [disabled]="!form.valid">
+                  <button class="btn btn-primary btn-next" (click)="verticalWizardNext(form)" rippleEffect
+                    [disabled]="!form.valid">
                     <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
                     <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                   </button>

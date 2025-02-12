@@ -18,8 +18,7 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
-  public selectedLocationId: number = 0;
-  public selectedSubLocationId: number = 0;
+  
 
   public currentUser: User | null = null;
   public isAnonymous: boolean = true; 
@@ -49,7 +48,9 @@ export class FormWizardComponent implements OnInit {
   public listboxOptions: string[] = [];
   public customInputValue = '';
   public dynamicLabel = '';
-  
+  public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
+  public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
+  public selectedRegion: string = ''; // Para almacenar la región seleccionada
 
   public selectBasic = [
     { name: 'Teléfono' },
@@ -106,6 +107,14 @@ export class FormWizardComponent implements OnInit {
     });
 
     this.today = new Date().toISOString().split('T')[0];
+
+    Swal.fire({
+      title: '<span style="color: red;">IMPORTANTE</span>',
+      html: 'Antes de comenzar tu denuncia, ten en cuenta que al finalizar se te asignará un folio y una contraseña únicos. <br><br><strong> Es crucial que los resguardes en un lugar seguro, ya que <strong style="color: red;">NO</strong> podrán recuperarse.</strong>',
+      icon: 'info',
+      confirmButtonText: 'Entendido'
+    });
+    
   }
 
   // Función para avanzar al siguiente paso
@@ -141,16 +150,36 @@ export class FormWizardComponent implements OnInit {
       }
     );
   }
+  
+  onRegionChange(region: string): void {
+    this.selectedRegion = region;
+    this.showTransportInput = !!region; // Si hay una región seleccionada, mostrar el input
+    this.cdr.detectChanges();
+  }
 
   // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = '';
+    this.customInputValue = ''; // Reset del valor
     this.showListbox = false;
     this.showInputBox = false;
-    this.selectedSubLocationId = 0;
+    this.showTransportOptions = false; // Ocultar regiones al cambiar de ubicación
+    this.showTransportInput = false; // Ocultar input al cambiar de ubicación
+    this.selectedRegion = ''; // Resetear región cuando se cambia de ubicación
 
     switch (ubicacion.toLowerCase()) {
+      case 'sucursales':
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
+        break;
+      case 'navesanexas':
+        this.showInputBox = true;
+        this.locationLabel = 'Ingrese el nombre o número de la nave';
+        break;
+      case 'unidadtransporte':
+        this.showTransportOptions = true; // Mostrar radios de región
+        this.locationLabel = 'Seleccione la región y luego ingrese la unidad de transporte';
+        break;
       case 'corporativo':
         this.selectedLocationId = 1;
         this.showListbox = true;
@@ -202,31 +231,8 @@ export class FormWizardComponent implements OnInit {
       default:
         this.selectedLocationId = 0;
     }
-
-    this.cdr.detectChanges();
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
-
-  onSubLocationChange(event: any): void {
-    const subLocationMap: { [key: string]: number } = {
-      'E Diaz': 1,
-      'Mar Báltico': 2,
-      'Podium': 3,
-      'Pedro Loza': 4,
-      'Oficinas de RRHH MTY': 5,
-      'Occidente': 6,
-      'Noreste': 7,
-      'Centro': 8,
-      'Embotelladora': 9,
-      'Dispositivos Médicos': 10
-    };
-
-    this.selectedSubLocationId = subLocationMap[event.target.value] || 0;
-    console.log("📌 SubUbicación seleccionada:", event.target.value);
-    console.log("📌 ID de la SubUbicación:", this.selectedSubLocationId);
-}
-
-
-
 
 
   // Función para validar la ubicación
@@ -336,54 +342,34 @@ export class FormWizardComponent implements OnInit {
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
-  
-    this.apiService.enviarDenuncia(denunciaData).subscribe((response) => {
-      console.log("✅ Respuesta de la denuncia:", response);
 
-      if (!this.isAnonymous) {
-        const requesterData = {
-          id_request: response.id,
-          name: this.TDNameVar,
-          position: this.TDEmailVar,
-          employee_number: this.employee_number, 
-          phone: this.phone,  
-          email: this.email
-        };
-  
-        console.log("📤 Enviando datos del requester:", requesterData);
-  
-        this.apiService.enviarDatosPersonales(requesterData).subscribe(
-          (res) => {
-            console.log("✅ Requester guardado:", res);
-          },
-          (err) => {
-            console.error("❌ Error al guardar requester:", err);
+    this.apiService.enviarDenuncia(denunciaData).subscribe(
+      (response) => {
+        Swal.fire({
+          title: '¡Denuncia Enviada!',
+          html: `
+            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
+            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
+            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
+          `,
+          icon: 'success',
+          confirmButtonText:'Cerrar'
+        }).then((result) => {
+          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+            this._router.navigate(['/Inicio']);
           }
-        );
+        });
+      },
+      (error) => {
+        Swal.fire({
+          title: '❌ Error',
+          text: 'Hubo un problema al enviar la denuncia.',
+          icon: 'error',
+          confirmButtonText: 'Reintentar'
+        });
       }
-  
-      // 📌 Mostrar mensaje y esperar a que el usuario presione "Cerrar"
-      Swal.fire({
-        title: '¡Denuncia Enviada!',
-        html: `<strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br><br>
-               <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br><br>
-               <em><span style="color: red;"><strong>IMPORTANTE.</strong></span> Favor de guardar bien estos datos.</em>`,
-        icon: 'success',
-        confirmButtonText: 'Cerrar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this._router.navigate(['/Inicio']); // 🔥 Redirige SOLO cuando presione "Cerrar"
-        }
-      });
-  
-    });
+    );
   }
-  
-  
-  
-  
-  
-  
 
   // Función para validar el paso actual
   isStepValid(): boolean {

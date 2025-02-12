@@ -14,31 +14,36 @@
     <div class="row mx-2">
       <!-- Primera Tarjeta -->
       <div class="col-md-6 d-flex align-items-stretch">
-        <div class="card w-100 d-flex flex-column p-2">
+        <div class="card w-100 d-flex flex-column p-3 justify-content-between">
           <div class="card-header">
-            <h4 class="card-title text-primary">Bienvenid@ al portal Denuncia Protegida</h4><br>
-            <p><br>
+            <h4 class="card-title text-primary">Bienvenid@ al portal Denuncia Protegida</h4>
+            <p>
               Esta plataforma ha sido creada para que todos los colaboradores puedan reportar cualquier acto o conducta no alineada a las políticas, código de conducta, reglamento interno del trabajo y legislación vigente.
               <br><br>¿Tienes alguna otra duda? No dudes en consultar nuestra sección de
-              <a href="forms/faq" class="text-primary">preguntas frecuentes.</a> 
+              <a [routerLink]="'/forms/faq'" class="text-primary">preguntas frecuentes.</a> 
             </p>
           </div>
-          <div class="mt-auto mb-3 text-center">
-            <button class="btn btn-primary" [routerLink]="'/forms/form-wizard'">Crea tu denuncia ahora</button>
+          
+          <div class="mt-auto mb-3 text-center" *ngIf="!isLoggedIn">
+            <a class="btn btn-primary" routerLink="/forms/form-wizard">Crea tu denuncia ahora</a>
+          </div>
+          <div class="mt-auto mb-3 text-center" *ngIf="isCapturista">
+            <a class="btn btn-primary" routerLink="/forms/form-capt">Crea tu denuncia ahora</a>
           </div>
         </div>
       </div>
 
       <!-- Segunda Tarjeta -->
       <div class="col-md-6 d-flex align-items-stretch">
-        <div class="card w-100 d-flex flex-column p-2">
+        <div class="card w-100 d-flex flex-column p-3 justify-content-between">
           <div class="card-header">
-            <h4 class="card-title text-primary">¿Deseas consultar un estatus?</h4><br>
-            <p><br>Haz click en el siguiente botón, te redireccionará a una página para consultar el estatus de tu folio.</p>
+            <h4 class="card-title text-primary">¿Deseas consultar un estatus?</h4>
+            <p>Haz click en el siguiente botón, te redireccionará a una página para consultar el estatus de tu folio.</p>
             <img src="assets/images/icons/indeximage.png" alt="Imagen descriptiva" class="img-fluid mb-3 w-25 mx-auto">
           </div>
           <div class="mt-auto mb-3 text-center">
-            <button class="btn btn-primary " [routerLink]="'/pages/pricing'">Consúltalo aquí</button>
+            <a class="btn btn-primary" routerLink="/pages/pricing">Consultar ahora</a>
+
           </div>
         </div>
       </div>
