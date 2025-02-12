@@ -21,13 +21,10 @@ export class FormWizardComponent implements OnInit {
   
 
   public currentUser: User | null = null;
-  public isAnonymous: boolean = true; 
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
   public TDEmailVar = '';
-  public phone: string ='';
-  public employee_number: string ='';
   public telefono: string = '';
   public selectedUbicacion: string = '';
   public selectedMedio: string = '';
@@ -181,55 +178,25 @@ export class FormWizardComponent implements OnInit {
         this.locationLabel = 'Seleccione la región y luego ingrese la unidad de transporte';
         break;
       case 'corporativo':
-        this.selectedLocationId = 1;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área del corporativo';
         this.listboxOptions = ['E Diaz', 'Mar Báltico', 'Podium', 'Pedro Loza', 'Oficinas de RRHH MTY'];
         break;
-
       case 'cedis':
-        this.selectedLocationId = 2;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el CEDIS';
         this.listboxOptions = ['Occidente', 'Noreste', 'Centro'];
         break;
-
-      case 'sucursales':
-        this.selectedLocationId = 3;
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la sucursal';
-        break;
-
-      case 'naves y anexas filiales':
-      case 'navesanexas':
-        this.selectedLocationId = 4;
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la nave';
-        break;
-
       case 'innomex':
-        this.selectedLocationId = 5;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de INNOMEX';
         this.listboxOptions = ['Embotelladora', 'Dispositivos Médicos'];
         break;
-
       case 'trate':
-        this.selectedLocationId = 6;
         this.showListbox = true;
         this.locationLabel = 'Seleccione el área de TRATE';
-        this.listboxOptions = ['Occidente', 'Noreste'];
+        this.listboxOptions = ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
         break;
-
-      case 'unidad de transporte':
-      case 'unidadtransporte':
-        this.selectedLocationId = 7;
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número de la unidad';
-        break;
-
-      default:
-        this.selectedLocationId = 0;
     }
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
@@ -307,11 +274,9 @@ export class FormWizardComponent implements OnInit {
 
   // Función para manejar el anonimato
   toggleAnonimato(value: boolean) {
-    this.isAnonymous = !value; 
     this.showAdditionalInfo = value;
-    this.cdr.detectChanges();
+    this.cdr.detectChanges(); // Forzar la detección de cambios
   }
-
 
   // Función para enviar el formulario
   onSubmit() {
@@ -324,17 +289,9 @@ export class FormWizardComponent implements OnInit {
       });
       return;
     }
-  
-    console.log("📌 Valores antes de enviar:");
-    console.log("Nombre:", this.TDNameVar);
-    console.log("Puesto:", this.TDEmailVar);
-    console.log("Número de empleado:", this.employee_number);
-    console.log("Teléfono:", this.phone);
-    console.log("Email:", this.email);
-    console.log("¿Es anónimo?", this.isAnonymous);
-  
-    // 📌 Datos base de la denuncia
-    const denunciaData: any = {
+
+    const denunciaData = {
+      id_requesters: this.isLoggedIn ? 1 : 0,
       id_reason: this.selectMultiSelected?.id || 0,
       id_location: this.getLocationId(),
       id_sublocation: this.getSubLocationId(),
