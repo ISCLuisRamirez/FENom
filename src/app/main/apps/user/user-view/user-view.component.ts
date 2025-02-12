@@ -6,6 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { FormGroup, FormControl } from '@angular/forms';
 import { UserViewService } from 'app/main/apps/user/user-view/user-view.service';
 import { environment } from 'environments/environment';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-user-view',
@@ -29,7 +31,12 @@ export class UserViewComponent implements OnInit, OnDestroy {
    * @param {UserViewService} _userViewService
    * @param {HttpClient} _httpClient
    */
-  constructor(private router: Router, private _userViewService: UserViewService, private _httpClient: HttpClient) {
+  constructor(
+    private router: Router,
+    private _userViewService: UserViewService,
+    private _httpClient: HttpClient,
+    private _router: Router
+  ) {
     this._unsubscribeAll = new Subject();
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
   }
@@ -41,15 +48,27 @@ export class UserViewComponent implements OnInit, OnDestroy {
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
 
-    this._httpClient.put(`${environment.apiUrl}/api/requests/${this.data.id}`, { status: nuevoStatus })
+    this._httpClient.patch(`${environment.apiUrl}/api/requests/${this.data.id}/status`, nuevoStatus, { headers: { 'Content-Type': 'application/json' } })
       .subscribe(
         response => {
-          console.log('Estado actualizado correctamente', response);
-          alert('Estado actualizado con éxito');
+          Swal.fire({
+            title: '¡Estado Actualizado!',
+            /* text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.', */
+            icon: 'success',
+            confirmButtonText: 'Cerrar'
+          }).then((result) => {
+            if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+              this._router.navigate(['/tables/datatables']);
+            }
+          });
         },
         error => {
-          console.error('Error actualizando el estado', error);
-          alert('Hubo un error al actualizar el estado');
+          Swal.fire({
+            title: 'Error!',
+            /* text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.', */
+            icon: 'error',
+            confirmButtonText: 'Cerrar'
+          })
         }
       );
   }
