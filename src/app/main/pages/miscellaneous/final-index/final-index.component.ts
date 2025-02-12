@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
+import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
@@ -10,22 +9,18 @@ import { CoreConfigService } from '@core/services/config.service';
   templateUrl: './final-index.component.html',
   styleUrls: ['./final-index.component.scss']
 })
-export class FinalIndexComponent implements OnInit {
+export class FinalIndexComponent implements OnInit, OnDestroy {
   public coreConfig: any;
 
   // Private
-  private _unsubscribeAll: Subject<any>;
+  private _unsubscribeAll: Subject<void> = new Subject<void>();
 
-  /**
-   * Constructor
-   *
-   * @param {CoreConfigService} _coreConfigService
-   */
-  constructor(private _coreConfigService: CoreConfigService) {
-    this._unsubscribeAll = new Subject();
-
+  constructor(
+    private _coreConfigService: CoreConfigService,
+    private _authenticationService: AuthenticationService
+  ) {
     // Configure the layout
-    this._coreConfigService.config = {
+    this._coreConfigService.setConfig({
       layout: {
         navbar: {
           hidden: false
@@ -39,15 +34,17 @@ export class FinalIndexComponent implements OnInit {
         customizer: false,
         enableLocalStorage: true
       }
-    };
+    }, { emitEvent: true });
   }
 
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
+  get isCapturista(): boolean {
+    return this._authenticationService.isCapturista ?? false;
+  }
 
-  /**
-   * On init
-   */
+  get isLoggedIn(): boolean {
+    return !!this._authenticationService.currentUserValue;
+  }
+
   ngOnInit(): void {
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
@@ -55,9 +52,6 @@ export class FinalIndexComponent implements OnInit {
     });
   }
 
-  /**
-   * On destroy
-   */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
