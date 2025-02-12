@@ -18,6 +18,7 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
+  
 
   public currentUser: User | null = null;
   public locationLabel: string = '';
@@ -44,6 +45,9 @@ export class FormWizardComponent implements OnInit {
   public listboxOptions: string[] = [];
   public customInputValue = '';
   public dynamicLabel = '';
+  public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
+  public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
+  public selectedRegion: string = ''; // Para almacenar la región seleccionada
 
   public selectBasic = [
     { name: 'Teléfono' },
@@ -100,6 +104,14 @@ export class FormWizardComponent implements OnInit {
     });
 
     this.today = new Date().toISOString().split('T')[0];
+
+    Swal.fire({
+      title: '<span style="color: red;">IMPORTANTE</span>',
+      html: 'Antes de comenzar tu denuncia, ten en cuenta que al finalizar se te asignará un folio y una contraseña únicos. <br><br><strong> Es crucial que los resguardes en un lugar seguro, ya que <strong style="color: red;">NO</strong> podrán recuperarse.</strong>',
+      icon: 'info',
+      confirmButtonText: 'Entendido'
+    });
+    
   }
 
   // Función para avanzar al siguiente paso
@@ -135,13 +147,22 @@ export class FormWizardComponent implements OnInit {
       }
     );
   }
+  
+  onRegionChange(region: string): void {
+    this.selectedRegion = region;
+    this.showTransportInput = !!region; // Si hay una región seleccionada, mostrar el input
+    this.cdr.detectChanges();
+  }
 
   // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset el valor
+    this.customInputValue = ''; // Reset del valor
     this.showListbox = false;
     this.showInputBox = false;
+    this.showTransportOptions = false; // Ocultar regiones al cambiar de ubicación
+    this.showTransportInput = false; // Ocultar input al cambiar de ubicación
+    this.selectedRegion = ''; // Resetear región cuando se cambia de ubicación
 
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':
@@ -153,8 +174,8 @@ export class FormWizardComponent implements OnInit {
         this.locationLabel = 'Ingrese el nombre o número de la nave';
         break;
       case 'unidadtransporte':
-        this.showInputBox = true;
-        this.locationLabel = 'Ingrese el número de la unidad';
+        this.showTransportOptions = true; // Mostrar radios de región
+        this.locationLabel = 'Seleccione la región y luego ingrese la unidad de transporte';
         break;
       case 'corporativo':
         this.showListbox = true;
@@ -179,6 +200,7 @@ export class FormWizardComponent implements OnInit {
     }
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
+
 
   // Función para validar la ubicación
   isUbicacionValid(): boolean {
