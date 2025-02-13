@@ -18,17 +18,27 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
-  
+  /* Datos de endpoint requesters en caso de no ser anónimo */
+  public employee_number: string ='';
+  public position: string = '';
+  public phone: string = '';
+  public name: '';
+  public email: string = '';
 
+
+ public isAnonymous: boolean = false;
   public currentUser: User | null = null;
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
   public TDEmailVar = '';
+  
+  
+  
   public telefono: string = '';
   public selectedUbicacion: string = '';
   public selectedMedio: string = '';
-  public email: string = '';
+  
   public approximateDatePeriod = '';
   public specificDate: string = '';
   public today: string;
@@ -278,6 +288,8 @@ export class FormWizardComponent implements OnInit {
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
+  
+
   // Función para enviar el formulario
   onSubmit() {
     if (!this.isStepValid()) {
@@ -289,7 +301,7 @@ export class FormWizardComponent implements OnInit {
       });
       return;
     }
-
+  
     const denunciaData = {
       id_requesters: this.isLoggedIn ? 1 : 0,
       id_reason: this.selectMultiSelected?.id || 0,
@@ -299,23 +311,40 @@ export class FormWizardComponent implements OnInit {
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
-
+  
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
-        Swal.fire({
-          title: '¡Denuncia Enviada!',
-          html: `
-            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
-          `,
-          icon: 'success',
-          confirmButtonText:'Cerrar'
-        }).then((result) => {
-          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this._router.navigate(['/Inicio']);
+        // Si la denuncia se envió correctamente, registrar el solicitante (denunciante)
+        const requesterData = {
+          id_request: response.id, // ID de la denuncia creada
+          name: this.name,
+          position: this.position, // Suponiendo que la ubicación es la posición
+          employee_number: this.employee_number || null,
+          phone: this.phone || null,
+          email: this.email|| null
+        };
+  
+        this.apiService.enviarDatosPersonales(requesterData).subscribe(
+          (res) => {
+            Swal.fire({
+              title: '¡Denuncia Enviada!',
+              html: `
+                <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
+                <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
+                <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.</em>
+              `,
+              icon: 'success',
+              confirmButtonText:'Cerrar'
+            }).then((result) => {
+              if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+                this._router.navigate(['/Inicio']);
+              }
+            });
+          },
+          (error) => {
+            console.error("Error al guardar el solicitante:", error);
           }
-        });
+        );
       },
       (error) => {
         Swal.fire({
@@ -327,6 +356,7 @@ export class FormWizardComponent implements OnInit {
       }
     );
   }
+  
 
   // Función para validar el paso actual
   isStepValid(): boolean {
