@@ -23,6 +23,7 @@ export class ApiService {
   enviarDatosPersonales(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/requesters`, data);
   }
+ 
 
 
   // Método para enviar datos (POST)

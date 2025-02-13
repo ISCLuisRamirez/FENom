@@ -18,7 +18,7 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit {
-  /* Datos de endpoint requesters en caso de no ser anónimo */
+  //Datos de endpoint requesters en caso de no ser anónimo */
   public employee_number: string ='';
   public position: string = '';
   public phone: string = '';

@@ -20,16 +20,30 @@ export class FormCaptComponent implements OnInit {
   public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
   public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
   public selectedRegion: string = ''; // Para almacenar la región seleccionada
-  
+
+
+  //Datos de endpoint requesters en caso de no ser anónimo
+  public employee_number: string ='';
+  public position: string = '';
+  public phone: string = '';
+  public name: '';
+  public email: string = '';
+  public isAnonymous: boolean = false;
+
+  //Datos de endpoint medio
+  public telefono_medio: string = '';
+  public email_medio: string = '';
+  public selectedMedio: string = '';
+  //Datos del motivo
+  public selectMultiSelected: any;
+
+  public telefono: string = '';
   public currentUser: User | null = null;
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
   public TDEmailVar = '';
-  public telefono: string = '';
   public selectedUbicacion: string = '';
-  public selectedMedio: string = '';
-  public email: string = '';
   public approximateDatePeriod = '';
   public specificDate: string = '';
   public today: string;
@@ -38,7 +52,7 @@ export class FormCaptComponent implements OnInit {
   public involvedList = [{ name: '', position: '', employeeNumber: '' }];
   public witnessList = [{ name: '', position: '', employeeNumber: '' }];
   public datos = [];
-  public selectMultiSelected: any;
+ 
   public showValidation: boolean = false;
   public showAdditionalInfo = false;
   public showListbox = false;
@@ -53,17 +67,20 @@ export class FormCaptComponent implements OnInit {
   ];
 
   public selectMulti = [
-    { name: 'Abuso de autoridad' },
-    { name: 'Acoso laboral' },
-    { name: 'Acoso sexual' },
-    { name: 'Apropiación y uso indebido de activos o recursos' },
-    { name: 'Condiciones inseguras' },
-    { name: 'Conflicto de interés' },
-    { name: 'Corrupción, soborno o extorsión' },
-    { name: 'Desvío de recursos' },
-    { name: 'Discriminación' },
-    { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)' }
+    { name: 'Abuso de autoridad', id: 1 },
+    { name: 'Acoso laboral', id: 2 },
+    { name: 'Acoso sexual', id: 3 },
+    { name: 'Apropiación y uso indebido de activos o recursos', id: 4 },
+    { name: 'Condiciones inseguras', id: 5 },
+    { name: 'Conflicto de interés', id: 6 },
+    { name: 'Corrupción, soborno o extorsión', id: 7 },
+    { name: 'Desvío de recursos', id: 8 },
+    { name: 'Discriminación', id: 9 },
+    { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)', id: 10 },
+    { name: 'Incumplimiento de las políticas internas', id: 11 },
+    { name: 'Manipulación de inventarios', id: 12 }
   ];
+
 
   private verticalWizardStepper: Stepper;
 
@@ -191,7 +208,7 @@ export class FormCaptComponent implements OnInit {
       });
       return;
     }
-
+  
     const denunciaData = {
       id_requesters: this.isLoggedIn ? 1 : 0,
       id_reason: this.selectMultiSelected?.id || 0,
@@ -201,23 +218,40 @@ export class FormCaptComponent implements OnInit {
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
-
+  
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
-        Swal.fire({
-          title: '¡Denuncia Enviada!',
-          html: `
-            <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-            <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-            <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
-          `,
-          icon: 'success',
-          confirmButtonText:'Cerrar'
-        }).then((result) => {
-          if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-            this._router.navigate(['/Inicio']);
+        // Si la denuncia se envió correctamente, registrar el solicitante (denunciante)
+        const requesterData = {
+          id_request: response.id, // ID de la denuncia creada
+          name: this.name,
+          position: this.position, // Suponiendo que la ubicación es la posición
+          employee_number: this.employee_number || null,
+          phone: this.phone || null,
+          email: this.email|| null
+        };
+  
+        this.apiService.enviarDatosPersonales(requesterData).subscribe(
+          (res) => {
+            Swal.fire({
+              title: '¡Denuncia Enviada!',
+              html: `
+                <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
+                <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
+                <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.</em>
+              `,
+              icon: 'success',
+              confirmButtonText:'Cerrar'
+            }).then((result) => {
+              if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+                this._router.navigate(['/Inicio']);
+              }
+            });
+          },
+          (error) => {
+            console.error("Error al guardar el solicitante:", error);
           }
-        });
+        );
       },
       (error) => {
         Swal.fire({
