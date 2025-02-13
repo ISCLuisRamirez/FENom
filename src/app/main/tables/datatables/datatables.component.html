@@ -52,52 +52,106 @@
             </div>
           </div>
         </div><br><br>
-        
         <ngx-datatable
-          [rows]="filteredRows"
-          [rowHeight]="58"
-          class="bootstrap core-bootstrap"
-          [limit]="10"
-          [columnMode]="ColumnMode.force"
-          [headerHeight]="40"
-          [footerHeight]="50"
-          [scrollbarH]="true"
-          [selectionType]="SelectionType.checkbox"
-          [limit]="basicSelectedOption"
-          (activate)="onActivate($event)"
-          (select)="onSelect($event)"
-        >
-          <ngx-datatable-column name="ID" prop="id" [sortable]="true" [draggable]="false" [resizeable]="false" [width]="80" [canAutoResize]="false">
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Motivo" prop="folio" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
-          <ngx-datatable-column name="Folio" prop="folio" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
-          <ngx-datatable-column name="Fecha" prop="date" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
-          <ngx-datatable-column name="Estatus" prop="status" [draggable]="false" [resizeable]="false">
-            <ng-template let-status="value" ngx-datatable-cell-template>
-              <div class="badge badge-pill" [ngClass]="{
-                'badge-light-primary': status == '1',
-                'badge-light-success': status == '2',
-                'badge-light-danger': status == '3'
-              }">
-                {{
-                  status == 1
-                    ? 'En proceso'
-                    : status == 2
-                    ? 'Abierto'
-                    : status == 3
-                    ? 'Cerrado'
-                    : 'ERROR'
-                }}
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false" [canAutoResize]="false">
-            <ng-template ngx-datatable-cell-template let-row="row">
-              <div class="d-flex align-items-center">
-                <button class="btn btn-primary" [routerLink]="['/apps/user/user-view/', row.id]">Revisar</button>
-              </div>              
-            </ng-template>
-          </ngx-datatable-column>
+                [rows]="filteredRows"
+                [rowHeight]="58"
+                class="bootstrap core-bootstrap"
+                [limit]="10"
+                [columnMode]="ColumnMode.force"
+                [headerHeight]="40"
+                [footerHeight]="50"
+                [scrollbarH]="true"
+                [selectionType]="SelectionType.checkbox"
+                [limit]="basicSelectedOption"
+                (activate)="onActivate($event)"
+                (select)="onSelect($event)"
+              >
+                <!-- Columna ID -->
+                <ngx-datatable-column name="ID" prop="id" [sortable]="true" [draggable]="false" [resizeable]="false" [width]="80" [canAutoResize]="false">
+                </ngx-datatable-column>
+
+                <!-- Columna Motivo -->
+                
+              <ngx-datatable-column name="Motivo" [draggable]="false" [resizeable]="false">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{
+                      row.id_reason === 1
+                        ? 'Abuso de autoridad'
+                        : row.id_reason === 2
+                        ? 'Acoso laboral'
+                        : row.id_reason === 3
+                        ? 'Acoso Sexual'
+                        : row.id_reason === 4
+                        ? 'Apropiación y uso indebido de activos o recursos'
+                        : row.id_reason === 5
+                        ? 'Condiciones inseguras'
+                        : row.id_reason === 6
+                        ? 'Conflicto de interés'
+                        : row.id_reason === 7
+                        ? 'Corrupción, soborno o extorsión'
+                        : row.id_reason === 8
+                        ? 'Desvío de recursos'
+                        : row.id_reason === 9
+                        ? 'Discriminación'
+                        : row.id_reason === 10
+                        ? 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)'
+                        : row.id_reason === 11
+                        ? 'Incumplimiento de las políticas internas'
+                        : row.id_reason === 12
+                        ? 'Manipulación de inventarios'
+                        : 'ERROR'
+                    }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- Columna Medio -->
+                <ngx-datatable-column name="Medio" [draggable]="false" [resizeable]="false">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{
+                      row.id_via === 1
+                        ? 'Teléfono'
+                        : row.id_via === 2
+                        ? 'Correo'
+                        : 'ERROR'
+                    }}
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- Columna Folio -->
+                <ngx-datatable-column name="Folio" prop="folio" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
+
+                <!-- Columna Fecha -->
+                <ngx-datatable-column name="Fecha" prop="date" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
+
+                <!-- Columna Estatus -->
+                <ngx-datatable-column name="Estatus" prop="status" [draggable]="false" [resizeable]="false">
+                  <ng-template let-status="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" [ngClass]="{
+                      'badge-light-primary': status == '1',
+                      'badge-light-success': status == '2',
+                      'badge-light-danger': status == '3'
+                    }">
+                      {{
+                        status == 1
+                          ? 'En proceso'
+                          : status == 2
+                          ? 'Abierto'
+                          : status == 3
+                          ? 'Cerrado'
+                          : 'ERROR'
+                      }}
+                    </div>
+                  </ng-template>
+            </ngx-datatable-column>
+
+  <!-- Columna Detalles -->
+  <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false" [canAutoResize]="false">
+    <ng-template ngx-datatable-cell-template let-row="row">
+      <div class="d-flex align-items-center">
+        <button class="btn btn-primary" [routerLink]="['/apps/user/user-view/', row.id]">Revisar</button>
+      </div>
+    </ng-template>
+  </ngx-datatable-column>
         </ngx-datatable>
       </core-card-snippet>
     </section>

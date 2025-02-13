@@ -184,6 +184,7 @@ export class DatatablesComponent implements OnInit {
     this.chkBoxSelected.splice(0, this.chkBoxSelected.length);
     this.chkBoxSelected.push(...selected);
   }
+  
 
   /**
    * Constructor

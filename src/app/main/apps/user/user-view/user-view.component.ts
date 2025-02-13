@@ -8,7 +8,6 @@ import { UserViewService } from 'app/main/apps/user/user-view/user-view.service'
 import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
 
-
 @Component({
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
@@ -16,21 +15,17 @@ import Swal from 'sweetalert2';
   encapsulation: ViewEncapsulation.None
 })
 export class UserViewComponent implements OnInit, OnDestroy {
-  // public
+  // Variables públicas
   public url = this.router.url;
-  public lastValue;
-  public data;
+  public lastValue: string;
+  public data: any;
 
-  // private
+  // Variables privadas
   private _unsubscribeAll: Subject<any>;
 
-  /**
-   * Constructor
-   *
-   * @param {Router} router
-   * @param {UserViewService} _userViewService
-   * @param {HttpClient} _httpClient
-   */
+  // Formulario reactivo para el estado
+  statusForm: FormGroup;
+
   constructor(
     private router: Router,
     private _userViewService: UserViewService,
@@ -39,59 +34,131 @@ export class UserViewComponent implements OnInit, OnDestroy {
   ) {
     this._unsubscribeAll = new Subject();
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
+
+    // Inicializar el formulario reactivo
+    this.statusForm = new FormGroup({
+      status: new FormControl('') // Inicializa vacío o con un valor del backend
+    });
   }
 
-  statusForm = new FormGroup({
-    status: new FormControl('') // Inicializa vacío o con un valor del backend
-  });
-
+  // Método para actualizar el estado
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
 
-    this._httpClient.patch(`${environment.apiUrl}/api/requests/${this.data.id}/status`, nuevoStatus, { headers: { 'Content-Type': 'application/json' } })
-      .subscribe(
-        response => {
-          Swal.fire({
-            title: '¡Estado Actualizado!',
-            /* text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.', */
-            icon: 'success',
-            confirmButtonText: 'Cerrar'
-          }).then((result) => {
-            if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-              this._router.navigate(['/tables/datatables']);
+    // Mostrar confirmación antes de cambiar el estado
+    Swal.fire({
+      title: 'Confirmación',
+      text: '¿Deseas cambiar el estado de la denuncia?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cambiar',
+      cancelButtonText: 'No, cancelar',
+      confirmButtonColor: '#7367F0',
+      cancelButtonColor: '#E42728',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Si el usuario confirma, proceder con el cambio de estado
+        this._httpClient.patch(`${environment.apiUrl}/api/requests/${this.data.id}/status`, { status: nuevoStatus }, { headers: { 'Content-Type': 'application/json' } })
+          .subscribe(
+            (response) => {
+              Swal.fire({
+                title: '¡Estado Actualizado!',
+                icon: 'success',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#7367F0',
+              }).then(() => {
+                this._router.navigate(['/tables/datatables']);
+              });
+            },
+            (error) => {
+              console.error('Error al actualizar el estado:', error); // Log del error
+              Swal.fire({
+                title: 'Error!',
+                text: 'No se pudo actualizar el estado.',
+                icon: 'error',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#7367F0',
+              });
             }
-          });
-        },
-        error => {
-          Swal.fire({
-            title: 'Error!',
-            /* text: 'Por favor, completa todos los campos obligatorios antes de enviar la denuncia.', */
-            icon: 'error',
-            confirmButtonText: 'Cerrar'
-          })
-        }
-      );
+          );
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Si el usuario cancela, no hacer nada
+        Swal.fire({
+          title: 'Cancelado',
+          text: 'No se realizaron cambios.',
+          icon: 'info',
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#7367F0',
+        });
+      }
+    });
   }
 
   // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-  /**
-   * On init
-   */
   ngOnInit(): void {
-    this._userViewService.onUserViewChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
+    this._userViewService.onUserViewChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe((response) => {
       this.data = response;
-      console.log(this.data)
+      console.log(this.data);
+
+      // Actualizar el formulario con el estado actual de la denuncia
+      this.statusForm.patchValue({ status: this.data.status });
+
+      // Aquí puedes acceder a más datos de la base de datos
+      console.log('Folio:', this.data.folio);
+      console.log('Medio de denuncia:', this.data.id_via);
+      console.log('Tipo de denuncia:', this.data.id_reason);
+      console.log('Ubicación:', this.data.id_location);
+      console.log('Fecha del suceso:', this.data.date);
+      console.log('Descripción:', this.data.description);
+      console.log('Nombre del solicitante:', this.data.applicant_name);
+      console.log('Correo del solicitante:', this.data.applicant_email);
+      console.log('Teléfono del solicitante:', this.data.applicant_phone);
+      console.log('Dirección del solicitante:', this.data.applicant_address);
     });
-    this.statusForm.patchValue({ status: this.data.status });
   }
 
-  /**
-   * On destroy
-   */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
+  }
+
+  // Método para convertir el estado numérico a texto
+  getStatusString(status: number): string {
+    switch (status) {
+      case 1:
+        return 'En proceso';
+      case 2:
+        return 'Abierto';
+      case 3:
+        return 'Cerrado';
+      default:
+        return 'ERROR';
+    }
+  }
+
+  // Método para convertir el motivo numérico a texto
+  getreason(id_reason: number | null | undefined): string {
+    const reasons = {
+      1: 'Abuso de autoridad',
+      2: 'Acoso laboral',
+      3: 'Acoso Sexual',
+      4: 'Apropiación y uso indebido de activos o recursos',
+      5: 'Condiciones inseguras',
+      6: 'Conflicto de interés',
+      7: 'Corrupción, soborno o extorsión',
+      8: 'Desvío de recursos',
+      9: 'Discriminación',
+      10: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)',
+      11: 'Incumplimiento de las políticas internas',
+      12: 'Manipulación de inventarios',
+    };
+
+    // Validación y retorno
+    if (id_reason !== null && id_reason !== undefined && reasons.hasOwnProperty(id_reason)) {
+      return reasons[id_reason];
+    } else {
+      return 'Datos inexistentes';
+    }
   }
 }

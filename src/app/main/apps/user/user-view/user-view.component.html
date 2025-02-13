@@ -28,7 +28,8 @@
                   <div class="denuncia-info-title">
                     <i data-feather="check" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Tipo de denuncia:
-                      </strong> {{data.id_reason}}</span>
+                      
+                      </strong>{{ getreason(data.id_reason) }}</span>
                   </div>
                 </div>
 
@@ -74,8 +75,9 @@
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0">Estatus actual:
-                  </span><strong>{{data.status}}</strong>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    Estatus actual: {{ getStatusString(data.status) }}
+                  </span>                
                 </div>
               </div>
 
@@ -97,13 +99,135 @@
                 </div>
                 <p class="card-text mb-0">No Aplica</p>
               </div>
-
-
             </div>
           </div>
         </div>
       </div>
       <!-- End Denuncia Info Section and Denuncia Status Section -->
+
+      <!-- Implicados y Testigos Section -->
+      <div class="row">
+        <!-- Tabla de Implicados -->
+        <div class="col-md-6">
+          <div class="card denuncia-card">
+            <div class="card-body">
+              <h5 class="text-primary">Implicados</h5>
+              <hr>
+
+              <!-- Table for Involved People -->
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Rol</th>
+                      <th>Teléfono</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Juan Pérez</td>
+                      <td>Implicado</td>
+                      <td>555-1234</td>
+                    </tr>
+                    <tr>
+                      <td>Carlos Gómez</td>
+                      <td>Implicado</td>
+                      <td>555-9876</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- End Table for Involved People -->
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Testigos -->
+        <div class="col-md-6">
+          <div class="card denuncia-card">
+            <div class="card-body">
+              <h5 class="text-primary">Testigos</h5>
+              <hr>
+
+              <!-- Table for Witnesses -->
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Rol</th>
+                      <th>Teléfono</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>María López</td>
+                      <td>Testigo</td>
+                      <td>555-5678</td>
+                    </tr>
+                    <tr>
+                      <td>Ana Martínez</td>
+                      <td>Testigo</td>
+                      <td>555-4321</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- End Table for Witnesses -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Implicados y Testigos Section -->
+
+      <!-- Información del Solicitante Section -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card denuncia-card">
+            <div class="card-body">
+              <h5 class="text-primary">Información del Solicitante</h5>
+              <hr>
+
+              <!-- Applicant Information -->
+              <div class="applicant-info">
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="user" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Nombre: </strong>{{data.applicant_name}}</span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="mail" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Correo Electrónico: </strong>{{data.applicant_email}}</span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="phone" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Teléfono: </strong>{{data.applicant_phone}}</span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="map-pin" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Dirección: </strong>{{data.applicant_address}}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- End Applicant Information -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Información del Solicitante Section -->
 
       <!-- Archivos Adjuntos and Estatus Change Sections in Row -->
       <div class="row">
@@ -141,26 +265,27 @@
             <div class="card-body">
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
-              <!-- Listbox to change the status of the denuncia -->
+              <!-- Formulario para cambiar el estado -->
               <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="settings" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">Cambiar Estatus de la Denuncia:
-                    </span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">Cambiar Estatus de la Denuncia:</span>
                   </div>
                   <div>
-                    <select class="custom-listbox" id="denunciaStatus" formControlName="status">
+                    <!-- Select con formControlName -->
+                    <select class="form-control" id="denunciaStatus" formControlName="status">
+                      <option value="1">En proceso</option>
                       <option value="2">Abierto</option>
                       <option value="3">Cerrado</option>
-                      <option value="1">En proceso</option>
                     </select>
                   </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3">
-                  <button type="button" class="btn btn-secondary mr-2" id="cancelBtn"
-                    [routerLink]="['/tables/datatables']">Cancelar</button>
-                  <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
+                  <!-- Botón de cancelar -->
+                  <button class="btn btn-secondary mr-2" [routerLink]="['/tables/datatables']">Cancelar</button>
+                  <!-- Botón de guardar -->
+                  <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
               </form>
             </div>

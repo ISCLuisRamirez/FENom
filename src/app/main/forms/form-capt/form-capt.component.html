@@ -76,19 +76,21 @@
                   <small class="text-muted">Añada el medio por el cual está realizando la denuncia.</small>
                   <span style="color: #F44336;">*</span>
                 </div>
+            
                 <div class="row">
                   <div class="form-group col-md-10">
                     <label class="form-label" for="medio">Seleccione el medio por el cual se está realizando la denuncia.</label>
                     <ng-select
-                      [items]="selectBasic"
+                      [items]="selectMedio"
                       [multiple]="false"
                       [closeOnSelect]="true"
                       [searchable]="false"
                       bindLabel="name"
+                      bindValue="id"
                       name="medio"
                       placeholder="Seleccione un medio"
                       [(ngModel)]="selectedMedio"
-                      (change)="onMedioChange($event)"
+                      (change)="onMedioChange()"
                       [clearable]="false"
                       required
                     >
@@ -101,33 +103,37 @@
                     </div>
                   </div>
                 </div>
-                <!-- Campo dinámico basado en la selección -->
-                <div *ngIf="selectedMedio === 'Teléfono'" class="form-group col-md-10 mt-2">
+            
+                <!-- Campo de Teléfono -->
+                <div *ngIf="selectedMedio === 1" class="form-group col-md-10 mt-2">
                   <label class="form-label">Número de Teléfono <span style="color: #F44336;">*</span></label>
                   <input
                     type="tel"
                     class="form-control"
                     placeholder="Ingrese su número de teléfono"
-                    [(ngModel)]="telefono"
-                    name="telefono"
+                    [(ngModel)]="telefono_medio"
+                    name="telefono_medio"
                     pattern="[0-9]{10}"
                     maxlength="10"
                     required
                     #telefonoInput="ngModel"
+                    (input)="validatePhoneNumber()"
                   />
                   <small class="text-muted">Ingrese un número de 10 dígitos.</small>
                   <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
                     El número de teléfono es obligatorio y debe tener 10 dígitos.
                   </div>
                 </div>
-                <div *ngIf="selectedMedio === 'Correo'" class="form-group col-md-10 mt-2">
+            
+                <!-- Campo de Correo Electrónico -->
+                <div *ngIf="selectedMedio === 2" class="form-group col-md-10 mt-2">
                   <label class="form-label">Correo Electrónico <span style="color: #F44336;">*</span></label>
                   <input
                     type="email"
                     class="form-control"
                     placeholder="Ingrese su correo electrónico"
-                    [(ngModel)]="email"
-                    name="email"
+                    [(ngModel)]="email_medio"
+                    name="email_medio"
                     required
                     #emailInput="ngModel"
                   />
@@ -136,6 +142,7 @@
                     El correo electrónico es obligatorio.
                   </div>
                 </div>
+            
                 <br />
                 <div class="d-flex justify-content-between">
                   <button class="btn btn-outline-secondary btn-prev" disabled>
@@ -153,6 +160,7 @@
                 </div>
               </form>
             </div>
+            
             <!-- Div Motivo -->
             <div id="personal-info-vertical" class="content">
               <form #form="ngForm">
@@ -165,7 +173,7 @@
                   <div class="form-group col-md-12">
                     <label class="form-label" for="selectLanguage">Seleccione el motivo</label>
                     <ng-select  
-                      [items]="selectMulti"
+                      [items]="selectMotivo"
                       [multiple]="false"
                       [closeOnSelect]="true"
                       [searchable]="false"
@@ -173,7 +181,7 @@
                       [clearable]="false"
                       name="selectLanguage"
                       placeholder="Seleccione el motivo"
-                      [(ngModel)]="selectMultiSelected"
+                      [(ngModel)]="motivo"
                       required
                       #motivoInput="ngModel"
                     >

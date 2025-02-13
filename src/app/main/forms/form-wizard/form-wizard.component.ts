@@ -106,8 +106,6 @@ export class FormWizardComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('currentUserValue:', this._authenticationService.currentUserValue?.role);
-    this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: true,
       animation: true
@@ -145,18 +143,7 @@ export class FormWizardComponent implements OnInit {
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
-  // Función para cargar datos
-  cargarDatos() {
-    this.apiService.getRoles().subscribe(
-      (response) => {
-        this.datos = response;
-        this.cdr.detectChanges(); // Forzar la detección de cambios
-      },
-      (error) => {
-        console.error('Error al obtener datos', error);
-      }
-    );
-  }
+ 
   
   onRegionChange(region: string): void {
     this.selectedRegion = region;

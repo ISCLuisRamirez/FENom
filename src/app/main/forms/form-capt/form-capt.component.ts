@@ -5,7 +5,10 @@ import { AuthenticationService } from 'app/auth/service';
 import { ApiService } from 'app/services/api.service';
 import Stepper from 'bs-stepper';
 import { User } from 'app/auth/models';
+import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { StringNullableChain } from 'lodash';
 
 const URL = 'http://localhost:5101';
 
@@ -33,12 +36,36 @@ export class FormCaptComponent implements OnInit {
   //Datos de endpoint medio
   public telefono_medio: string = '';
   public email_medio: string = '';
-  public selectedMedio: string = '';
-  //Datos del motivo
-  public selectMultiSelected: any;
+  public selectedMedio: any;
+  public selectMedio = [
+    { name: 'Teléfono', id: 1 },
+    { name: 'Correo', id: 2 }
+  ];
 
-  public telefono: string = '';
+  //Datos del motivo (Listado de motivos y respectivos ID's)
+  public motivo: any;
+  public selectMotivo = [
+    { name: 'Abuso de autoridad', id: 1 },
+    { name: 'Acoso laboral', id: 2 },
+    { name: 'Acoso sexual', id: 3 },
+    { name: 'Apropiación y uso indebido de activos o recursos', id: 4 },
+    { name: 'Condiciones inseguras', id: 5 },
+    { name: 'Conflicto de interés', id: 6 },
+    { name: 'Corrupción, soborno o extorsión', id: 7 },
+    { name: 'Desvío de recursos', id: 8 },
+    { name: 'Discriminación', id: 9 },
+    { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)', id: 10 },
+    { name: 'Incumplimiento de las políticas internas', id: 11 },
+    { name: 'Manipulación de inventarios', id: 12 }
+  ];
+
+  //Datos del endpoint request
+ 
   public currentUser: User | null = null;
+  public telefono: string = '';
+  
+
+
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
@@ -61,25 +88,9 @@ export class FormCaptComponent implements OnInit {
   public customInputValue = '';
   public dynamicLabel = '';
 
-  public selectBasic = [
-    { name: 'Teléfono' },
-    { name: 'Correo' }
-  ];
+  
 
-  public selectMulti = [
-    { name: 'Abuso de autoridad', id: 1 },
-    { name: 'Acoso laboral', id: 2 },
-    { name: 'Acoso sexual', id: 3 },
-    { name: 'Apropiación y uso indebido de activos o recursos', id: 4 },
-    { name: 'Condiciones inseguras', id: 5 },
-    { name: 'Conflicto de interés', id: 6 },
-    { name: 'Corrupción, soborno o extorsión', id: 7 },
-    { name: 'Desvío de recursos', id: 8 },
-    { name: 'Discriminación', id: 9 },
-    { name: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)', id: 10 },
-    { name: 'Incumplimiento de las políticas internas', id: 11 },
-    { name: 'Manipulación de inventarios', id: 12 }
-  ];
+  
 
 
   private verticalWizardStepper: Stepper;
@@ -90,6 +101,8 @@ export class FormCaptComponent implements OnInit {
     allowedFileType: ['image', 'pdf', 'doc', 'docx'],
     maxFileSize: 10 * 1024 * 1024
   });
+
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   constructor(
     private apiService: ApiService,
@@ -111,7 +124,10 @@ export class FormCaptComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('currentUserValue:', this._authenticationService.currentUserValue?.role);
+    this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
+      this.currentUser = user;
+    });
+
     this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: true,
@@ -153,7 +169,7 @@ export class FormCaptComponent implements OnInit {
         );
 
       case 1:
-        return !!this.selectMultiSelected;
+        return !!this.motivo;
 
       case 2:
         return this.isUbicacionValid();
@@ -210,8 +226,10 @@ export class FormCaptComponent implements OnInit {
     }
   
     const denunciaData = {
+      id_user:this.currentUser.employee_number,
+      id_via: this.selectedMedio || 0,
       id_requesters: this.isLoggedIn ? 1 : 0,
-      id_reason: this.selectMultiSelected?.id || 0,
+      id_reason: this.motivo.id || 0,
       id_location: this.getLocationId(),
       id_sublocation: this.getSubLocationId(),
       date: this.specificDate || this.today,
@@ -238,7 +256,7 @@ export class FormCaptComponent implements OnInit {
               html: `
                 <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
                 <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-                <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.</em>
+                <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia</em>
               `,
               icon: 'success',
               confirmButtonText:'Cerrar'
@@ -384,13 +402,16 @@ export class FormCaptComponent implements OnInit {
     return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
   }
 
-  onMedioChange(event: any) {
-    this.selectedMedio = event.name;
-    this.telefono = '';
-    this.email = '';
-    this.showValidation = false;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+  onMedioChange() {
+    console.log("Medio seleccionado (ID):", this.selectedMedio);
+  
+    if (this.selectedMedio === 1) {
+      this.email_medio = '';
+    } else if (this.selectedMedio === 2) {
+      this.telefono_medio = '';
+    }
   }
+  
 
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
