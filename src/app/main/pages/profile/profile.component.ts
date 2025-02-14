@@ -13,6 +13,36 @@ import { Router } from '@angular/router';  // Importar Router para redirección
   encapsulation: ViewEncapsulation.None
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+
+  // Opciones de la gráfica de estadísticas
+  public estadisticasChartOptions: any = {
+    chart: {
+      type: 'donut',
+      width: '100%',
+      height: 350,
+      toolbar: { show: false }
+    },
+    dataLabels: { enabled: false },
+    legend: { show: true, position: 'bottom' },
+    stroke: { width: 2 },
+    colors: ['#7367F0', '#28C76F', '#EA5455'],
+    series: [], // Se llenará con los datos del endpoint
+    labels: [], // Se llenará con los datos del endpoint
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              label: 'Total',
+              color: '#6E6B7B'
+            }
+          }
+        }
+      }
+    }
+  };
   // public
   public contentHeader: object;
   public data: any;
@@ -79,8 +109,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     // Suscribimos a los cambios del servicio de perfil
+    // Obtener datos del servicio
     this._pricingService.onPricingChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
       this.data = response;
+
+      // Asignar datos a la gráfica de estadísticas
+      if (this.data?.estadisticas) {
+        this.estadisticasChartOptions.series = this.data.estadisticas.series;
+        this.estadisticasChartOptions.labels = this.data.estadisticas.labels;
+      }
     });
 
     // Configuración del encabezado de la página
