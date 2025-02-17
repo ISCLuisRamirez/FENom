@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { FormRepeaterModule } from 'app/main/forms/form-repeater/form-repeater.module';
 import { FormElementsModule } from 'app/main/forms/form-elements/form-elements.module';
 import { FormLayoutModule } from 'app/main/forms/form-layout/form-layout.module';
@@ -9,9 +9,9 @@ import { FormWizardModule } from 'app/main/forms/form-wizard/form-wizard.module'
 import { FormCaptModule } from 'app/main/forms/form-capt/form-capt.module';
 
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
+    CommonModule,
     FaqModule,
     FormElementsModule,
     FormLayoutModule,

@@ -19,9 +19,23 @@ export class ApiService {
   enviarDenuncia(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/requests`, data);
   }
-  // Método para guardar los datos en `requesters`
+  // Método para guardar los datos en `requesters` del denunciante.
   enviarDatosPersonales(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/requesters`, data);
+  }
+
+  // Método para guardar los datos en `witnesses`.(Testigos)
+  enviarDatosWit(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/witnesses`, data);
+  }
+  // Método para guardar los datos en `subjects`. (Involucrados)
+  enviarDatosInv(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/subjects`, data);
+  }
+
+  //Get para obtener informacion filtrada
+  getSolicitanteInfoFiltrado(data: any ): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/requesters?id_request=`+ data);
   }
  
 

@@ -202,19 +202,19 @@ export class FormWizardComponent implements OnInit {
   // Función para validar la ubicación
   isUbicacionValid(): boolean {
     if (!this.selectedUbicacion) return false;
-
+  
     switch (this.selectedUbicacion.toLowerCase()) {
       case 'sucursales':
       case 'navesanexas':
       case 'unidadtransporte':
         return !!this.customInputValue?.trim();
-
+  
       case 'corporativo':
       case 'cedis':
       case 'innomex':
       case 'trate':
         return !!this.customInputValue;
-
+  
       default:
         return false;
     }
@@ -289,26 +289,32 @@ export class FormWizardComponent implements OnInit {
       return;
     }
   
+    // Obtener el ID de la ubicación y sububicación
+    const idLocation = this.getLocationId();
+    const idSubLocation = this.getSubLocationId();
+  
+    // Datos de la denuncia
     const denunciaData = {
       id_requesters: this.isLoggedIn ? 1 : 0,
       id_reason: this.selectMultiSelected?.id || 0,
-      id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
+      id_location: idLocation,
+      id_sublocation: idSubLocation,
       date: this.specificDate || this.today,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
   
+    // Enviar la denuncia al backend
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
         // Si la denuncia se envió correctamente, registrar el solicitante (denunciante)
         const requesterData = {
           id_request: response.id, // ID de la denuncia creada
           name: this.name,
-          position: this.position, // Suponiendo que la ubicación es la posición
+          position: this.position,
           employee_number: this.employee_number || null,
           phone: this.phone || null,
-          email: this.email|| null
+          email: this.email || null
         };
   
         this.apiService.enviarDatosPersonales(requesterData).subscribe(
@@ -321,7 +327,7 @@ export class FormWizardComponent implements OnInit {
                 <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.</em>
               `,
               icon: 'success',
-              confirmButtonText:'Cerrar'
+              confirmButtonText: 'Cerrar'
             }).then((result) => {
               if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
                 this._router.navigate(['/Inicio']);
@@ -384,21 +390,27 @@ export class FormWizardComponent implements OnInit {
   }
 
   // Función para obtener el ID de la ubicación
+  // Función para obtener el ID de la ubicación
   getLocationId(): number {
     switch (this.selectedUbicacion.toLowerCase()) {
       case 'corporativo': return 1;
       case 'cedis': return 2;
       case 'sucursales': return 3;
-      case 'naves anexas': return 4;
+      case 'navesanexas': return 4;
       case 'innomex': return 5;
       case 'trate': return 6;
-      case 'unidad transporte': return 7;
+      case 'unidadtransporte': return 7;
       default: return 0;
     }
   }
 
   // Función para obtener el ID de la sububicación
   getSubLocationId(): number {
-    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
+    if (this.customInputValue) {
+      // Buscar el índice de la opción seleccionada en la lista de opciones
+      const index = this.listboxOptions.indexOf(this.customInputValue);
+      return index + 1; // Sumar 1 para evitar IDs de 0
+    }
+    return 0; // Si no hay sububicación, devolver 0
   }
 }

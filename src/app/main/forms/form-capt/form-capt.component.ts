@@ -59,13 +59,22 @@ export class FormCaptComponent implements OnInit {
     { name: 'Manipulación de inventarios', id: 12 }
   ];
 
-  //Datos del endpoint request
- 
+  //Datos del endpoint request 
   public currentUser: User | null = null;
   public telefono: string = '';
+
+  //datos del endpoint involved
+  public employee_number_inv: string ='';
+  public position_inv: string = '';
+  public name_inv: '';
+
+  //Datos del endpoint witness
+  public employee_number_wit: string ='';
+  public position_wit: string = '';
+  public name_wit: '';
+
+
   
-
-
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
@@ -128,7 +137,6 @@ export class FormCaptComponent implements OnInit {
       this.currentUser = user;
     });
 
-    this.cargarDatos();
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: true,
       animation: true
@@ -225,53 +233,113 @@ export class FormCaptComponent implements OnInit {
       return;
     }
   
+    // Determinar si se debe guardar name_sublocation o id_sublocation
+    const ubicacionesConInput = ['unidadtransporte', 'anexos', 'navesfilialesysucursales'];
+    const usarNameSubLocation = ubicacionesConInput.includes(this.selectedUbicacion.toLowerCase());
+  
+    let idSubLocation: number | null = null;
+    let nameSubLocation: string | null = null;
+  
+    if (usarNameSubLocation) {
+      // Guardar el valor del input en name_sublocation
+      nameSubLocation = this.customInputValue;
+    } else {
+      // Obtener el ID de la sububicación para otras ubicaciones
+      idSubLocation = this.getSubLocationId();
+    }
+  
+    // Datos de la denuncia
     const denunciaData = {
-      id_user:this.currentUser.employee_number,
+      id_user: this.currentUser.id,
       id_via: this.selectedMedio || 0,
-      id_requesters: this.isLoggedIn ? 1 : 0,
       id_reason: this.motivo.id || 0,
       id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
+      id_sublocation: idSubLocation, // Puede ser null si se usa name_sublocation
+      name_sublocation: nameSubLocation, // Guardar el nombre de la sububicación si es necesario
       date: this.specificDate || this.today,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
   
+    // Enviar la denuncia
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
         // Si la denuncia se envió correctamente, registrar el solicitante (denunciante)
         const requesterData = {
           id_request: response.id, // ID de la denuncia creada
           name: this.name,
-          position: this.position, // Suponiendo que la ubicación es la posición
+          position: this.position,
           employee_number: this.employee_number || null,
           phone: this.phone || null,
-          email: this.email|| null
+          email: this.email || null
         };
   
         this.apiService.enviarDatosPersonales(requesterData).subscribe(
           (res) => {
-            Swal.fire({
-              title: '¡Denuncia Enviada!',
-              html: `
-                <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-                <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-                <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia</em>
-              `,
-              icon: 'success',
-              confirmButtonText:'Cerrar'
-            }).then((result) => {
-              if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-                this._router.navigate(['/Inicio']);
-              }
+            // Guardar datos de Involucrados (Involved)
+            const involvedPromises = this.involvedList.map((involved) => {
+              const involvedData = {
+                id_request: response.id, // ID de la denuncia creada
+                name: involved.name,
+                position: involved.position,
+                employee_number: involved.employeeNumber || null
+              };
+              return this.apiService.enviarDatosInv(involvedData).toPromise();
             });
+  
+            // Guardar datos de Testigos (Witness)
+            const witnessPromises = this.witnessList.map((witness) => {
+              const witnessData = {
+                id_request: response.id, // ID de la denuncia creada
+                name: witness.name,
+                position: witness.position,
+                employee_number: witness.employeeNumber || null
+              };
+              return this.apiService.enviarDatosWit(witnessData).toPromise();
+            });
+  
+            // Esperar a que todas las promesas se resuelvan
+            Promise.all([...involvedPromises, ...witnessPromises])
+              .then(() => {
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                  title: '¡Denuncia Enviada!',
+                  html: `
+                    <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
+                    <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
+                    <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia</em>
+                  `,
+                  icon: 'success',
+                  confirmButtonText: 'Cerrar'
+                }).then((result) => {
+                  if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+                    this._router.navigate(['/Inicio']);
+                  }
+                });
+              })
+              .catch((error) => {
+                console.error('Error al guardar involucrados o testigos:', error);
+                Swal.fire({
+                  title: '❌ Error',
+                  text: 'Hubo un problema al guardar los involucrados o testigos.',
+                  icon: 'error',
+                  confirmButtonText: 'Reintentar'
+                });
+              });
           },
           (error) => {
             console.error("Error al guardar el solicitante:", error);
+            Swal.fire({
+              title: '❌ Error',
+              text: 'Hubo un problema al guardar el solicitante.',
+              icon: 'error',
+              confirmButtonText: 'Reintentar'
+            });
           }
         );
       },
       (error) => {
+        console.error('Error al enviar la denuncia:', error);
         Swal.fire({
           title: '❌ Error',
           text: 'Hubo un problema al enviar la denuncia.',
@@ -399,7 +467,12 @@ export class FormCaptComponent implements OnInit {
   }
 
   getSubLocationId(): number {
-    return this.listboxOptions.indexOf(this.customInputValue) + 1 || 0;
+    if (this.customInputValue) {
+      // Buscar el índice de la opción seleccionada en la lista de opciones
+      const index = this.listboxOptions.indexOf(this.customInputValue);
+      return index + 1; // Sumar 1 para evitar IDs de 0
+    }
+    return 0; // Si no hay sububicación, devolver 0
   }
 
   onMedioChange() {

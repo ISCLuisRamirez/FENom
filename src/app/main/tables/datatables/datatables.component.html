@@ -99,7 +99,7 @@
                         ? 'Incumplimiento de las políticas internas'
                         : row.id_reason === 12
                         ? 'Manipulación de inventarios'
-                        : 'ERROR'
+                        : ''
                     }}
                   </ng-template>
                 </ngx-datatable-column>
@@ -112,7 +112,7 @@
                         ? 'Teléfono'
                         : row.id_via === 2
                         ? 'Correo'
-                        : 'ERROR'
+                        : 'Portal'
                     }}
                   </ng-template>
                 </ngx-datatable-column>
@@ -138,11 +138,14 @@
                           ? 'Abierto'
                           : status == 3
                           ? 'Cerrado'
-                          : 'ERROR'
+                          : ''
                       }}
                     </div>
                   </ng-template>
-            </ngx-datatable-column>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Fecha de creación" prop="created_date" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
+                <ngx-datatable-column name="Ultima modificación" prop="updated_date" [draggable]="false" [resizeable]="false"></ngx-datatable-column>
 
   <!-- Columna Detalles -->
   <ngx-datatable-column name="Detalles" [width]="120" [sortable]="false" [canAutoResize]="false">

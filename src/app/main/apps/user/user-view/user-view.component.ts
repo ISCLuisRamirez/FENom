@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ApiService } from 'app/services/api.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -12,13 +13,15 @@ import Swal from 'sweetalert2';
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
   styleUrls: ['./user-view.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class UserViewComponent implements OnInit, OnDestroy {
   // Variables públicas
   public url = this.router.url;
   public lastValue: string;
   public data: any;
+  public solicitanteData: any;
+  public row: any = null;
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -27,6 +30,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   statusForm: FormGroup;
 
   constructor(
+    private apiService: ApiService, // Nombre correcto
     private router: Router,
     private _userViewService: UserViewService,
     private _httpClient: HttpClient,
@@ -37,7 +41,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
 
     // Inicializar el formulario reactivo
     this.statusForm = new FormGroup({
-      status: new FormControl('') // Inicializa vacío o con un valor del backend
+      status: new FormControl(''), // Inicializa vacío o con un valor del backend
     });
   }
 
@@ -58,7 +62,12 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         // Si el usuario confirma, proceder con el cambio de estado
-        this._httpClient.patch(`${environment.apiUrl}/api/requests/${this.data.id}/status`, { status: nuevoStatus }, { headers: { 'Content-Type': 'application/json' } })
+        this._httpClient
+          .patch(
+            `${environment.apiUrl}/api/requests/${this.data.id}/status`,
+            { status: nuevoStatus },
+            { headers: { 'Content-Type': 'application/json' } }
+          )
           .subscribe(
             (response) => {
               Swal.fire({
@@ -95,26 +104,31 @@ export class UserViewComponent implements OnInit, OnDestroy {
   }
 
   // Lifecycle Hooks
-  ngOnInit(): void {
-    this._userViewService.onUserViewChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe((response) => {
-      this.data = response;
-      console.log(this.data);
+   ngOnInit(): void {
+    this._userViewService.onUserViewChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response) => {
+        this.data = response;
 
-      // Actualizar el formulario con el estado actual de la denuncia
-      this.statusForm.patchValue({ status: this.data.status });
+        // Actualizar el formulario con el estado actual de la denuncia
+        this.statusForm.patchValue({ status: this.data.status });
 
-      // Aquí puedes acceder a más datos de la base de datos
-      console.log('Folio:', this.data.folio);
-      console.log('Medio de denuncia:', this.data.id_via);
-      console.log('Tipo de denuncia:', this.data.id_reason);
-      console.log('Ubicación:', this.data.id_location);
-      console.log('Fecha del suceso:', this.data.date);
-      console.log('Descripción:', this.data.description);
-      console.log('Nombre del solicitante:', this.data.applicant_name);
-      console.log('Correo del solicitante:', this.data.applicant_email);
-      console.log('Teléfono del solicitante:', this.data.applicant_phone);
-      console.log('Dirección del solicitante:', this.data.applicant_address);
-    });
+        // Obtener los datos del solicitante si el id_requester está disponible
+        if (this.data.id) {
+          this.apiService.getSolicitanteInfoFiltrado(this.data.id)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+              (solicitanteData) => {
+                // Asignar los datos de solicitanteData a la variable row
+                this.row = solicitanteData;
+                console.log('Datos guardados en row:', this.row);
+              },
+              (error) => {
+                console.error('Error al obtener los datos del solicitante:', error);
+              }
+            );
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -133,7 +147,39 @@ export class UserViewComponent implements OnInit, OnDestroy {
       case 3:
         return 'Cerrado';
       default:
-        return 'ERROR';
+        return '';
+    }
+  }
+
+  getMedio(id_via: number): string {
+    switch (id_via) {
+      case 1:
+        return 'Teléfono';
+      case 2:
+        return 'Correo';
+      default:
+        return 'Portal';
+    }
+  }
+
+  getLocation(id_location: number): string {
+    switch (id_location) {
+      case 1:
+        return 'Corporativo';
+      case 2:
+        return 'Cedis';
+      case 3:
+        return 'Sucursales';
+      case 4:
+        return 'Naves y anexas filiales';
+      case 5:
+        return 'Innomex';
+      case 6:
+        return 'TRATE';
+      case 7:
+        return 'Unidad de transporte';
+      default:
+        return 'Ubicación desconocida'; // Valor por defecto si el id_location no coincide
     }
   }
 

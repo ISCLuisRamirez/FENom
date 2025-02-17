@@ -20,7 +20,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Medio de
-                        denuncia:</strong> {{data.id_via}}</span>
+                        denuncia:</strong> {{ getMedio(data.id_via) }}</span>
                   </div>
                 </div>
 
@@ -37,7 +37,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Ubicación:
-                      </strong>{{data.id_location}}
+                      </strong>{{ getLocation(data.id_location) }}
                     </span>
                   </div>
                 </div>
@@ -120,8 +120,8 @@
                   <thead>
                     <tr>
                       <th>Nombre</th>
-                      <th>Rol</th>
-                      <th>Teléfono</th>
+                      <th>Puesto</th>
+                      <th>Número de empleado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -157,8 +157,8 @@
                   <thead>
                     <tr>
                       <th>Nombre</th>
-                      <th>Rol</th>
-                      <th>Teléfono</th>
+                      <th>Puesto</th>
+                      <th>Número de empleado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -196,33 +196,49 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="user" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Nombre: </strong>{{data.applicant_name}}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Nombre: </strong>{{ solicitanteData.name }}
+                    </span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="mail" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Correo Electrónico: </strong>{{data.applicant_email}}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Correo Electrónico: </strong>{{ solicitanteData.emai }}
+                    </span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="phone" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Teléfono: </strong>{{data.applicant_phone}}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Teléfono: </strong>{{ solicitanteData.phone }}
+                    </span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Dirección: </strong>{{data.applicant_address}}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Numero de empleado: </strong>{{ solicitanteData.employee_number }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="map-pin" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Puesto: </strong>{{ solicitanteData.position }}
+                    </span>
                   </div>
                 </div>
               </div>
               <!-- End Applicant Information -->
-
             </div>
           </div>
         </div>
