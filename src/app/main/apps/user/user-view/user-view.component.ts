@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { ApiService } from 'app/services/api.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FormGroup, FormControl } from '@angular/forms';
 import { UserViewService } from 'app/main/apps/user/user-view/user-view.service';
 import { environment } from 'environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,7 +21,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   public lastValue: string;
   public data: any;
   public solicitanteData: any;
-  public row: any = null;
+  public row: any[] = [];
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -46,62 +46,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   }
 
   // Método para actualizar el estado
-  actualizarStatus() {
-    const nuevoStatus = this.statusForm.value.status;
-
-    // Mostrar confirmación antes de cambiar el estado
-    Swal.fire({
-      title: 'Confirmación',
-      text: '¿Deseas cambiar el estado de la denuncia?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, cambiar',
-      cancelButtonText: 'No, cancelar',
-      confirmButtonColor: '#7367F0',
-      cancelButtonColor: '#E42728',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Si el usuario confirma, proceder con el cambio de estado
-        this._httpClient
-          .patch(
-            `${environment.apiUrl}/api/requests/${this.data.id}/status`,
-            { status: nuevoStatus },
-            { headers: { 'Content-Type': 'application/json' } }
-          )
-          .subscribe(
-            (response) => {
-              Swal.fire({
-                title: '¡Estado Actualizado!',
-                icon: 'success',
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#7367F0',
-              }).then(() => {
-                this._router.navigate(['/tables/datatables']);
-              });
-            },
-            (error) => {
-              console.error('Error al actualizar el estado:', error); // Log del error
-              Swal.fire({
-                title: 'Error!',
-                text: 'No se pudo actualizar el estado.',
-                icon: 'error',
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#7367F0',
-              });
-            }
-          );
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // Si el usuario cancela, no hacer nada
-        Swal.fire({
-          title: 'Cancelado',
-          text: 'No se realizaron cambios.',
-          icon: 'info',
-          confirmButtonText: 'Cerrar',
-          confirmButtonColor: '#7367F0',
-        });
-      }
-    });
-  }
+  
 
   // Lifecycle Hooks
    ngOnInit(): void {
@@ -130,6 +75,67 @@ export class UserViewComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  actualizarStatus() {
+    const nuevoStatus = this.statusForm.value.status;
+  
+    // Mostrar confirmación antes de cambiar el estado
+    Swal.fire({
+      title: 'Confirmación',
+      text: '¿Deseas cambiar el estado de la denuncia?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cambiar',
+      cancelButtonText: 'No, cancelar',
+      confirmButtonColor: '#7367F0',
+      cancelButtonColor: '#E42728',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const apiUrl = `${environment.apiUrl}/api/requests/${this.data.id}/status`;
+  
+        this._httpClient.patch(
+          apiUrl,
+          { status: nuevoStatus },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        ).subscribe({
+          next: (response) => {
+            Swal.fire({
+              title: '¡Estado Actualizado!',
+              text: 'El estado se ha actualizado correctamente.',
+              icon: 'success',
+              confirmButtonText: 'Cerrar',
+              confirmButtonColor: '#7367F0',
+            }).then(() => {
+              this._router.navigate(['/tables/datatables']);
+            });
+          },
+          error: (error) => {
+            console.error('Error al actualizar el estado:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: error?.error?.message || 'No se pudo actualizar el estado.',
+              icon: 'error',
+              confirmButtonText: 'Cerrar',
+              confirmButtonColor: '#7367F0',
+            });
+          }
+        });
+      } else {
+        Swal.fire({
+          title: 'Cancelado',
+          text: 'No se realizaron cambios.',
+          icon: 'info',
+          confirmButtonText: 'Cerrar',
+          confirmButtonColor: '#7367F0',
+        });
+      }
+    });
+  }
+  
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions

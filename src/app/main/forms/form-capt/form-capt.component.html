@@ -268,7 +268,7 @@
                     </div>
                     <div *ngIf="showInputBox">
                       <label>{{ locationLabel }}</label>
-                      <input type="text" id="customInput" class="form-control" [(ngModel)]="customInputValue"
+                      <input type="string" id="customInput" class="form-control" [(ngModel)]="customInputValuelabel"
                         [placeholder]="locationLabel" required />
                     </div>
                   </div>
@@ -295,7 +295,7 @@
             
                   <div *ngIf="showTransportInput" class="mt-3">
                     <label>Ingrese el número de la unidad de transporte:</label>
-                    <input type="text" id="customInput" class="form-control" [(ngModel)]="customInputValue"
+                    <input type="text" id="customInputValue" class="form-control" [(ngModel)]="customInputValuelabel"
                       placeholder="# de unidad de transporte" required />
                   </div>
             
@@ -451,7 +451,7 @@
                     id="name-{{ i }}"
                     class="form-control"
                     placeholder="Nombre(s) Apellido Paterno Apellido Materno"
-                    [(ngModel)]="person.name"
+                    [(ngModel)]="person.name_inv"
                     required
                   />
                 </div>
@@ -462,7 +462,7 @@
                     id="position-{{ i }}"
                     class="form-control"
                     placeholder="Ej. Operador"
-                    [(ngModel)]="person.position"
+                    [(ngModel)]="person.position_inv"
                   />
                 </div>
                 <div class="form-group col-md-4">
@@ -472,7 +472,7 @@
                     id="employee_number-{{ i }}"
                     class="form-control"
                     placeholder="112233"
-                    [(ngModel)]="person.employee_number"
+                    [(ngModel)]="person.employee_number_inv"
                   />
                 </div>
               </div>
@@ -496,7 +496,7 @@
                     id="witness-name-{{ i }}"
                     class="form-control"
                     placeholder="Nombre(s) Apellido Paterno Apellido Materno"
-                    [(ngModel)]="witness.name"
+                    [(ngModel)]="witness.name_wit"
                   />
                 </div>
                 <div class="form-group col-md-4">
@@ -506,7 +506,7 @@
                     id="witness-contact-{{ i }}"
                     class="form-control"
                     placeholder="Ej. Operador"
-                    [(ngModel)]="witness.contact"
+                    [(ngModel)]="witness.position_wit"
                   />
                 </div>
                 <div class="form-group col-md-4">
@@ -516,7 +516,7 @@
                     id="witness-contact-{{ i }}"
                     class="form-control"
                     placeholder="445566"
-                    [(ngModel)]="witness.contact"
+                    [(ngModel)]="witness.employee_number_wit"
                   />
                 </div>
               </div>

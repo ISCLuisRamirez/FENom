@@ -25,13 +25,18 @@ export class ApiService {
   }
 
   // Método para guardar los datos en `witnesses`.(Testigos)
-  enviarDatosWit(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/witnesses`, data);
-  }
-  // Método para guardar los datos en `subjects`. (Involucrados)
   enviarDatosInv(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/subjects`, data);
+    return this.http.post(`${this.apiUrl}/api/subjects`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
+  
+  enviarDatosWit(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/witnesses`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
 
   //Get para obtener informacion filtrada
   getSolicitanteInfoFiltrado(data: any ): Observable<any> {

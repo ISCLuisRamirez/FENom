@@ -8,7 +8,6 @@ import { User } from 'app/auth/models';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { StringNullableChain } from 'lodash';
 
 const URL = 'http://localhost:5101';
 
@@ -63,7 +62,7 @@ export class FormCaptComponent implements OnInit {
   public currentUser: User | null = null;
   public telefono: string = '';
 
-  //datos del endpoint involved
+  //Datos del endpoint involved 
   public employee_number_inv: string ='';
   public position_inv: string = '';
   public name_inv: '';
@@ -71,7 +70,7 @@ export class FormCaptComponent implements OnInit {
   //Datos del endpoint witness
   public employee_number_wit: string ='';
   public position_wit: string = '';
-  public name_wit: '';
+  public name_wit: ''; 
 
 
   
@@ -82,11 +81,12 @@ export class FormCaptComponent implements OnInit {
   public selectedUbicacion: string = '';
   public approximateDatePeriod = '';
   public specificDate: string = '';
+ 
   public today: string;
   public datereport: string = '';
   public selectedFiles: FileItem[] = [];
-  public involvedList = [{ name: '', position: '', employeeNumber: '' }];
-  public witnessList = [{ name: '', position: '', employeeNumber: '' }];
+  public involvedList = [{ name_inv: '', position_inv: '', employee_number_inv: '' }];
+  public witnessList = [{ name_wit: '', position_wit: '', employee_number_wit: '' }];
   public datos = [];
  
   public showValidation: boolean = false;
@@ -95,13 +95,8 @@ export class FormCaptComponent implements OnInit {
   public showInputBox = false;
   public listboxOptions: string[] = [];
   public customInputValue = '';
+  public customInputValuelabel = '';
   public dynamicLabel = '';
-
-  
-
-  
-
-
   private verticalWizardStepper: Stepper;
 
   public uploader: FileUploader = new FileUploader({
@@ -141,9 +136,7 @@ export class FormCaptComponent implements OnInit {
       linear: true,
       animation: true
     });
-
     this.today = new Date().toISOString().split('T')[0];
-
     Swal.fire({
       title: '<span style="color: red;">IMPORTANTE</span>',
       html: 'Antes de comenzar tu denuncia, ten en cuenta que al finalizar se te asignará un folio y una contraseña únicos. <br><br><strong> Es crucial que los resguardes en un lugar seguro, ya que <strong style="color: red;">NO</strong> podrán recuperarse.</strong>',
@@ -190,7 +183,7 @@ export class FormCaptComponent implements OnInit {
         );
 
       case 4:
-        return this.involvedList.every(person => person.name.trim() !== '');
+        return this.involvedList.every(person => person.name_inv.trim() !== '');
 
       case 5:
         if (this.showAdditionalInfo) {
@@ -241,115 +234,124 @@ export class FormCaptComponent implements OnInit {
     let nameSubLocation: string | null = null;
   
     if (usarNameSubLocation) {
-      // Guardar el valor del input en name_sublocation
-      nameSubLocation = this.customInputValue;
+      nameSubLocation = this.customInputValuelabel;
     } else {
-      // Obtener el ID de la sububicación para otras ubicaciones
       idSubLocation = this.getSubLocationId();
     }
   
     // Datos de la denuncia
     const denunciaData = {
-      id_user: this.currentUser.id,
+      id_user: this.currentUser?.id || 0,
       id_via: this.selectedMedio || 0,
-      id_reason: this.motivo.id || 0,
+      id_reason: this.motivo?.id || 0,
       id_location: this.getLocationId(),
-      id_sublocation: idSubLocation, // Puede ser null si se usa name_sublocation
-      name_sublocation: nameSubLocation, // Guardar el nombre de la sububicación si es necesario
+      id_sublocation: idSubLocation,
+      name_sublocation: this.selectedRegion + "-" + this.customInputValuelabel|| null,
       date: this.specificDate || this.today,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };
   
-    // Enviar la denuncia
+    console.log('📤 Enviando Denuncia:', denunciaData);
+  
+    // Enviar la denuncia principal
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
-        // Si la denuncia se envió correctamente, registrar el solicitante (denunciante)
-        const requesterData = {
-          id_request: response.id, // ID de la denuncia creada
-          name: this.name,
-          position: this.position,
-          employee_number: this.employee_number || null,
-          phone: this.phone || null,
-          email: this.email || null
-        };
+        console.log('✅ Denuncia Guardada:', response);
   
-        this.apiService.enviarDatosPersonales(requesterData).subscribe(
-          (res) => {
-            // Guardar datos de Involucrados (Involved)
-            const involvedPromises = this.involvedList.map((involved) => {
-              const involvedData = {
-                id_request: response.id, // ID de la denuncia creada
-                name: involved.name,
-                position: involved.position,
-                employee_number: involved.employeeNumber || null
-              };
-              return this.apiService.enviarDatosInv(involvedData).toPromise();
+        const idRequest = response?.id;
+  
+        if (!idRequest) {
+          Swal.fire({
+            title: '❌ Error',
+            text: 'No se recibió el ID de la denuncia.',
+            icon: 'error',
+            confirmButtonText: 'Reintentar'
+          });
+          return;
+        }
+  
+        // Enviar Datos Personales si no es anónimo
+        let requesterPromise = Promise.resolve();
+        if (!this.isAnonymous) {
+          const requesterData = {
+            id_request: idRequest,
+            name: this.name?.trim() || '',
+            position: this.position?.trim() || '',
+            employee_number: this.employee_number?.trim() || null,
+            phone: this.phone?.trim() || null,
+            email: this.email?.trim() || null
+          };
+          console.log('📤 Enviando Solicitante:', requesterData);
+          requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
+        }
+  
+        // Enviar Involucrados (Subjects)
+        const involvedPromises = this.involvedList
+          .filter(inv => inv.name_inv?.trim())
+          .map((involved) => {
+            const involvedData = {
+              id_request: idRequest,
+              name: involved.name_inv?.trim() || '',
+              position: involved.position_inv?.trim() || '',
+              employee_number: involved.employee_number_inv?.trim() || null
+            };
+            return this.apiService.enviarDatosInv(involvedData).toPromise();
+          });
+  
+        // Enviar Testigos (Witnesses)
+        const witnessPromises = this.witnessList
+          .filter(wit => wit.name_wit?.trim())
+          .map((witness) => {
+            const witnessData = {
+              id_request: idRequest,
+              name: witness.name_wit?.trim() || '',
+              position: witness.position_wit?.trim() || '',
+              employee_number: witness.employee_number_wit ? String(witness.employee_number_wit).trim() : null
+            };
+            return this.apiService.enviarDatosWit(witnessData).toPromise();
+          });
+  
+        // Esperar a que todas las promesas se completen
+        Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
+          .then(() => {
+            console.log('✅ Todos los datos fueron guardados correctamente');
+            Swal.fire({
+              title: '✅ Denuncia Enviada',
+              html: `
+                <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
+                <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
+                <em style="color: red;"><strong>IMPORTANTE:</strong> Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
+              `,
+              icon: 'success',
+              confirmButtonText: 'Cerrar'
+            }).then(() => {
+              this._router.navigate(['/Inicio']);
             });
-  
-            // Guardar datos de Testigos (Witness)
-            const witnessPromises = this.witnessList.map((witness) => {
-              const witnessData = {
-                id_request: response.id, // ID de la denuncia creada
-                name: witness.name,
-                position: witness.position,
-                employee_number: witness.employeeNumber || null
-              };
-              return this.apiService.enviarDatosWit(witnessData).toPromise();
-            });
-  
-            // Esperar a que todas las promesas se resuelvan
-            Promise.all([...involvedPromises, ...witnessPromises])
-              .then(() => {
-                // Mostrar mensaje de éxito
-                Swal.fire({
-                  title: '¡Denuncia Enviada!',
-                  html: `
-                    <strong>Folio:</strong><span style="color: green;"><strong> ${response.folio}</strong></span><br><br>
-                    <strong>Contraseña:</strong><span style="color: green;"> <strong> ${response.password}</strong><br><br></span>
-                    <em><span style="color: red;"><strong>IMPORTANTE.</strong><br></span>Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia</em>
-                  `,
-                  icon: 'success',
-                  confirmButtonText: 'Cerrar'
-                }).then((result) => {
-                  if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
-                    this._router.navigate(['/Inicio']);
-                  }
-                });
-              })
-              .catch((error) => {
-                console.error('Error al guardar involucrados o testigos:', error);
-                Swal.fire({
-                  title: '❌ Error',
-                  text: 'Hubo un problema al guardar los involucrados o testigos.',
-                  icon: 'error',
-                  confirmButtonText: 'Reintentar'
-                });
-              });
-          },
-          (error) => {
-            console.error("Error al guardar el solicitante:", error);
+          })
+          .catch((error) => {
+            console.error('❌ Error al guardar Involucrados o Testigos:', error);
             Swal.fire({
               title: '❌ Error',
-              text: 'Hubo un problema al guardar el solicitante.',
+              text: 'Hubo un problema al guardar los involucrados o testigos. Verifica los datos e intenta nuevamente.',
               icon: 'error',
               confirmButtonText: 'Reintentar'
             });
-          }
-        );
+          });
       },
       (error) => {
-        console.error('Error al enviar la denuncia:', error);
+        console.error('❌ Error al enviar la denuncia:', error);
         Swal.fire({
           title: '❌ Error',
-          text: 'Hubo un problema al enviar la denuncia.',
+          text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
           icon: 'error',
           confirmButtonText: 'Reintentar'
         });
       }
     );
   }
-
+  
+  
   verticalWizardNext() {
     this.verticalWizardStepper.next();
     this.cdr.detectChanges(); // Forzar la detección de cambios
@@ -457,11 +459,11 @@ export class FormCaptComponent implements OnInit {
     switch (this.selectedUbicacion.toLowerCase()) {
       case 'corporativo': return 1;
       case 'cedis': return 2;
-      case 'sucursales': return 3;
-      case 'naves anexas': return 4;
+      case 'navesfilialesysucursales': return 3;
+      case 'anexos': return 4;
       case 'innomex': return 5;
       case 'trate': return 6;
-      case 'unidad transporte': return 7;
+      case 'unidadtransporte': return 7;
       default: return 0;
     }
   }
@@ -498,7 +500,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   addInvolved() {
-    this.involvedList.push({ name: '', position: '', employeeNumber: '' });
+    this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '' });
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
@@ -510,7 +512,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   addWitness() {
-    this.witnessList.push({ name: '', position: '', employeeNumber: '' });
+    this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '' });
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 

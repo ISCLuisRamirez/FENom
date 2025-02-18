@@ -197,7 +197,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="user" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Nombre: </strong>{{ solicitanteData.name }}
+                      <strong>Nombre: </strong>{{ row[0].name }}
                     </span>
                   </div>
                 </div>
@@ -206,7 +206,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="mail" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Correo Electrónico: </strong>{{ solicitanteData.emai }}
+                      <strong>Correo Electrónico: </strong>{{ row[0].email }}
                     </span>
                   </div>
                 </div>
@@ -215,7 +215,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="phone" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Teléfono: </strong>{{ solicitanteData.phone }}
+                      <strong>Teléfono: </strong>{{ row[0].phone }}
                     </span>
                   </div>
                 </div>
@@ -224,7 +224,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Numero de empleado: </strong>{{ solicitanteData.employee_number }}
+                      <strong>Numero de empleado: </strong>{{ row[0].employee_number }}
                     </span>
                   </div>
                 </div>
@@ -233,7 +233,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Puesto: </strong>{{ solicitanteData.position }}
+                      <strong>Puesto: </strong>{{ row[0].position }}
                     </span>
                   </div>
                 </div>
@@ -282,11 +282,11 @@
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
               <!-- Formulario para cambiar el estado -->
-              <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
+              <form [formGroup]="statusForm">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="settings" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">Cambiar Estatus de la Denuncia:</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0 p-2">Cambiar Estatus de la Denuncia:</span>
                   </div>
                   <div>
                     <!-- Select con formControlName -->
@@ -299,9 +299,9 @@
                 </div>
                 <div class="d-flex justify-content-end mt-3">
                   <!-- Botón de cancelar -->
-                  <button class="btn btn-secondary mr-2" [routerLink]="['/tables/datatables']">Cancelar</button>
+                  <button class="btn btn-secondary mr-2" routerLink="/tables/datatables">Cancelar</button>
                   <!-- Botón de guardar -->
-                  <button type="submit" class="btn btn-primary">Guardar</button>
+                  <button type="submit" (click)="actualizarStatus()" class="btn btn-primary">Guardar</button>
                 </div>
               </form>
             </div>
