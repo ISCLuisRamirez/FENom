@@ -8,10 +8,14 @@ import { User } from 'app/auth/models';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
 
 const URL = 'http://localhost:5101';
 
 @Component({
+  
   selector: 'app-form-capt',
   templateUrl: './form-capt.component.html',
   styleUrls: ['./form-capt.component.scss'],
@@ -19,6 +23,17 @@ const URL = 'http://localhost:5101';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormCaptComponent implements OnInit {
+  @ViewChild('form') form!: NgForm;
+  @ViewChild('form1') form1!: NgForm;
+  @ViewChild('form2') form2!: NgForm;
+  @ViewChild('form3') form3!: NgForm;
+  @ViewChild('form4') form4!: NgForm;
+  @ViewChild('form5') form5!: NgForm;
+
+
+  public currentStep: number = 0;
+
+  public value_UT:string='';
   public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
   public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
   public selectedRegion: string = ''; // Para almacenar la región seleccionada
@@ -246,7 +261,7 @@ export class FormCaptComponent implements OnInit {
       id_reason: this.motivo?.id || 0,
       id_location: this.getLocationId(),
       id_sublocation: idSubLocation,
-      name_sublocation: this.selectedRegion + "-" + this.customInputValuelabel|| null,
+      name_sublocation: this.selectedRegion + "-" + this.value_UT|| null,
       date: this.specificDate || this.today,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
@@ -276,11 +291,11 @@ export class FormCaptComponent implements OnInit {
         if (!this.isAnonymous) {
           const requesterData = {
             id_request: idRequest,
-            name: this.name?.trim() || '',
-            position: this.position?.trim() || '',
-            employee_number: this.employee_number?.trim() || null,
-            phone: this.phone?.trim() || null,
-            email: this.email?.trim() || null
+            name: this.name|| '',
+            position: this.position|| null,
+            employee_number: this.employee_number|| null,
+            phone: this.phone || null,
+            email: this.email || null
           };
           console.log('📤 Enviando Solicitante:', requesterData);
           requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
@@ -353,13 +368,68 @@ export class FormCaptComponent implements OnInit {
   
   
   verticalWizardNext() {
-    this.verticalWizardStepper.next();
+    switch (this.currentStep) {
+      case 0:
+        if (this.form.valid) {
+          this.currentStep++;
+          this.verticalWizardStepper.next();
+        } else {
+          console.warn('Formulario "Medio" inválido');
+        }
+        break;
+      case 1:
+        if (this.form1.valid) {
+          this.currentStep++;
+          this.verticalWizardStepper.next();
+        } else {
+          console.warn('Formulario "Motivo" inválido');
+        }
+        break;
+      case 2:
+        if (this.form2.valid) {
+          this.currentStep++;
+          this.verticalWizardStepper.next();
+        } else {
+          console.warn('Formulario "Ubicación" inválido');
+        }
+        break;
+      case 3:
+        if (this.form3.valid) {
+          this.currentStep++;
+          this.verticalWizardStepper.next();
+        } else {
+          console.warn('Formulario "Detalles" inválido');
+        }
+        break;
+      case 4:
+        if (this.form4.valid) {
+          this.currentStep++;
+          this.verticalWizardStepper.next();
+        } else {
+          console.warn('Formulario "Involucrados" inválido');
+        }
+        break;
+      case 5:
+        if (this.form5.valid) {
+          this.onSubmit(); 
+        } else {
+          console.warn('Formulario "Privacidad" inválido');
+        }
+        break;
+      default:
+        console.warn('Paso desconocido');
+        break;
+    }
+
     this.cdr.detectChanges(); // Forzar la detección de cambios
   }
 
   verticalWizardPrevious() {
-    this.verticalWizardStepper.previous();
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    if (this.currentStep > 0) {
+      this.currentStep--;
+      this.verticalWizardStepper.previous();
+      this.cdr.detectChanges();
+    }
   }
 
   cargarDatos() {

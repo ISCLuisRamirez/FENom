@@ -36,15 +36,20 @@ export class ApiService {
       headers: { 'Content-Type': 'application/json' }
     });
   }
+
+  getInvolucrados(id_request: number) {
+    return this.http.get<any[]>(`${this.apiUrl}/api/subjects/${id_request}`);
+  }
   
+  getTestigos(id_request: number) {
+    return this.http.get<any[]>(`${this.apiUrl}/api/witnesses/${id_request}`);
+  }
 
   //Get para obtener informacion filtrada
   getSolicitanteInfoFiltrado(data: any ): Observable<any> {
     return this.http.get(`${this.apiUrl}/api/requesters?id_request=`+ data);
   }
  
-
-
   // Método para enviar datos (POST)
   crearDato(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/datos`, data);
