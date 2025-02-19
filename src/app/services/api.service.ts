@@ -15,6 +15,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/api/roles`); //Obtiene los datos de los roles.
   }
 
+  getdatosgrafica(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/requests/counter`); //Obtiene los datos de los roles.
+  }
+
   // Método para enviar datos a mi tabla requests (Solicitudes)
   enviarDenuncia(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/requests`, data);

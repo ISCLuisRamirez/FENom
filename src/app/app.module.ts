@@ -25,6 +25,9 @@ import { AppComponent } from 'app/app.component';
 import { LayoutModule } from 'app/layout/layout.module';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 
+// 1. Importar NgApexchartsModule
+import { NgApexchartsModule } from 'ng-apexcharts';
+
 import { ContextMenuComponent } from 'app/main/extensions/context-menu/context-menu.component';
 import { AnimatedCustomContextMenuComponent } from './main/extensions/context-menu/custom-context-menu/animated-custom-context-menu/animated-custom-context-menu.component';
 import { BasicCustomContextMenuComponent } from './main/extensions/context-menu/custom-context-menu/basic-custom-context-menu/basic-custom-context-menu.component';
@@ -35,95 +38,61 @@ const appRoutes: Routes = [
     path: 'Inicio',
     redirectTo: '/pages/miscellaneous/final-index'
   },
-
   {
     path: 'apps',
     loadChildren: () => import('./main/apps/apps.module').then(m => m.AppsModule),
-    /* canActivate: [AuthGuard] */
   },
   {
     path: 'pages',
     loadChildren: () => import('./main/pages/pages.module').then(m => m.PagesModule)
   },
-  {
-    path: 'ui',
-    loadChildren: () => import('./main/ui/ui.module').then(m => m.UIModule),
-    /* canActivate: [AuthGuard] */
-  },
-  {
-    path: 'components',
-    loadChildren: () => import('./main/components/components.module').then(m => m.ComponentsModule),
-    /* canActivate: [AuthGuard] */
-  },
-  {
-    path: 'extensions',
-    loadChildren: () => import('./main/extensions/extensions.module').then(m => m.ExtensionsModule),
-    /* canActivate: [AuthGuard] */
-  },
-  {
-    path: 'forms',
-    loadChildren: () => import('./main/forms/forms.module').then(m => m.FormsModule),
-    /* canActivate: [AuthGuard] */
-  },
-  {
-    path: 'tables',
-    loadChildren: () => import('./main/tables/tables.module').then(m => m.TablesModule),
-    /* canActivate: [AuthGuard] */
-  },
-  {
-    path: 'charts-and-maps',
-    loadChildren: () => import('./main/charts-and-maps/charts-and-maps.module').then(m => m.ChartsAndMapsModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: '',
-    redirectTo: '/pages/miscellaneous/final-index',
-    pathMatch: 'full'
-  },
+  // ... resto de rutas
   {
     path: '**',
-    redirectTo: '/pages/miscellaneous/error' //Error 404 - Page not found
+    redirectTo: '/pages/miscellaneous/error'
   }
 ];
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        ContextMenuComponent,
-        BasicCustomContextMenuComponent,
-        AnimatedCustomContextMenuComponent,
-        SubMenuCustomContextMenuComponent
-    ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        HttpClientInMemoryWebApiModule.forRoot(FakeDbService, {
-            delay: 0,
-            passThruUnknownUrl: true
-        }),
-        RouterModule.forRoot(appRoutes, {
-            scrollPositionRestoration: 'enabled',
-            relativeLinkResolution: 'legacy'
-        }),
-        NgbModule,
-        ToastrModule.forRoot(),
-        TranslateModule.forRoot(),
-        ContextMenuModule,
-        CoreModule.forRoot(coreConfig),
-        CoreCommonModule,
-        CoreSidebarModule,
-        CoreThemeCustomizerModule,
-        CardSnippetModule,
-        LayoutModule,
-        ContentHeaderModule
-    ],
-    providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        // ! IMPORTANT: Provider used to create fake backend, comment while using real API
-      /*   fakeBackendProvider */
-    ],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    ContextMenuComponent,
+    BasicCustomContextMenuComponent,
+    AnimatedCustomContextMenuComponent,
+    SubMenuCustomContextMenuComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    HttpClientInMemoryWebApiModule.forRoot(FakeDbService, {
+      delay: 0,
+      passThruUnknownUrl: true
+    }),
+    RouterModule.forRoot(appRoutes, {
+      scrollPositionRestoration: 'enabled',
+      relativeLinkResolution: 'legacy'
+    }),
+    NgbModule,
+    ToastrModule.forRoot(),
+    TranslateModule.forRoot(),
+    ContextMenuModule,
+    CoreModule.forRoot(coreConfig),
+    CoreCommonModule,
+    CoreSidebarModule,
+    CoreThemeCustomizerModule,
+    CardSnippetModule,
+    LayoutModule,
+    ContentHeaderModule,
+
+    // 2. Agregar NgApexchartsModule al array de imports
+    NgApexchartsModule
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    // fakeBackendProvider
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -22,6 +22,10 @@ export class UserViewComponent implements OnInit, OnDestroy {
   public data: any;
   public solicitanteData: any;
   public row: any[] = [];
+  public implicados: any[] = [];
+  public testigos: any[] = [];
+  
+
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -49,27 +53,51 @@ export class UserViewComponent implements OnInit, OnDestroy {
   
 
   // Lifecycle Hooks
-   ngOnInit(): void {
+  ngOnInit(): void {
     this._userViewService.onUserViewChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
-
-        // Actualizar el formulario con el estado actual de la denuncia
-        this.statusForm.patchValue({ status: this.data.status });
-
-        // Obtener los datos del solicitante si el id_requester está disponible
+  
+        // Obtener los datos del solicitante
         if (this.data.id) {
           this.apiService.getSolicitanteInfoFiltrado(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (solicitanteData) => {
-                // Asignar los datos de solicitanteData a la variable row
                 this.row = solicitanteData;
-                console.log('Datos guardados en row:', this.row);
+                console.log('Datos del solicitante:', this.row);
               },
               (error) => {
                 console.error('Error al obtener los datos del solicitante:', error);
+              }
+            );
+  
+          // Obtener los datos de los implicados
+          this.apiService.getInvolucrados(this.data.id)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+              (implicadosData) => {
+                // Verifica si implicadosData es un arreglo o un objeto
+                this.implicados = Array.isArray(implicadosData) ? implicadosData : [implicadosData];
+                console.log('Datos de implicados:', this.implicados);
+              },
+              (error) => {
+                console.error('Error al obtener los datos de los implicados:', error);
+              }
+            );
+  
+          // Obtener los datos de los testigos
+          this.apiService.getTestigos(this.data.id)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+              (testigosData) => {
+                // Verifica si testigosData es un arreglo o un objeto
+                this.testigos = Array.isArray(testigosData) ? testigosData : [testigosData];
+                console.log('Datos de testigos:', this.testigos);
+              },
+              (error) => {
+                console.error('Error al obtener los datos de los testigos:', error);
               }
             );
         }
@@ -78,6 +106,12 @@ export class UserViewComponent implements OnInit, OnDestroy {
 
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
+  
+    // Obtener el ID del usuario actual (suponiendo que está en el localStorage)
+    const userId = localStorage.getItem('userId'); // Ajusta según tu sistema de autenticación
+  
+    // Generar la fecha de última actualización
+    const updatedDate = new Date().toISOString(); // Fecha en formato ISO
   
     // Mostrar confirmación antes de cambiar el estado
     Swal.fire({
@@ -93,16 +127,29 @@ export class UserViewComponent implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         const apiUrl = `${environment.apiUrl}/api/requests/${this.data.id}/status`;
   
+        // Agregar token de autenticación si es necesario
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Ajusta según tu sistema de autenticación
+        });
+  
+        // Datos a enviar en la solicitud PATCH
+        const body = {
+          status: nuevoStatus,
+          id_user_updated: userId,
+          updated_date: updatedDate
+        };
+  
+        console.log('URL de la API:', apiUrl);
+        console.log('Datos a enviar:', body);
+  
         this._httpClient.patch(
           apiUrl,
-          { status: nuevoStatus },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
+          body, // Enviar el cuerpo con los nuevos datos
+          { headers }
         ).subscribe({
           next: (response) => {
+            console.log('Respuesta de la API:', response);
             Swal.fire({
               title: '¡Estado Actualizado!',
               text: 'El estado se ha actualizado correctamente.',
@@ -168,24 +215,69 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  getSublocation(id_sublocation:number): string{
+    switch (id_sublocation) {
+      case 0:
+        return " " + this.data.name_sublocation;
+      case 1:
+        return 'E diaz';
+      case 2:
+        return 'Mar Báltico';
+      case 3:
+        return 'Podium';
+      case 4:
+        return 'Pedro Loza';
+      case 5:
+        return 'Oficinas de RRHH MTY';
+      case 6:
+        return 'Occidente';
+      case 7:
+        return 'Noreste';
+      case 8:
+        return 'Centro';
+      case 9:
+        return 'Embotelladora ';
+      case 10:
+        return 'Dispositivos Médicos';
+      case 11:
+        return 'Occidente';
+      case 12:            
+        return 'Noreste';
+      case 13:
+        return 'Centro';
+      case 14:
+        return 'CDA Villahermosa';
+      case 15:
+        return 'CDA Mérida';
+      case 16:            
+        return 'CDA Chihuahua';
+      default:
+        return " " + this.data.name_sublocation;
+    }
+  }
+
+  
+
   getLocation(id_location: number): string {
     switch (id_location) {
+      case 0:
+        return 'Ubicación desconocida';
       case 1:
-        return 'Corporativo';
+        return 'Corporativo' + "-" + this.getSublocation(this.data.id_sublocation);
       case 2:
-        return 'Cedis';
+        return 'Cedis' + "-" + this.getSublocation(this.data.id_sublocation);
       case 3:
-        return 'Sucursales';
+        return 'Sucursales' + "-" + this.getSublocation(this.data.id_sublocation);
       case 4:
-        return 'Naves y anexas filiales';
+        return 'Naves y anexas filiales' + "-" + this.getSublocation(this.data.id_sublocation);
       case 5:
-        return 'Innomex';
+        return 'Innomex' + "-" + this.getSublocation(this.data.id_sublocation);
       case 6:
-        return 'TRATE';
+        return 'TRATE' + "-" + this.getSublocation(this.data.id_sublocation);
       case 7:
-        return 'Unidad de transporte';
+        return 'Unidad de transporte' + "-" + this.getSublocation(this.data.id_sublocation);
       default:
-        return 'Ubicación desconocida'; // Valor por defecto si el id_location no coincide
+        return 'Ubicación desconocida';
     }
   }
 

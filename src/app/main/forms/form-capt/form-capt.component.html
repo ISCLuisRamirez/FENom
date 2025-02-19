@@ -264,15 +264,15 @@
                         <div *ngIf="selectedUbicacion === 'unidadtransporte'" class="mt-3">
                           <p><strong>Selecciona la región:</strong></p>
                           <label>
-                            <input type="radio" name="regionTransporte" value="norte" (change)="onRegionChange('norte')" [(ngModel)]="selectedRegion" required />
+                            <input type="radio" name="regionTransporte" value="NORTE" (change)="onRegionChange('norte')" [(ngModel)]="selectedRegion" required />
                             Norte
                           </label><br>
                           <label>
-                            <input type="radio" name="regionTransporte" value="centro" (change)="onRegionChange('centro')" [(ngModel)]="selectedRegion" required />
+                            <input type="radio" name="regionTransporte" value="CENTRO" (change)="onRegionChange('centro')" [(ngModel)]="selectedRegion" required />
                             Centro
                           </label><br>
                           <label>
-                            <input type="radio" name="regionTransporte" value="sur" (change)="onRegionChange('sur')" [(ngModel)]="selectedRegion" required />
+                            <input type="radio" name="regionTransporte" value="SUR" (change)="onRegionChange('sur')" [(ngModel)]="selectedRegion" required />
                             Sur
                           </label><br>
                         </div>
@@ -296,127 +296,146 @@
                   </div>
                   <!-- Div Detalles -->
                   <div id="social-links-vertical" class="content">
-                      <form #form3="ngForm">
-                        <div class="content-header">
-                          <h5 class="mb-0">Detalles</h5>
-                          <small>Detalles de la denuncia.</small>
-                        </div>
-                        <div class="col-12">
-                          <p>Por favor seleccione alguna de las siguientes opciones:</p>
-                          <div class="form-check form-check-inline">
-                            <input
-                              class="form-check-input"
-                              type="radio"
-                              name="dateOptions"
-                              id="specificDateOption"
-                              value="date"
-                              [(ngModel)]="datereport"
-                              required
-                            />
-                            <label class="form-check-label" for="specificDateOption">Fecha específica</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input
-                              class="form-check-input"
-                              type="radio"
-                              name="dateOptions"
-                              id="approximateDateOption"
-                              value="dateaprox"
-                              [(ngModel)]="datereport"
-                              required
-                            />
-                            <label class="form-check-label" for="approximateDateOption">Periodo aproximado</label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input
-                              class="form-check-input"
-                              type="radio"
-                              name="dateOptions"
-                              id="noDateOption"
-                              value="NA"
-                              [(ngModel)]="datereport"
-                              required
-                            />
-                            <label class="form-check-label" for="noDateOption">No cuento con fecha</label>
-                          </div>
-                          <div *ngIf="datereport === 'date'" class="form-group mt-3">
-                            <label for="specificDate">Seleccione la fecha específica:</label><span style="color: #F44336;">*</span>
-                            <input
-                              class="form-control"
-                              name="fecha_esp"
-                              type="date"
-                              id="specificDate"
-                              [(ngModel)]="specificDate"
-                              [max]="today"
-                              required
-                            />
-                          </div>
-                          <div *ngIf="datereport === 'dateaprox'" class="form-group mt-3">
-                            <label for="approximateDatePeriod">Periodo aproximado:</label><span style="color: #F44336;">*</span>
-                            <input
-                              type="text"
-                              name="fecha_aprox"
-                              id="approximateDatePeriod"
-                              class="form-control"
-                              placeholder="Ejemplo: Mayo-Junio 2023"
-                              [(ngModel)]="approximateDatePeriod"
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12 mt-3">
-                          <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
-                          <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
-                          <div class="custom-file">
-                            <input
-                              type="file"
-                              id="file-upload-multiple"
-                              class="custom-file-input"
-                              (change)="onFileSelect($event)"
-                              multiple
-                            />
-                            <label class="custom-file-label" for="file-upload-multiple">
-                              {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
-                            </label>
-                          </div>
-                          <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
-                          <div *ngIf="uploader.queue.length > 0" class="mt-3">
-                            <h6>Archivos en fila:</h6>
-                            <ul class="list-group">
-                              <li *ngFor="let item of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ item.file.name }} - {{ item.file.size / 1024 | number: '1.0-2' }} KB
-                                <span *ngIf="item.isUploading" class="badge badge-primary">Subiendo...</span>
-                                <span *ngIf="item.isSuccess" class="badge badge-success">Subido</span>
-                                <span *ngIf="item.isCancel" class="badge badge-warning">Cancelado</span>
-                                <span *ngIf="item.isError" class="badge badge-danger">Error</span>
-                              </li>
-                            </ul>
-                            <div class="progress mt-2">
-                              <div
-                                class="progress-bar"
-                                role="progressbar"
-                                [style.width.%]="uploader.progress"
-                                aria-valuenow="{{ uploader.progress }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              >
-                                {{ uploader.progress }}%
-                              </div>
-                            </div>
-                          </div><br><br>
-                        </div>
-                      </form><!-- Sección de botones de div detalles -->
-                      <div class="d-flex justify-content-between mt-3">
-                        <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
-                          <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                          <span class="align-middle d-sm-inline-block d-none">Anterior</span>
-                        </button>
-                        <button class="btn btn-primary btn-next" (click)="verticalWizardNext()" rippleEffect [disabled]="!form3.valid">
-                          <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
-                          <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
-                        </button>
+                    <form #form3="ngForm">
+                      <div class="content-header">
+                        <h5 class="mb-0">Detalles</h5>
+                        <small>Detalles de la denuncia.</small>
                       </div>
+                      <div class="col-12">
+                        <p>Por favor seleccione alguna de las siguientes opciones:</p>
+                        <div class="form-check form-check-inline">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="dateOptions"
+                            id="specificDateOption"
+                            value="date"
+                            [(ngModel)]="datereport"
+                            required
+                          />
+                          <label class="form-check-label" for="specificDateOption">Fecha específica</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="dateOptions"
+                            id="approximateDateOption"
+                            value="dateaprox"
+                            [(ngModel)]="datereport"
+                            required
+                          />
+                          <label class="form-check-label" for="approximateDateOption">Periodo aproximado</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="dateOptions"
+                            id="noDateOption"
+                            value="NA"
+                            [(ngModel)]="datereport"
+                            required
+                          />
+                          <label class="form-check-label" for="noDateOption">No cuento con fecha</label>
+                        </div>
+                        <div *ngIf="datereport === 'date'" class="form-group mt-3">
+                          <label for="specificDate">Seleccione la fecha específica:</label><span style="color: #F44336;">*</span>
+                          <input
+                            class="form-control"
+                            name="fecha_esp"
+                            type="date"
+                            id="specificDate"
+                            [(ngModel)]="specificDate"
+                            [max]="today"
+                            required
+                          />
+                        </div>
+                        <div *ngIf="datereport === 'dateaprox'" class="form-group mt-3">
+                          <label for="approximateDatePeriod">Periodo aproximado:</label><span style="color: #F44336;">*</span>
+                          <input
+                            type="text"
+                            name="fecha_aprox"
+                            id="approximateDatePeriod"
+                            class="form-control"
+                            placeholder="Ejemplo: Mayo-Junio 2023"
+                            [(ngModel)]="approximateDatePeriod"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 mt-3">
+                        <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span>
+                        <label for="description" style="font-size: small;">
+                          Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió.
+                      </label><br>
+                        <textarea
+                          id="description"
+                          name="description"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Por favor, proporciona una descripción detallada de la denuncia."
+                          [(ngModel)]="description"
+                          required
+                        ></textarea>
+                      </div>
+                      <div class="col-12 mt-3">
+                        <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
+                        <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
+                        <div class="custom-file">
+                          <input
+                            type="file"
+                            id="file-upload-multiple"
+                            class="custom-file-input"
+                            (change)="onFileSelect($event)"
+                            multiple
+                          />
+                          <label class="custom-file-label" for="file-upload-multiple">
+                            {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
+                          </label>
+                        </div>
+                        <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
+                        <div *ngIf="uploader.queue.length > 0" class="mt-3">
+                          <h6>Archivos en fila:</h6>
+                          <ul class="list-group">
+                            <li *ngFor="let item of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
+                              {{ item.file.name }} - {{ item.file.size / 1024 | number: '1.0-2' }} KB
+                              <span *ngIf="item.isUploading" class="badge badge-primary">Subiendo...</span>
+                              <span *ngIf="item.isSuccess" class="badge badge-success">Subido</span>
+                              <span *ngIf="item.isCancel" class="badge badge-warning">Cancelado</span>
+                              <span *ngIf="item.isError" class="badge badge-danger">Error</span>
+                            </li>
+                          </ul>
+                          <div class="progress mt-2">
+                            <div
+                              class="progress-bar"
+                              role="progressbar"
+                              [style.width.%]="uploader.progress"
+                              aria-valuenow="{{ uploader.progress }}"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            >
+                              {{ uploader.progress }}%
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  
+                    </form>
+                  
+                    <!-- Sección de botones de div detalles -->
+                    <div class="d-flex justify-content-between mt-3">
+                      <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                        <span class="align-middle d-sm-inline-block d-none">Anterior</span>
+                      </button>
+                      <button class="btn btn-primary btn-next" (click)="verticalWizardNext()" rippleEffect [disabled]="!form3.valid">
+                        <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
+                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                      </button>
                     </div>
+                  </div>
                   <!-- Div Involucrados -->
                   <div id="section_involved" class="content">
                     <form #form4="ngForm">

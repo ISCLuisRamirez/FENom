@@ -1,10 +1,29 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProfileService } from 'app/main/pages/profile/profile.service';
-import { AuthenticationService } from 'app/auth/service';  // Importar servicio de autenticación
-import { Router } from '@angular/router';  // Importar Router para redirección
+import { ApiService } from 'app/services/api.service';
+import { AuthenticationService } from 'app/auth/service';
+import { Router } from '@angular/router';
+import {
+  ChartComponent,
+  ApexNonAxisChartSeries,
+  ApexChart,
+  ApexResponsive,
+  ApexLegend,
+  ApexDataLabels,
+  ApexFill
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+  series: ApexNonAxisChartSeries;
+  chart: ApexChart;
+  labels: any;
+  responsive: ApexResponsive[];
+  legend: ApexLegend;
+  dataLabels: ApexDataLabels;
+  fill: ApexFill;
+};
+
 
 @Component({
   selector: 'app-profile',
@@ -13,70 +32,58 @@ import { Router } from '@angular/router';  // Importar Router para redirección
   encapsulation: ViewEncapsulation.None
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  public data: any;
+  public contentHeader: object;
+  private _unsubscribeAll: Subject<any>;
 
-  // Opciones de la gráfica de estadísticas
-  public estadisticasChartOptions: any = {
-    chart: {
-      type: 'donut',
-      width: '100%',
-      height: 350,
-      toolbar: { show: false }
-    },
-    dataLabels: { enabled: false },
-    legend: { show: true, position: 'bottom' },
-    stroke: { width: 2 },
-    colors: ['#7367F0', '#28C76F', '#EA5455'],
-    series: [], // Se llenará con los datos del endpoint
-    labels: [], // Se llenará con los datos del endpoint
-    plotOptions: {
-      pie: {
-        donut: {
-          labels: {
-            show: true,
-            total: {
-              show: true,
-              label: 'Total',
-              color: '#6E6B7B'
+  public chartOptions: Partial<ChartOptions>;
+
+  constructor(
+    private _apiService: ApiService,
+    private _authenticationService: AuthenticationService,
+    private _router: Router
+  ) {
+    this._unsubscribeAll = new Subject();
+
+    // Configuración inicial de la gráfica Apex
+    this.chartOptions = {
+      series: [],
+      chart: {
+        type: 'pie',
+        width: '100%',
+        height: 350,
+        // Asumiendo la fuente de Vuexy (puedes cambiarla a la tuya)
+        fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+      },
+      labels: [],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 300
+            },
+            legend: {
+              position: 'bottom'
             }
           }
         }
+      ],
+      legend: {
+        position: 'bottom'
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+        }
+      },
+      fill: {
+        opacity: 1
       }
-    }
-  };
-  // public
-  public contentHeader: object;
-  public data: any;
-  public toggleMenu = true;
-  public Monthly = false;
-  public toggleNavbarRef = false;
-  public loadMoreRef = false;
-
-  // private
-  private _unsubscribeAll: Subject<any>;
-
-  constructor(
-    private _pricingService: ProfileService, 
-    private sanitizer: DomSanitizer, 
-    private _authenticationService: AuthenticationService, // Inyectar el servicio de autenticación
-    private _router: Router // Inyectar el servicio Router
-  ) {
-    this._unsubscribeAll = new Subject();
+    };
   }
 
-  // Public Methods
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * Load More
-   */
-  loadMore() {
-    this.loadMoreRef = !this.loadMoreRef;
-    setTimeout(() => {
-      this.loadMoreRef = !this.loadMoreRef;
-    }, 2000);
-  }
-
-  // Getter para determinar si el usuario está logueado y si es Admin o Client
   get isLoggedIn() {
     return this._authenticationService.currentUserValue != null;
   }
@@ -89,38 +96,34 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this._authenticationService.isCapturista;
   }
 
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * On init
-   */
   ngOnInit(): void {
-    // Verificamos si el usuario está logueado, si no lo redirigimos al login
+    // Verificar si el usuario está logueado
     if (!this.isLoggedIn) {
       this._router.navigate(['/pages/authentication/login-v1']);
       return;
     }
 
-    // Verificamos si el usuario tiene los permisos adecuados para ver la página
+    // Verificar permisos
     if (!(this.isComite || this.isCapturista)) {
-      this._router.navigate(['/']); // Redirigir a la página principal si no es admin ni client
+      this._router.navigate(['/']);
       return;
     }
 
-    // Suscribimos a los cambios del servicio de perfil
-    // Obtener datos del servicio
-    this._pricingService.onPricingChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
-      this.data = response;
+    // Llamada a la API
+    this._apiService.getdatosgrafica() // Debe devolver { total, count, status }
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(response => {
+        console.log('Respuesta /api/requests/counter:', response);
+        // Ejemplo: { total: 57, count: [54, 2, 1], status: ["En proceso", "Cerradas", "Abiertas"] }
+        this.data = response;
+        if (this.data) {
+          // Asignar datos a la gráfica Apex
+          this.chartOptions.series = this.data.count;
+          this.chartOptions.labels = this.data.status;
+        }
+      });
 
-      // Asignar datos a la gráfica de estadísticas
-      if (this.data?.estadisticas) {
-        this.estadisticasChartOptions.series = this.data.estadisticas.series;
-        this.estadisticasChartOptions.labels = this.data.estadisticas.labels;
-      }
-    });
-
-    // Configuración del encabezado de la página
+    // Configuración del encabezado
     this.contentHeader = {
       headerTitle: 'Profile',
       actionButton: true,
@@ -135,11 +138,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     };
   }
 
-  /**
-   * On destroy
-   */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuard } from 'app/auth/helpers';
 import { CoreCommonModule } from '@core/common.module';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { ProfileService } from 'app/main/pages/profile/profile.service';
 import { ProfileComponent } from 'app/main/pages/profile/profile.component';
@@ -24,8 +25,14 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [ProfileComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), NgbModule, CoreCommonModule, ContentHeaderModule],
-
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    NgbModule,
+    CoreCommonModule,
+    ContentHeaderModule,
+    NgApexchartsModule
+  ],
   providers: [ProfileService]
 })
 export class ProfileModule {}

@@ -96,6 +96,7 @@ export class FormCaptComponent implements OnInit {
   public selectedUbicacion: string = '';
   public approximateDatePeriod = '';
   public specificDate: string = '';
+  public description:string='';
  
   public today: string;
   public datereport: string = '';
@@ -261,21 +262,16 @@ export class FormCaptComponent implements OnInit {
       id_reason: this.motivo?.id || 0,
       id_location: this.getLocationId(),
       id_sublocation: idSubLocation,
+      description: this.description,
       name_sublocation: this.selectedRegion + "-" + this.value_UT|| null,
       date: this.specificDate || this.today,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
-    };
-  
-    console.log('📤 Enviando Denuncia:', denunciaData);
-  
-    // Enviar la denuncia principal
+    };  
+
     this.apiService.enviarDenuncia(denunciaData).subscribe(
       (response) => {
-        console.log('✅ Denuncia Guardada:', response);
-  
         const idRequest = response?.id;
-  
         if (!idRequest) {
           Swal.fire({
             title: '❌ Error',
@@ -288,7 +284,7 @@ export class FormCaptComponent implements OnInit {
   
         // Enviar Datos Personales si no es anónimo
         let requesterPromise = Promise.resolve();
-        if (!this.isAnonymous) {
+        if (!this.isAnonymous===false) {
           const requesterData = {
             id_request: idRequest,
             name: this.name|| '',
@@ -303,29 +299,30 @@ export class FormCaptComponent implements OnInit {
   
         // Enviar Involucrados (Subjects)
         const involvedPromises = this.involvedList
-          .filter(inv => inv.name_inv?.trim())
+          .filter(inv => inv.name_inv)
           .map((involved) => {
             const involvedData = {
               id_request: idRequest,
-              name: involved.name_inv?.trim() || '',
-              position: involved.position_inv?.trim() || '',
-              employee_number: involved.employee_number_inv?.trim() || null
+              name: involved.name_inv || '',
+              position: involved.position_inv || '',
+              employee_number: involved.employee_number_inv || null
             };
             return this.apiService.enviarDatosInv(involvedData).toPromise();
           });
-  
+
         // Enviar Testigos (Witnesses)
         const witnessPromises = this.witnessList
-          .filter(wit => wit.name_wit?.trim())
+          .filter(wit => wit.name_wit)
           .map((witness) => {
             const witnessData = {
               id_request: idRequest,
-              name: witness.name_wit?.trim() || '',
-              position: witness.position_wit?.trim() || '',
-              employee_number: witness.employee_number_wit ? String(witness.employee_number_wit).trim() : null
+              name: witness.name_wit || '',
+              position: witness.position_wit || '',
+              employee_number: witness.employee_number_wit ? String(witness.employee_number_wit) : null
             };
             return this.apiService.enviarDatosWit(witnessData).toPromise();
           });
+
   
         // Esperar a que todas las promesas se completen
         Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])

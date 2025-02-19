@@ -25,8 +25,11 @@ export class DatatablesComponent implements OnInit {
   // Private
   private _unsubscribeAll: Subject<any>;
   private tempData = [];
+  
 
   // public
+  public involucrados: any[] = [];
+  public testigos: any[] = [];
   public contentHeader: object;
   public rows: any;
   public selected = [];
