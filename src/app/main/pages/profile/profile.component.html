@@ -22,13 +22,13 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-5 col-md-6 col-sm-12 col-12">
+        <div class="col-lg-6 col-md-12 col-sm-12 col-12">
           <div class="card">
             <div class="card-header text-center">
               <h4 class="card-title text-primary">Estadísticas</h4>
               <p class="card-text font-small-2 mb-0">Denuncias por estatus</p>
-            </div>
-            <div class="card-body">
+            </div> 
+            <div class="card-body mt-3">
               <div class="row text-center">
                 <div class="col-4" *ngIf="data?.count && data?.status">
                   <h4 class="font-weight-bolder mb-0">{{ data.count[0] }}</h4>
@@ -43,11 +43,20 @@
                   <p class="card-text font-small-3 mb-0">{{ data.status[2] }}</p>
                 </div>
               </div>
-              <div class="text-center mt-2">
+              <div class="text-center mt-4 mb-0">
                 <strong>Total: {{ data?.total }}</strong>
+              </div> <br>
+
+              <div class="d-flex justify-content-center mt-1 mb-5">
+                <button class="btn btn-primary">Descargar estadísticas</button>
               </div>
+              
             </div>
+
+
+           
           </div>
+          
         </div>
       </div> 
     </div>

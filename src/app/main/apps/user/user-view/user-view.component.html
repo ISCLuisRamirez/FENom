@@ -10,7 +10,9 @@
             <div class="card-body">
               <h5 class="text-primary">Información de la Denuncia</h5>
               <div class="d-flex flex-wrap my-50">
-                <span class="card-text font-weight-bold mb-0"><strong>Folio: </strong>{{data.folio}}</span>
+                <span class="card-text font-weight-bold mb-0">
+                  <strong>Folio: </strong>{{ data.folio }}
+                </span>
               </div>
               <hr>
 
@@ -19,25 +21,26 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Medio de
-                        denuncia:</strong> {{ getMedio(data.id_via) }}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Medio de denuncia:</strong> {{ getMedio(data.id_via) }}
+                    </span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="check" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Tipo de denuncia:
-                      
-                      </strong>{{ getreason(data.id_reason) }}</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Tipo de denuncia:</strong> {{ getreason(data.id_reason) }}
+                    </span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Ubicación:
-                      </strong>{{ getLocation(data.id_location) }}
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Ubicación:</strong> {{ getLocation(data.id_location) }}
                     </span>
                   </div>
                 </div>
@@ -45,8 +48,8 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Fecha del suceso:
-                      </strong> {{data.date}}
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Fecha del suceso:</strong> {{ data.date }}
                     </span>
                   </div>
                 </div>
@@ -54,10 +57,11 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del incidente:
-                      </strong></span><br>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Descripción del incidente:</strong>
+                    </span><br>
                   </div>
-                  <p class="card-text mb-0">{{data.description}}</p>
+                  <p class="card-text mb-0">{{ data.description }}</p>
                 </div>
               </div>
               <!-- End Denuncia Details -->
@@ -77,7 +81,7 @@
                   <i data-feather="alert-circle" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
                     Estatus actual: {{ getStatusString(data.status) }}
-                  </span>                
+                  </span>
                 </div>
               </div>
 
@@ -85,8 +89,9 @@
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="file-text" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0">¿Se ha reportado
-                    previamente?</span><br>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    ¿Se ha reportado previamente?
+                  </span><br>
                 </div>
                 <p class="card-text mb-0">No</p>
               </div>
@@ -94,11 +99,23 @@
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="info" class="mr-1"></i>
-                  <span class="card-text denuncia-info-title font-weight-bold mb-0"><strong>Descripción del reporte:
-                    </strong></span><br>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <strong>Descripción del reporte:</strong>
+                  </span><br>
                 </div>
                 <p class="card-text mb-0">No Aplica</p>
               </div>
+
+              <div class="d-flex flex-wrap my-50">
+                <div class="denuncia-info-title">
+                  <i data-feather="info" class="mr-1"></i>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <strong>Ultimo cambio de estatus por: </strong>
+                  </span><br>
+                </div>
+                <p class="card-text mb-0">345243 </p>
+              </div>
+
             </div>
           </div>
         </div>
@@ -125,21 +142,15 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Juan Pérez</td>
-                      <td>Implicado</td>
-                      <td>555-1234</td>
-                    </tr>
-                    <tr>
-                      <td>Carlos Gómez</td>
-                      <td>Implicado</td>
-                      <td>555-9876</td>
+                    <tr *ngFor="let implicado of implicados">
+                      <td>{{ implicado.name }}</td>
+                      <td>{{ implicado.position }}</td>
+                      <td>{{ implicado.employee_number }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <!-- End Table for Involved People -->
-
             </div>
           </div>
         </div>
@@ -162,21 +173,15 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>María López</td>
-                      <td>Testigo</td>
-                      <td>555-5678</td>
-                    </tr>
-                    <tr>
-                      <td>Ana Martínez</td>
-                      <td>Testigo</td>
-                      <td>555-4321</td>
+                    <tr *ngFor="let testigo of testigos">
+                      <td>{{ testigo.name }}</td>
+                      <td>{{ testigo.position }}</td>
+                      <td>{{ testigo.employee_number }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <!-- End Table for Witnesses -->
-
             </div>
           </div>
         </div>
@@ -193,7 +198,8 @@
 
               <!-- Applicant Information -->
               <div class="applicant-info">
-                <div class="d-flex flex-wrap my-50">
+                <!-- Verifica que row[0] exista antes de acceder a sus propiedades -->
+                <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="user" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
@@ -202,7 +208,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap my-50">
+                <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="mail" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
@@ -211,7 +217,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap my-50">
+                <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="phone" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
@@ -220,16 +226,16 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap my-50">
+                <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Numero de empleado: </strong>{{ row[0].employee_number }}
+                      <strong>Número de empleado: </strong>{{ row[0].employee_number }}
                     </span>
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap my-50">
+                <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
@@ -253,19 +259,16 @@
             <div class="card-body">
               <h5 class="text-primary">Archivos Adjuntos</h5>
               <hr>
-
-              <!-- Displaying files -->
+              <!-- Aquí podrías usar *ngFor si recibes un array de archivos en tu API -->
               <div class="file-list">
                 <div class="file-item d-flex justify-content-between align-items-center my-2">
                   <a href="#" class="file-name text-truncate">Archivo1.pdf</a>
                   <button class="btn btn-link btn-sm">Ver</button>
                 </div>
-
                 <div class="file-item d-flex justify-content-between align-items-center my-2">
                   <a href="#" class="file-name text-truncate">Imagen2.jpg</a>
                   <button class="btn btn-link btn-sm">Ver</button>
                 </div>
-
                 <div class="file-item d-flex justify-content-between align-items-center my-2">
                   <a href="#" class="file-name text-truncate">Documento3.png</a>
                   <button class="btn btn-link btn-sm">Ver</button>
@@ -281,29 +284,40 @@
             <div class="card-body">
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
-              <!-- Formulario para cambiar el estado -->
-              <form [formGroup]="statusForm">
+
+              <!-- Formulario Reactivo para cambiar estatus -->
+              <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="settings" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0 p-2">Cambiar Estatus de la Denuncia:</span>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0 p-2">
+                      Cambiar Estatus de la Denuncia:
+                    </span>
                   </div>
                   <div>
-                    <!-- Select con formControlName -->
+                    <!-- Si deseas que '1', '2', '3' sean números en el form, usa [ngValue] -->
                     <select class="form-control" id="denunciaStatus" formControlName="status">
-                      <option value="1">En proceso</option>
-                      <option value="2">Abierto</option>
-                      <option value="3">Cerrado</option>
+                      <option [ngValue]="1">En proceso</option>
+                      <option [ngValue]="2">Abierto</option>
+                      <option [ngValue]="3">Cerrado</option>
                     </select>
                   </div>
                 </div>
+
+                <!-- Botones dentro del formulario -->
                 <div class="d-flex justify-content-end mt-3">
-                  <!-- Botón de cancelar -->
-                  <button class="btn btn-secondary mr-2" routerLink="/tables/datatables">Cancelar</button>
-                  <!-- Botón de guardar -->
-                  <button type="submit" (click)="actualizarStatus()" class="btn btn-primary">Guardar</button>
+                  <!-- type="button" para que NO envíe el formulario -->
+                  <button type="button" class="btn btn-secondary mr-2" routerLink="/tables/datatables">
+                    Cancelar
+                  </button>
+
+                  <!-- type="submit" para que SÍ envíe el formulario y dispare (ngSubmit) -->
+                  <button type="submit" class="btn btn-primary">
+                    Guardar
+                  </button>
                 </div>
               </form>
+              <!-- Fin del formulario -->
             </div>
           </div>
         </div>

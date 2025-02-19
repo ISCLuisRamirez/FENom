@@ -24,8 +24,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
   public row: any[] = [];
   public implicados: any[] = [];
   public testigos: any[] = [];
-  
-
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -34,7 +32,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   statusForm: FormGroup;
 
   constructor(
-    private apiService: ApiService, // Nombre correcto
+    private apiService: ApiService,
     private router: Router,
     private _userViewService: UserViewService,
     private _httpClient: HttpClient,
@@ -45,23 +43,28 @@ export class UserViewComponent implements OnInit, OnDestroy {
 
     // Inicializar el formulario reactivo
     this.statusForm = new FormGroup({
-      status: new FormControl(''), // Inicializa vacío o con un valor del backend
+      // Por defecto vacío. Ajusta a 'string' o 'number' según tu lógica
+      status: new FormControl('')
     });
   }
 
-  // Método para actualizar el estado
-  
-
-  // Lifecycle Hooks
   ngOnInit(): void {
+    // Suscribirse al servicio para obtener la data de la denuncia
     this._userViewService.onUserViewChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
-  
+
+        // Si ya tenemos this.data, podemos setear el valor del status en el formulario
+        if (this.data?.status) {
+          // Convertimos a número, si status es numérico
+          this.statusForm.patchValue({ status: +this.data.status });
+        }
+
         // Obtener los datos del solicitante
         if (this.data.id) {
-          this.apiService.getSolicitanteInfoFiltrado(this.data.id)
+          this.apiService
+            .getSolicitanteInfoFiltrado(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (solicitanteData) => {
@@ -72,9 +75,10 @@ export class UserViewComponent implements OnInit, OnDestroy {
                 console.error('Error al obtener los datos del solicitante:', error);
               }
             );
-  
+
           // Obtener los datos de los implicados
-          this.apiService.getInvolucrados(this.data.id)
+          this.apiService
+            .getInvolucrados(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (implicadosData) => {
@@ -86,9 +90,10 @@ export class UserViewComponent implements OnInit, OnDestroy {
                 console.error('Error al obtener los datos de los implicados:', error);
               }
             );
-  
+
           // Obtener los datos de los testigos
-          this.apiService.getTestigos(this.data.id)
+          this.apiService
+            .getTestigos(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (testigosData) => {
@@ -104,15 +109,18 @@ export class UserViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Método para actualizar el estado de la denuncia
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
-  
-    // Obtener el ID del usuario actual (suponiendo que está en el localStorage)
-    const userId = localStorage.getItem('userId'); // Ajusta según tu sistema de autenticación
-  
+
+    // Obtener el usuario actual desde el localStorage
+    const currentUserString = localStorage.getItem('currentUser') || '{}';
+    const currentUser = JSON.parse(currentUserString);
+    const userId = currentUser?.id_user; // Ajusta según la propiedad real que guardes
+
     // Generar la fecha de última actualización
     const updatedDate = new Date().toISOString(); // Fecha en formato ISO
-  
+
     // Mostrar confirmación antes de cambiar el estado
     Swal.fire({
       title: 'Confirmación',
@@ -126,28 +134,17 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         const apiUrl = `${environment.apiUrl}/api/requests/${this.data.id}/status`;
-  
+
         // Agregar token de autenticación si es necesario
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Ajusta según tu sistema de autenticación
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         });
-  
+
         // Datos a enviar en la solicitud PATCH
-        const body = {
-          status: nuevoStatus,
-          id_user_updated: userId,
-          updated_date: updatedDate
-        };
-  
-        console.log('URL de la API:', apiUrl);
-        console.log('Datos a enviar:', body);
-  
-        this._httpClient.patch(
-          apiUrl,
-          body, // Enviar el cuerpo con los nuevos datos
-          { headers }
-        ).subscribe({
+        let status: number = nuevoStatus;
+
+        this._httpClient.patch(apiUrl, status, { headers }).subscribe({
           next: (response) => {
             console.log('Respuesta de la API:', response);
             Swal.fire({
@@ -157,6 +154,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
               confirmButtonText: 'Cerrar',
               confirmButtonColor: '#7367F0',
             }).then(() => {
+              // Navegar a la tabla (o donde necesites) tras actualizar
               this._router.navigate(['/tables/datatables']);
             });
           },
@@ -182,7 +180,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
@@ -204,6 +201,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Método para convertir el id_via a un string
   getMedio(id_via: number): string {
     switch (id_via) {
       case 1:
@@ -215,10 +213,11 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSublocation(id_sublocation:number): string{
+  // Método para convertir id_sublocation a texto
+  getSublocation(id_sublocation: number): string {
     switch (id_sublocation) {
       case 0:
-        return " " + this.data.name_sublocation;
+        return ' ' + this.data.name_sublocation;
       case 1:
         return 'E diaz';
       case 2:
@@ -236,12 +235,12 @@ export class UserViewComponent implements OnInit, OnDestroy {
       case 8:
         return 'Centro';
       case 9:
-        return 'Embotelladora ';
+        return 'Embotelladora';
       case 10:
         return 'Dispositivos Médicos';
       case 11:
         return 'Occidente';
-      case 12:            
+      case 12:
         return 'Noreste';
       case 13:
         return 'Centro';
@@ -249,41 +248,40 @@ export class UserViewComponent implements OnInit, OnDestroy {
         return 'CDA Villahermosa';
       case 15:
         return 'CDA Mérida';
-      case 16:            
+      case 16:
         return 'CDA Chihuahua';
       default:
-        return " " + this.data.name_sublocation;
+        return ' ' + this.data.name_sublocation;
     }
   }
 
-  
-
+  // Método para convertir id_location a texto
   getLocation(id_location: number): string {
     switch (id_location) {
       case 0:
         return 'Ubicación desconocida';
       case 1:
-        return 'Corporativo' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Corporativo' + '-' + this.getSublocation(this.data.id_sublocation);
       case 2:
-        return 'Cedis' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Cedis' + '-' + this.getSublocation(this.data.id_sublocation);
       case 3:
-        return 'Sucursales' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Sucursales' + '-' + this.getSublocation(this.data.id_sublocation);
       case 4:
-        return 'Naves y anexas filiales' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Naves y anexas filiales' + '-' + this.getSublocation(this.data.id_sublocation);
       case 5:
-        return 'Innomex' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Innomex' + '-' + this.getSublocation(this.data.id_sublocation);
       case 6:
-        return 'TRATE' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'TRATE' + '-' + this.getSublocation(this.data.id_sublocation);
       case 7:
-        return 'Unidad de transporte' + "-" + this.getSublocation(this.data.id_sublocation);
+        return 'Unidad de transporte' + '-' + this.getSublocation(this.data.id_sublocation);
       default:
         return 'Ubicación desconocida';
     }
   }
 
-  // Método para convertir el motivo numérico a texto
+  // Método para convertir el id_reason a texto
   getreason(id_reason: number | null | undefined): string {
-    const reasons = {
+    const reasons: any = {
       1: 'Abuso de autoridad',
       2: 'Acoso laboral',
       3: 'Acoso Sexual',
@@ -295,10 +293,9 @@ export class UserViewComponent implements OnInit, OnDestroy {
       9: 'Discriminación',
       10: 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)',
       11: 'Incumplimiento de las políticas internas',
-      12: 'Manipulación de inventarios',
+      12: 'Manipulación de inventarios'
     };
 
-    // Validación y retorno
     if (id_reason !== null && id_reason !== undefined && reasons.hasOwnProperty(id_reason)) {
       return reasons[id_reason];
     } else {

@@ -49,4 +49,6 @@ export class UserViewService implements Resolve<any> {
       }, reject);
     });
   }
+
+  
 }

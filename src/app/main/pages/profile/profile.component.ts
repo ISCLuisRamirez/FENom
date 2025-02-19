@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       chart: {
         type: 'pie',
         width: '100%',
-        height: 350,
+        height: 600,
         // Asumiendo la fuente de Vuexy (puedes cambiarla a la tuya)
         fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
       },
