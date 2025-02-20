@@ -269,7 +269,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
               html: `
                 <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
                 <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
-                <em style="color: red;"><strong><br>IMPORTANTE:</strong><br> “Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
+                <em style="color: red;"><strong><br>IMPORTANTE:</strong><br></em> Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
               `,
               icon: 'success',
               confirmButtonText: 'Cerrar'

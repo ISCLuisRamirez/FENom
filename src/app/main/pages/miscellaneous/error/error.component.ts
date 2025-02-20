@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Location } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
@@ -20,8 +19,9 @@ export class ErrorComponent implements OnInit {
    * Constructor
    *
    * @param {CoreConfigService} _coreConfigService
+   * @param {Location} location
    */
-  constructor(private _coreConfigService: CoreConfigService) {
+  constructor(private _coreConfigService: CoreConfigService, private location: Location) {
     this._unsubscribeAll = new Subject();
 
     // Configure the layout
@@ -53,6 +53,13 @@ export class ErrorComponent implements OnInit {
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
+  }
+
+  /**
+   * Go back to the previous page
+   */
+  goBack(): void {
+    this.location.back();
   }
 
   /**

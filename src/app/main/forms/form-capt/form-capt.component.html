@@ -368,18 +368,24 @@
                       <div class="col-12 mt-3">
                         <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span>
                         <label for="description" style="font-size: small;">
-                          Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió.
+                          Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió. La descripción no debe exceder los 500 caracteres.
                       </label><br>
                         <textarea
                           id="description"
                           name="description"
                           class="form-control"
                           rows="5"
-                          placeholder="Por favor, proporciona una descripción detallada de la denuncia."
+                          placeholder="Por favor, proporciona una descripción detallada de la denuncia. Máximo 500 caracteres."
                           [(ngModel)]="description"
+                          #descriptionInput="ngModel"
+                          maxlength="500"
                           required
                         ></textarea>
+                        <div *ngIf="descriptionInput.value?.length > 500" class="text-danger mt-1">
+                          La descripción no puede superar los 500 caracteres.
+                        </div>
                       </div>
+        
 
                       <div class="col-12 mt-3">
                         <p><strong>¿Ha reportado el incidente anteriormente?</strong></p>
@@ -569,119 +575,130 @@
                   <div id="section_anonimo" class="content">
                     <form #form5="ngForm">
                         <div class="content-header">
-                          <h5 class="mb-0">Privacidad</h5>
-                          <small>¿Desea agregar su información?</small>
+                            <h5 class="mb-0">Privacidad</h5>
+                            <small>¿Desea agregar su información?</small>
                         </div>
                         <!-- Opciones de privacidad -->
                         <input
-                          class="input"
-                          type="radio"
-                          id="radio-opc-no"
-                          name="no-anonimo"
-                          value="si"
-                          [(ngModel)]="isAnonymous"
-                          (change)="toggleAnonimato(true)"
-                          required
+                            class="input"
+                            type="radio"
+                            id="radio-opc-no"
+                            name="no-anonimo"
+                            value="si"
+                            [(ngModel)]="isAnonymous"
+                            (change)="toggleAnonimato(true)"
+                            required
                         />
                         Sí, deseo agregar mis datos.<br /><br />
                         <input
-                          class="input"
-                          type="radio"
-                          id="radio-opc-si"
-                          name="anonimo"
-                          value="no"
-                          [(ngModel)]="isAnonymous"
-                          (change)="toggleAnonimato(false)"
-                          required
+                            class="input"
+                            type="radio"
+                            id="radio-opc-si"
+                            name="anonimo"
+                            value="no"
+                            [(ngModel)]="isAnonymous"
+                            (change)="toggleAnonimato(false)"
+                            required
                         />
                         No<br /><br />
                         <!-- Sección de información adicional -->
                         <div *ngIf="showAdditionalInfo">
-                          <h5>Información Adicional</h5>
-                          <label style="font-size: small;">
-                            <strong style="color: red;">IMPORTANTE:</strong> Su información será únicamente solicitada para el
-                            seguimiento de su denuncia y será tratada con máxima confidencialidad.
-                          </label><br /><br />
-                    
-                          <div class="row">
-                            <div class="form-group col-md-4">
-                              <label class="form-label" for="nombre">Nombre Completo:</label><span style="color: #F44336;">*</span>
-                              <input
-                                type="text"
-                                id="nombre"
-                                class="form-control"
-                                placeholder="Nombre(s) Apellido Paterno Apellido Materno"
-                                name="nombre"
-                                [(ngModel)]="name"
-                                required
-                              />
+                            <h5>Información Adicional</h5>
+                            <label style="font-size: small;">
+                                <strong style="color: red;">IMPORTANTE:</strong> Su información será únicamente solicitada para el
+                                seguimiento de su denuncia y será tratada con máxima confidencialidad.
+                            </label><br /><br />
+                
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label class="form-label" for="nombre">Nombre Completo:</label><span style="color: #F44336;">*</span>
+                                    <input
+                                        type="text"
+                                        id="nombre"
+                                        class="form-control"
+                                        placeholder="Nombre(s) Apellido Paterno Apellido Materno"
+                                        name="nombre"
+                                        [(ngModel)]="name"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="form-label" for="puesto">Puesto:</label><span style="color: #F44336;">*</span>
+                                    <input
+                                        type="text"
+                                        id="puesto"
+                                        class="form-control"
+                                        placeholder="Operador"
+                                        name="puesto"
+                                        [(ngModel)]="position"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="form-label" for="numeroEmpleado">Número de empleado:</label><span style="color: #F44336;">*</span>
+                                    <input
+                                        type="text"
+                                        id="numeroEmpleado"
+                                        class="form-control"
+                                        placeholder="658921"
+                                        name="numeroEmpleado"
+                                        [(ngModel)]="employee_number"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                              <label class="form-label" for="puesto">Puesto:</label><span style="color: #F44336;">*</span>
-                              <input
-                                type="text"
-                                id="puesto"
-                                class="form-control"
-                                placeholder="Operador"
-                                name="puesto"
-                                [(ngModel)]="position"
-                                required
-                              />
+                            <br>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label class="form-label" for="telefono">Teléfono:</label><span style="color: #F44336;">*</span>
+                                    <input
+                                        type="text"
+                                        id="telefono"
+                                        class="form-control"
+                                        placeholder="3334357534"
+                                        name="telefono"
+                                        [(ngModel)]="phone"
+                                        #phoneInput="ngModel"
+                                        pattern="^[0-9]{10}$"
+                                        maxlength="10"
+                                        required
+                                    />
+                                    <div *ngIf="phoneInput.invalid && phoneInput.touched" class="text-danger mt-1">
+                                        El número de teléfono debe contener exactamente 10 dígitos.
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="form-label" for="email">Email personal:</label><span style="color: #F44336;">*</span>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        class="form-control"
+                                        placeholder="ejemplo@mail.com"
+                                        name="email"
+                                        [(ngModel)]="email"
+                                        #emailInput="ngModel"
+                                        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                        required
+                                    />
+                                    <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger mt-1">
+                                        Ingrese un correo electrónico válido.
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                              <label class="form-label" for="numeroEmpleado">Número de empleado:</label><span style="color: #F44336;">*</span>
-                              <input
-                                type="text"
-                                id="numeroEmpleado"
-                                class="form-control"
-                                placeholder="658921"
-                                name="numeroEmpleado"
-                                [(ngModel)]="employee_number"
-                                required
-                              />
-                            </div>
-                          </div>
-                          <br>
-                          <div class="row">
-                            <div class="form-group col-md-4">
-                              <label class="form-label" for="telefono">Teléfono:</label><span style="color: #F44336;">*</span>
-                              <input
-                                type="text"
-                                id="telefono"
-                                class="form-control"
-                                placeholder="3334357534"
-                                name="telefono"
-                                [(ngModel)]="phone"
-                                required
-                              />
-                            </div>
-                            <div class="form-group col-md-4">
-                              <label class="form-label" for="email">Email personal:</label><span style="color: #F44336;">*</span>
-                              <input
-                                type="email"
-                                id="email"
-                                class="form-control"
-                                placeholder="ejemplo@mail.com"
-                                name="email"
-                                [(ngModel)]="email"
-                                required
-                              />
-                            </div>
-                          </div> 
-                          <br>
+                            <br>
                         </div>
                     </form>
-                  
-                      <!-- Botones de navegación -->
-                      <div class="d-flex justify-content-between pb-0">
+                
+                    <!-- Botones de navegación -->
+                    <div class="d-flex justify-content-between pb-0">
                         <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
-                          <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                          <span class="align-middle d-sm-inline-block d-none">Anterior</span>
+                            <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                            <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                         </button>
                         <button class="btn btn-success btn-submit" rippleEffect (click)="onSubmit()" [disabled]="!form5.valid">
-                          Enviar
+                            Enviar
                         </button>
-                      </div>
+                    </div>
                   </div>
           </div>
         </div>
