@@ -7,6 +7,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { UserViewService } from 'app/main/apps/user/user-view/user-view.service';
 import { environment } from 'environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { User } from 'app/auth/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -24,6 +25,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   public row: any[] = [];
   public implicados: any[] = [];
   public testigos: any[] = [];
+  public currentUser: User | null = null;
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -85,6 +87,9 @@ export class UserViewComponent implements OnInit, OnDestroy {
                 // Verifica si implicadosData es un arreglo o un objeto
                 this.implicados = Array.isArray(implicadosData) ? implicadosData : [implicadosData];
                 console.log('Datos de implicados:', this.implicados);
+                console.log('id_request:', this.data.id_request);
+                console.log('this.data:', this.data);
+                console.log('solicitanteData:', this.solicitanteData);
               },
               (error) => {
                 console.error('Error al obtener los datos de los implicados:', error);
@@ -109,19 +114,11 @@ export class UserViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Método para actualizar el estado de la denuncia
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
-
-    // Obtener el usuario actual desde el localStorage
     const currentUserString = localStorage.getItem('currentUser') || '{}';
-    const currentUser = JSON.parse(currentUserString);
-    const userId = currentUser?.id_user; // Ajusta según la propiedad real que guardes
+    const updatedDate = new Date().toISOString();
 
-    // Generar la fecha de última actualización
-    const updatedDate = new Date().toISOString(); // Fecha en formato ISO
-
-    // Mostrar confirmación antes de cambiar el estado
     Swal.fire({
       title: 'Confirmación',
       text: '¿Deseas cambiar el estado de la denuncia?',
@@ -134,16 +131,12 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         const apiUrl = `${environment.apiUrl}/api/requests/${this.data.id}/status`;
-
-        // Agregar token de autenticación si es necesario
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         });
 
-        // Datos a enviar en la solicitud PATCH
         let status: number = nuevoStatus;
-
         this._httpClient.patch(apiUrl, status, { headers }).subscribe({
           next: (response) => {
             console.log('Respuesta de la API:', response);
@@ -154,7 +147,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               confirmButtonText: 'Cerrar',
               confirmButtonColor: '#7367F0',
             }).then(() => {
-              // Navegar a la tabla (o donde necesites) tras actualizar
               this._router.navigate(['/tables/datatables']);
             });
           },

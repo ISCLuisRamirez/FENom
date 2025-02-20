@@ -42,11 +42,12 @@ export class ApiService {
   }
 
   getInvolucrados(id_request: number) {
-    return this.http.get<any[]>(`${this.apiUrl}/api/subjects/${id_request}`);
+    return this.http.get<any[]>(`${this.apiUrl}/api/subjects`, { params: { id_request: id_request.toString() } });
   }
   
+  
   getTestigos(id_request: number) {
-    return this.http.get<any[]>(`${this.apiUrl}/api/witnesses/${id_request}`);
+    return this.http.get<any[]>(`${this.apiUrl}/api/witnesses`, { params: { id_request: id_request.toString() } });
   }
 
   //Get para obtener informacion filtrada
