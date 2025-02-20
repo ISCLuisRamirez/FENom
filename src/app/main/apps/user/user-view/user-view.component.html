@@ -1,10 +1,9 @@
 <div class="content-wrapper container-xxl p-0">
   <div class="content-body">
-    <!-- page denuncia view start -->
     <section class="app-denuncia-view">
 
-      <!-- Denuncia Info Section and Denuncia Status Section in a Row -->
       <div class="row">
+        <!-- Sección Informacion de la denuncia -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
@@ -15,14 +14,21 @@
                 </span>
               </div>
               <hr>
-
-              <!-- Denuncia Details -->
               <div class="denuncia-details">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
                       <strong>Medio de denuncia:</strong> {{ getMedio(data.id_via) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="flag" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Información del medio:</strong> {{ data.via_detail }}
                     </span>
                   </div>
                 </div>
@@ -56,20 +62,27 @@
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
+                    <i data-feather="calendar" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Periodo aproximado:</strong> {{ data.period }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Descripción del incidente:</strong>
-                    </span><br>
+                      <strong>Descripción del incidente:</strong> {{ data.description }}
+                    </span>
                   </div>
-                  <p class="card-text mb-0">{{ data.description }}</p>
                 </div>
-              </div>
-              <!-- End Denuncia Details -->
 
+              </div>
             </div>
           </div>
         </div>
-
+        <!-- Sección Estatus -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
@@ -80,58 +93,80 @@
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    Estatus actual: {{ getStatusString(data.status) }}
+                    Estatus actual: 
                   </span>
+                  {{ getStatusString(data.status) }}
                 </div>
               </div>
 
               <!-- Previous Report Status -->
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
-                  <i data-feather="file-text" class="mr-1"></i>
+                  <i data-feather="info" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    ¿Se ha reportado previamente?
-                  </span><br>
+                    <strong>¿Se ha reportado previamente?</strong> pendiente
+                  </span>
                 </div>
-                <p class="card-text mb-0">No</p>
               </div>
+
 
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="info" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    <strong>Descripción del reporte:</strong>
-                  </span><br>
+                    <strong>Descripción del reporte:</strong> pendiente
+                  </span>
                 </div>
-                <p class="card-text mb-0">No Aplica</p>
+              </div><br>
+
+              <div class="d-flex flex-wrap my-50">
+                <div class="denuncia-info-title">
+                  <i data-feather="calendar" class="mr-1"></i>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <strong>Ultimo cambio de estatus por:</strong> {{ getemployee(data.id_user_updated) }}
+                  </span>
+                </div>
+              </div>
+
+
+              <div class="d-flex flex-wrap my-50">
+                <div class="denuncia-info-title">
+                  <i data-feather="calendar" class="mr-1"></i>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <strong>Fecha de creación:</strong> {{ data.created_date }}
+                  </span>
+                </div>
               </div>
 
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
-                  <i data-feather="info" class="mr-1"></i>
+                  <i data-feather="calendar" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    <strong>Ultimo cambio de estatus por: </strong>
-                  </span><br>
+                    <strong>Fecha de modificación:</strong> {{ data.updated_date }}
+                  </span>
                 </div>
-                <p class="card-text mb-0">345243 </p>
+              </div>
+
+              <div class="d-flex flex-wrap my-50">
+                <div class="denuncia-info-title">
+                  <i data-feather="calendar" class="mr-1"></i>
+                  <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <strong>Fecha de cierre:</strong> {{ data.closed_date }}
+                  </span>
+                </div>
               </div>
 
             </div>
           </div>
         </div>
       </div>
-      <!-- End Denuncia Info Section and Denuncia Status Section -->
-
-      <!-- Implicados y Testigos Section -->
+      <!-- Sección Implicados -->
       <div class="row">
-        <!-- Tabla de Implicados -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Implicados</h5>
               <hr>
-
-              <!-- Table for Involved People -->
               <div class="table-responsive">
                 <table class="table table-bordered">
                   <thead>
@@ -186,9 +221,7 @@
           </div>
         </div>
       </div>
-      <!-- End Implicados y Testigos Section -->
-
-      <!-- Información del Solicitante Section -->
+      <!-- Sección Info del solicitante -->
       <div class="row">
         <div class="col-md-12">
           <div class="card denuncia-card">
@@ -249,9 +282,7 @@
           </div>
         </div>
       </div>
-      <!-- End Información del Solicitante Section -->
-
-      <!-- Archivos Adjuntos and Estatus Change Sections in Row -->
+      <!-- Sección archivos adjuntos -->
       <div class="row">
         <!-- Archivos Adjuntos Section -->
         <div class="col-md-6">
@@ -322,9 +353,6 @@
           </div>
         </div>
       </div>
-      <!-- End Archivos Adjuntos and Estatus Change Sections -->
-
     </section>
-    <!-- page denuncia view end -->
   </div>
 </div>

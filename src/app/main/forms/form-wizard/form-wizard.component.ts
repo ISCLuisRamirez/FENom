@@ -94,6 +94,10 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public specificDate: string = '';
   public description: string = '';
 
+  //Datos para el reporte previo
+  public previousReport:string ='';
+  public previousReportDetails: string ='';
+
   public today: string;
   public datereport: string = '';
   public datos = [];
@@ -190,15 +194,14 @@ export class FormWizardComponent implements OnInit, OnDestroy {
 
     // Datos de la denuncia
     const denunciaData = {
-      id_user: this.currentUser?.id || 0,
-      id_via: this.selectedMedio || 0, // SE MANTIENE IGUAL
-      id_reason: this.motivo?.id || 0,
-      period:this.approximateDatePeriod,
+      id_user: this.currentUser?.id || null,
+      id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
       id_sublocation: idSubLocation,
       description: this.description,
       name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
-      date: this.specificDate || this.today,
+      date: this.specificDate || null, // :this.previousReportDetails || null,
+      period:this.approximateDatePeriod || null,
       file: this.uploader.queue.length > 0 ? this.uploader.queue[0].file.name : '',
       status: 1
     };

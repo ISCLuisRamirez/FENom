@@ -86,10 +86,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               (implicadosData) => {
                 // Verifica si implicadosData es un arreglo o un objeto
                 this.implicados = Array.isArray(implicadosData) ? implicadosData : [implicadosData];
-                console.log('Datos de implicados:', this.implicados);
-                console.log('id_request:', this.data.id_request);
-                console.log('this.data:', this.data);
-                console.log('solicitanteData:', this.solicitanteData);
               },
               (error) => {
                 console.error('Error al obtener los datos de los implicados:', error);
@@ -104,7 +100,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               (testigosData) => {
                 // Verifica si testigosData es un arreglo o un objeto
                 this.testigos = Array.isArray(testigosData) ? testigosData : [testigosData];
-                console.log('Datos de testigos:', this.testigos);
               },
               (error) => {
                 console.error('Error al obtener los datos de los testigos:', error);
@@ -139,7 +134,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
         let status: number = nuevoStatus;
         this._httpClient.patch(apiUrl, status, { headers }).subscribe({
           next: (response) => {
-            console.log('Respuesta de la API:', response);
             Swal.fire({
               title: '¡Estado Actualizado!',
               text: 'El estado se ha actualizado correctamente.',
@@ -196,6 +190,8 @@ export class UserViewComponent implements OnInit, OnDestroy {
   // Método para convertir el id_via a un string
   getMedio(id_via: number): string {
     switch (id_via) {
+      case 0:
+        return 'Portal'
       case 1:
         return 'Teléfono';
       case 2:
@@ -291,7 +287,18 @@ export class UserViewComponent implements OnInit, OnDestroy {
     if (id_reason !== null && id_reason !== undefined && reasons.hasOwnProperty(id_reason)) {
       return reasons[id_reason];
     } else {
-      return 'Datos inexistentes';
+      return 'Motivo desconocido';
+    }
+  }
+
+  getemployee(id_user_updated:number): string {
+    switch (id_user_updated) {
+      case 1:
+        return '';
+      case 2:
+        return '234567';
+      default:
+        return 'Usuario indefinido';
     }
   }
 }

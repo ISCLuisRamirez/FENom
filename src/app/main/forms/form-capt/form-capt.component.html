@@ -380,6 +380,49 @@
                           required
                         ></textarea>
                       </div>
+
+                      <div class="col-12 mt-3">
+                        <p><strong>¿Ha reportado el incidente anteriormente?</strong></p>
+                        <div class="form-check form-check-inline">
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="previousReport"
+                                id="previousReportYes"
+                                value="true"
+                                [(ngModel)]="previousReport"
+                                required
+                            />
+                            <label class="form-check-label" for="previousReportYes">Sí</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="previousReport"
+                                id="previousReportNo"
+                                value="false"
+                                [(ngModel)]="previousReport"
+                                required
+                            />
+                            <label class="form-check-label" for="previousReportNo">No</label>
+                        </div>
+                        <div *ngIf="previousReport === 'true'" class="form-group mt-3">
+                            <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
+                            <textarea
+                                id="previousReportDetails"
+                                name="previousReportDetails"
+                                class="form-control"
+                                rows="3"
+                                placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
+                                [(ngModel)]="previousReportDetails"
+                                required
+                            ></textarea>
+                        </div>
+                    </div>
+                    
+                    
+
                       <div class="col-12 mt-3">
                         <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
                         <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
@@ -396,35 +439,9 @@
                           </label>
                         </div>
                         <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
-                        <div *ngIf="uploader.queue.length > 0" class="mt-3">
-                          <h6>Archivos en fila:</h6>
-                          <ul class="list-group">
-                            <li *ngFor="let item of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
-                              {{ item.file.name }} - {{ item.file.size / 1024 | number: '1.0-2' }} KB
-                              <span *ngIf="item.isUploading" class="badge badge-primary">Subiendo...</span>
-                              <span *ngIf="item.isSuccess" class="badge badge-success">Subido</span>
-                              <span *ngIf="item.isCancel" class="badge badge-warning">Cancelado</span>
-                              <span *ngIf="item.isError" class="badge badge-danger">Error</span>
-                            </li>
-                          </ul>
-                          <div class="progress mt-2">
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              [style.width.%]="uploader.progress"
-                              aria-valuenow="{{ uploader.progress }}"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            >
-                              {{ uploader.progress }}%
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                  
                     </form>
-                  
-                    <!-- Sección de botones de div detalles -->
+
                     <div class="d-flex justify-content-between mt-3">
                       <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>

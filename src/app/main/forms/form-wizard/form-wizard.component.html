@@ -306,6 +306,22 @@
               </div>
 
               <div class="col-12 mt-3">
+                <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span>
+                <label for="description" style="font-size: small;">
+                  Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió.
+              </label><br>
+                <textarea
+                  id="description"
+                  name="description"
+                  class="form-control"
+                  rows="5"
+                  placeholder="Por favor, proporciona una descripción detallada de la denuncia."
+                  [(ngModel)]="description"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="col-12 mt-3">
                 <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
                 <p style="font-size: small;">
                   Por favor, sube únicamente las evidencias más relevantes. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total.

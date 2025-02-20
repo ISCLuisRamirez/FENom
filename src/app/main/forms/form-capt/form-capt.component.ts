@@ -34,9 +34,13 @@ export class FormCaptComponent implements OnInit {
   public currentStep: number = 0;
 
   public value_UT:string='';
-  public showTransportOptions: boolean = false; // Para mostrar los radios de región cuando se selecciona "Unidad Transporte"
-  public showTransportInput: boolean = false; // Para mostrar el input cuando una región ha sido seleccionada
-  public selectedRegion: string = ''; // Para almacenar la región seleccionada
+  public showTransportOptions: boolean = false;
+  public showTransportInput: boolean = false; 
+  public selectedRegion: string = ''; 
+
+  //Datos para el reporte previo
+  public previousReport:string ='';
+  public previousReportDetails: string ='';
 
 
   //Datos de endpoint requesters en caso de no ser anónimo
@@ -257,14 +261,16 @@ export class FormCaptComponent implements OnInit {
   
     // Datos de la denuncia
     const denunciaData = {
-      id_user: this.currentUser?.id || 0,
-      id_via: this.selectedMedio || 0,
-      id_reason: this.motivo?.id || 0,
+      id_user: this.currentUser?.id || null,
+      id_via: this.selectedMedio || null,
+      id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
       id_sublocation: idSubLocation,
+      via_detail:this.email_medio || this.telefono_medio,
       description: this.description,
-      name_sublocation: this.selectedRegion + "-" + this.value_UT|| null,
-      date: this.specificDate || this.today,
+      name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
+      date: this.specificDate || null, // :this.previousReportDetails || null,
+      period:this.approximateDatePeriod || null,
       file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
       status: 1
     };  
@@ -293,7 +299,6 @@ export class FormCaptComponent implements OnInit {
             phone: this.phone || null,
             email: this.email || null
           };
-          console.log('📤 Enviando Solicitante:', requesterData);
           requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
         }
   
@@ -327,7 +332,6 @@ export class FormCaptComponent implements OnInit {
         // Esperar a que todas las promesas se completen
         Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
           .then(() => {
-            console.log('✅ Todos los datos fueron guardados correctamente');
             Swal.fire({
               title: '✅ Denuncia Enviada',
               html: `
@@ -537,16 +541,14 @@ export class FormCaptComponent implements OnInit {
 
   getSubLocationId(): number {
     if (this.customInputValue) {
-      // Buscar el índice de la opción seleccionada en la lista de opciones
       const index = this.listboxOptions.indexOf(this.customInputValue);
-      return index + 1; // Sumar 1 para evitar IDs de 0
+      return index + 1;
     }
-    return 0; // Si no hay sububicación, devolver 0
+    return 0;
   }
 
   onMedioChange() {
-    console.log("Medio seleccionado (ID):", this.selectedMedio);
-  
+
     if (this.selectedMedio === 1) {
       this.email_medio = '';
     } else if (this.selectedMedio === 2) {
@@ -562,36 +564,36 @@ export class FormCaptComponent implements OnInit {
       files.forEach((file) => {
         this.uploader.addToQueue([file]);
       });
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges(); 
     }
   }
 
   addInvolved() {
     this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '' });
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges(); 
   }
 
   removeInvolved() {
     if (this.involvedList.length > 0) {
       this.involvedList.pop();
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges(); 
     }
   }
 
   addWitness() {
     this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '' });
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges(); 
   }
 
   removeWitness() {
     if (this.witnessList.length > 0) {
       this.witnessList.pop();
-      this.cdr.detectChanges(); // Forzar la detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
   toggleAnonimato(value: boolean) {
     this.showAdditionalInfo = value;
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges(); 
   }
 }
