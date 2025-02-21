@@ -37,8 +37,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   private verticalWizardStepper: Stepper;
   readonly maxFiles = 5;
   readonly maxTotalSize = 25 * 1024 * 1024; 
-
-  // ----------------- PROPIEDADES ORIGINALES -----------------
   
   public selectedMedio: any = 0;
   public selectedFiles: FileItem[] = [];
@@ -160,7 +158,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     this.today = new Date().toISOString().split('T')[0];
 
     Swal.fire({
-      title: '<span style="color: red;">IMPORTANTE</span>',
+      title: '<span style="color: red;">IMPORTANTE</span><br>',
       html: 'Antes de comenzar tu denuncia, ten en cuenta que al finalizar se te asignará un folio y una contraseña únicos. <br><br><strong> Es crucial que los resguardes en un lugar seguro, ya que <strong style="color: red;">NO</strong> podrán recuperarse.</strong>',
       icon: 'info',
       confirmButtonText: 'Entendido'
@@ -194,7 +192,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       status: 1
     };
   
-    // Función interna para enviar los datos adicionales (denunciante, involucrados y testigos)
+    // Función interna para enviar datos adicionales (denunciante, involucrados y testigos)
     const sendAdditionalData = (idRequest: number, response: any) => {
       let requesterPromise = Promise.resolve();
       if (!this.isAnonymous) {
@@ -241,7 +239,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
               <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
               <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
               <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
-              Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.
+              Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
             `,
             icon: 'success',
             confirmButtonText: 'Cerrar'
@@ -260,54 +258,59 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         });
     };
   
-    // Si hay archivos (evidencias) en la cola del uploader, subirlos
+    // Si hay archivos (evidencias) en la cola, subirlos
     if (this.uploader.queue.length > 0) {
-      const uploadObservables = this.uploader.queue.map(item =>
-        this.apiService.uploadFile(item._file)
-      );
-      forkJoin(uploadObservables).subscribe({
-        next: (responses: any[]) => {
-          // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
-          const uploadedFiles = responses.map(resp => resp.fileName || resp.id);
-          denunciaData.file = uploadedFiles.join(','); // Ejemplo: se unen por comas
-          // Enviar la denuncia con los datos actualizados
-          this.apiService.enviarDenuncia(denunciaData).subscribe({
-            next: (response) => {
-              const idRequest = response?.id;
-              if (!idRequest) {
-                Swal.fire({
-                  title: '❌ Error',
-                  text: 'No se recibió el ID de la denuncia.',
-                  icon: 'error',
-                  confirmButtonText: 'Reintentar'
-                });
-                return;
-              }
+      // Primero, enviar la denuncia sin archivos para obtener el idRequest
+      this.apiService.enviarDenuncia(denunciaData).subscribe({
+        next: (response) => {
+          const idRequest = response.id;
+          
+          if (!idRequest) {
+            Swal.fire({
+              title: '❌ Error',
+              text: 'No se recibió el ID de la denuncia.',
+              icon: 'error',
+              confirmButtonText: 'Reintentar'
+            });
+            return;
+          }
+  
+          // Ahora, subir cada archivo pasando el idRequest obtenido
+          const uploadObservables = this.uploader.queue.map(item =>
+            this.apiService.uploadFile(item._file, idRequest)
+          );
+          
+          forkJoin(uploadObservables).subscribe({
+            next: (responses: any[]) => {
+              // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
+              const uploadedFiles = responses.map(resp => resp.fileName && resp.id);
+              denunciaData.file = uploadedFiles.join(',');
+              // Enviar datos adicionales asociados a la denuncia
               sendAdditionalData(idRequest, response);
             },
             error: (error) => {
-              console.error('❌ Error al enviar la denuncia:', error);
+              console.error('Error al subir archivos:', error);
               Swal.fire({
-                title: '❌ Error',
-                text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
+                title: 'Error al subir archivos',
+                text: 'No se pudieron subir los archivos. Intenta nuevamente.',
                 icon: 'error',
-                confirmButtonText: 'Reintentar'
+                confirmButtonText: 'Aceptar'
               });
             }
           });
         },
         error: (error) => {
-          console.error('Error al subir archivos:', error);
+          console.error('❌ Error al enviar la denuncia:', error);
           Swal.fire({
-            title: 'Error al subir archivos',
-            text: 'No se pudieron subir los archivos. Intenta nuevamente.',
+            title: '❌ Error',
+            text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
             icon: 'error',
-            confirmButtonText: 'Aceptar'
+            confirmButtonText: 'Reintentar'
           });
         }
       });
     } else {
-      // Si no hay evidencias, enviar la denuncia directamente
+      // Si no hay archivos, enviar la denuncia directamente
       this.apiService.enviarDenuncia(denunciaData).subscribe({
         next: (response) => {
           const idRequest = response?.id;
@@ -334,6 +337,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       });
     }
   }
+  
+  
 
   verticalWizardNext() {
     switch (this.currentStep) {
@@ -397,9 +402,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ----------------------------------------------------------------
-  //              Validaciones por paso (isStepValid)
-  // ----------------------------------------------------------------
   isStepValid(): boolean {
     const currentStep = this.currentStep;
 
@@ -436,10 +438,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         return true;
     }
   }
-
-  // ----------------------------------------------------------------
-  //              Lógica Ubicación, Involucrados, Testigos
-  // ----------------------------------------------------------------
   onRegionChange(region: string): void {
     this.selectedRegion = region;
     this.showTransportInput = !!region;

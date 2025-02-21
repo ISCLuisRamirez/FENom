@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { NumberFormatStyle } from '@angular/common';
 
 @Injectable({
   providedIn: 'root', // Disponible en toda la aplicación
@@ -70,9 +71,10 @@ export class ApiService {
     return this.http.delete(`${this.apiUrl}/datos/${id}`);
   }
 
-  uploadFile(file: File): Observable<any> {
+  uploadFile(file: File, idRequest: number): Observable<any> {
     const formData = new FormData();
     formData.append('file', file, file.name);
+    formData.append('id_request', idRequest.toString());
     return this.http.post(`${this.apiUrl}/api/files/upload`, formData);
   }
   
