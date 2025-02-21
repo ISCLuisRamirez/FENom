@@ -16,8 +16,6 @@
                   <option value="25">25</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
-                  <!-- Valor especial 'all' para mostrar todas en una sola página -->
-                  <option value="all">Todos</option>
                 </select>
                 solicitudes
               </label>
@@ -29,13 +27,8 @@
             <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 w-100">
               <label class="d-flex align-items-center">
                 Búsqueda por folio:
-                <input
-                  type="search"
-                  placeholder="Buscar folio..."
-                  class="form-control ml-25"
-                  (keyup)="filterUpdate($event)"
-                  (search)="filterUpdate($event)"
-                />
+                <input type="text" [(ngModel)]="filters.Folio" placeholder="Buscar por folio"
+                  (input)="onFilterChange()" placeholder="Buscar folio..." class="form-control ml-25">
               </label>
             </div>
           </div>
@@ -45,9 +38,9 @@
             <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 w-100">
               <label class="d-flex align-items-center">
                 Filtro por Estatus:
-                <select class="form-control ml-25" [(ngModel)]="selectedStatus" (change)="filterByStatus()">
+                <select [(ngModel)]="filters.Status" (change)="onFilterChange()">
                   <option value="">Todos</option>
-                  <option value="1">En proceso</option>
+                  <option value="1">En Proceso</option>
                   <option value="2">Abierto</option>
                   <option value="3">Cerrado</option>
                 </select>
@@ -58,45 +51,30 @@
         <br /><br />
 
         <!-- ngx-datatable con paginación controlada por [limit]="tableLimit" -->
-        <ngx-datatable
-          [rows]="filteredRows"
-          [rowHeight]="58"
-          class="bootstrap core-bootstrap"
-          [columnMode]="ColumnMode.force"
-          [headerHeight]="40"
-          [footerHeight]="50"
-          [scrollbarH]="true"
-          [selectionType]="SelectionType.checkbox"
-          [limit]="tableLimit"
-          (activate)="onActivate($event)"
-          (select)="onSelect($event)"
-        >
-          <ngx-datatable-column
-            name="ID"
-            prop="id"
-            [sortable]="true"
-            [draggable]="false"
-            [resizeable]="false"
-            [width]="50"
-            [canAutoResize]="false"
-          ></ngx-datatable-column>
+        <ngx-datatable [rows]="filteredRows" [rowHeight]="58" class="bootstrap core-bootstrap"
+          [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
+          [selectionType]="SelectionType.checkbox" [limit]="tableLimit" (activate)="onActivate($event)"
+          (select)="onSelect($event)">
+          <ngx-datatable-column name="ID" prop="id" [sortable]="true" [draggable]="false" [resizeable]="false"
+            [width]="50" [canAutoResize]="false"></ngx-datatable-column>
 
           <ngx-datatable-column name="Motivo" [width]="500" [draggable]="false" [resizeable]="false">
             <ng-template let-row="row" ngx-datatable-cell-template>
               {{
-                row.id_reason === 1 ? 'Abuso de autoridad'
-                : row.id_reason === 2 ? 'Acoso laboral'
-                : row.id_reason === 3 ? 'Acoso Sexual'
-                : row.id_reason === 4 ? 'Apropiación y uso indebido de activos o recursos'
-                : row.id_reason === 5 ? 'Condiciones inseguras'
-                : row.id_reason === 6 ? 'Conflicto de interés'
-                : row.id_reason === 7 ? 'Corrupción, soborno o extorsión'
-                : row.id_reason === 8 ? 'Desvío de recursos'
-                : row.id_reason === 9 ? 'Discriminación'
-                : row.id_reason === 10 ? 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas contables inadecuadas)'
-                : row.id_reason === 11 ? 'Incumplimiento de las políticas internas'
-                : row.id_reason === 12 ? 'Manipulación de inventarios'
-                : ''
+              row.id_reason === 1 ? 'Abuso de autoridad'
+              : row.id_reason === 2 ? 'Acoso laboral'
+              : row.id_reason === 3 ? 'Acoso Sexual'
+              : row.id_reason === 4 ? 'Apropiación y uso indebido de activos o recursos'
+              : row.id_reason === 5 ? 'Condiciones inseguras'
+              : row.id_reason === 6 ? 'Conflicto de interés'
+              : row.id_reason === 7 ? 'Corrupción, soborno o extorsión'
+              : row.id_reason === 8 ? 'Desvío de recursos'
+              : row.id_reason === 9 ? 'Discriminación'
+              : row.id_reason === 10 ? 'Fraude Financiero (Malversación de fondos, falsificación de registros, prácticas
+              contables inadecuadas)'
+              : row.id_reason === 11 ? 'Incumplimiento de las políticas internas'
+              : row.id_reason === 12 ? 'Manipulación de inventarios'
+              : ''
               }}
             </ng-template>
           </ngx-datatable-column>
@@ -104,66 +82,37 @@
           <ngx-datatable-column name="Medio" [width]="50" [draggable]="false" [resizeable]="false">
             <ng-template let-row="row" ngx-datatable-cell-template>
               {{
-                row.id_via === 1 ? 'Teléfono'
-                : row.id_via === 2 ? 'Correo'
-                : 'Portal'
+              row.id_via === 1 ? 'Teléfono'
+              : row.id_via === 2 ? 'Correo'
+              : 'Portal'
               }}
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column
-            name="Folio"
-            prop="folio"
-            [width]="50"
-            [draggable]="false"
-            [resizeable]="false"
-          ></ngx-datatable-column>
+          <ngx-datatable-column name="Folio" prop="folio" [width]="50" [draggable]="false"
+            [resizeable]="false"></ngx-datatable-column>
 
-          <ngx-datatable-column
-            name="F. creación"
-            prop="created_date"
-            [width]="80"
-            [draggable]="false"
-            [resizeable]="false"
-          ></ngx-datatable-column>
+          <ngx-datatable-column name="F. creación" prop="created_date" [width]="80" [draggable]="false"
+            [resizeable]="false"></ngx-datatable-column>
 
-          <ngx-datatable-column
-            name="F. modificación"
-            prop="updated_date"
-            [width]="80"
-            [draggable]="false"
-            [resizeable]="false"
-          ></ngx-datatable-column>
+          <ngx-datatable-column name="F. modificación" prop="updated_date" [width]="80" [draggable]="false"
+            [resizeable]="false"></ngx-datatable-column>
 
-          <ngx-datatable-column
-            name="F. cierre"
-            prop="closed_date"
-            [width]="80"
-            [draggable]="false"
-            [resizeable]="false"
-          ></ngx-datatable-column>
+          <ngx-datatable-column name="F. cierre" prop="closed_date" [width]="80" [draggable]="false"
+            [resizeable]="false"></ngx-datatable-column>
 
-          <ngx-datatable-column
-            name="Estatus"
-            prop="status"
-            [width]="80"
-            [draggable]="false"
-            [resizeable]="false"
-          >
+          <ngx-datatable-column name="Estatus" prop="status" [width]="80" [draggable]="false" [resizeable]="false">
             <ng-template let-status="value" ngx-datatable-cell-template>
-              <div
-                class="badge badge-pill"
-                [ngClass]="{
+              <div class="badge badge-pill" [ngClass]="{
                   'badge-light-primary': status == '1',
                   'badge-light-success': status == '2',
                   'badge-light-danger': status == '3'
-                }"
-              >
+                }">
                 {{
-                  status == 1 ? 'En proceso'
-                  : status == 2 ? 'Abierto'
-                  : status == 3 ? 'Cerrado'
-                  : ''
+                status == 1 ? 'En proceso'
+                : status == 2 ? 'Abierto'
+                : status == 3 ? 'Cerrado'
+                : ''
                 }}
               </div>
             </ng-template>

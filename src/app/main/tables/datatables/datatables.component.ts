@@ -26,6 +26,16 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject();
   private tempData: any[] = [];
 
+  public filters = {
+    IdReason: null,
+    IdLocation: null,
+    IdSublocation: null,
+    FechaDesde: null,
+    FechaHasta: null,
+    Status: null,
+    Folio: ''
+  };
+  
   public rows: any[] = [];
   public kitchenSinkRows: any[] = [];
   public filteredRows: any[] = [];
@@ -75,32 +85,32 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   // 2) Ciclo de vida
   // ------------------------------------------------
   ngOnInit() {
-    // Suscribirse para obtener los datos
-    this._datatablesService.onDatatablessChanged
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(response => {
-        this.rows = response.datos;
-        this.tempData = [...this.rows];
-        this.kitchenSinkRows = [...this.rows];
-        this.filteredRows = [...this.kitchenSinkRows];
-        this.exportCSVData = [...this.rows];
-      });
-
-    // Configuración de encabezado
-    this.contentHeader = {
-      headerTitle: 'Datatables',
-      actionButton: true,
-      breadcrumb: {
-        type: '',
-        links: [
-          { name: 'Home', isLink: true, link: '/' },
-          { name: 'Forms & Tables', isLink: true, link: '/' },
-          { name: 'Datatables', isLink: false }
-        ]
-      }
-    };
+    this.loadRequests();
   }
 
+  loadRequests() {
+    this._datatablesService.getDataTableRows(this.filters).then((data) => {
+      console.log('Datos para la tabla:', data); // <-- Verificar que la tabla recibe los datos
+  
+      if (!Array.isArray(data)) {
+        console.error('Los datos recibidos no son un array:', data);
+        this.rows = [];
+        return;
+      }
+  
+      this.rows = [...data]; // Copia los datos para la tabla
+      this.tempData = [...this.rows];
+      this.kitchenSinkRows = [...this.rows];
+      this.filteredRows = [...this.kitchenSinkRows];
+      this.exportCSVData = [...this.rows];
+    }).catch(error => {
+      console.error('Error al cargar solicitudes:', error);
+      this.rows = [];
+    });
+  }
+  
+  
+  
   ngOnDestroy(): void {
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
@@ -214,4 +224,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
     this.rows[rowIndex][cell] = event.target.value;
     this.rows = [...this.rows];
   }
+  onFilterChange() {
+    this.loadRequests();
+  }  
 }
