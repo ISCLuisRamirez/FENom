@@ -52,7 +52,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public phone: string = '';
   public name: string = '';
   public email: string = '';
-  public isAnonymous: boolean = false;
+  public isAnonymous: string = 'false';
 
   //Datos del motivo
   public motivo: any;
@@ -192,101 +192,103 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       status: 1
     };
   
-    // Función interna para enviar datos adicionales (denunciante, involucrados y testigos)
-    const sendAdditionalData = (idRequest: number, response: any) => {
-      let requesterPromise = Promise.resolve();
-      if (!this.isAnonymous) {
-        const requesterData = {
-          id_request: idRequest,
-          name: this.name || '',
-          position: this.position || null,
-          employee_number: this.employee_number || null,
-          phone: this.phone || null,
-          email: this.email || null
-        };
-        requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
-      }
-  
-      const involvedPromises = this.involvedList
-        .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
-        .map(inv => {
-          const involvedData = {
-            id_request: idRequest,
-            name: inv.name_inv || '',
-            position: inv.position_inv || '',
-            employee_number: inv.employee_number_inv || null
-          };
-          return this.apiService.enviarDatosInv(involvedData).toPromise();
-        });
-  
-      const witnessPromises = this.witnessList
-        .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
-        .map(wit => {
-          const witnessData = {
-            id_request: idRequest,
-            name: wit.name_wit || '',
-            position: wit.position_wit || '',
-            employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null
-          };
-          return this.apiService.enviarDatosWit(witnessData).toPromise();
-        });
-  
-      Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
-        .then(() => {
-          Swal.fire({
-            title: '✅ Denuncia Enviada',
-            html: `
-              <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
-              <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
-              <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
-              Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
-            `,
-            icon: 'success',
-            confirmButtonText: 'Cerrar'
-          }).then(() => {
-            this._router.navigate(['/Inicio']);
-          });
-        })
-        .catch((error) => {
-          console.error('❌ Error al guardar involucrados o testigos:', error);
+    // Enviar la denuncia principal
+    this.apiService.enviarDenuncia(denunciaData).subscribe({
+      next: (response) => {
+        const idRequest = response?.id;
+        if (!idRequest) {
           Swal.fire({
             title: '❌ Error',
-            text: 'Hubo un problema al guardar los involucrados o testigos. Verifica los datos e intenta nuevamente.',
+            text: 'No se recibió el ID de la denuncia.',
             icon: 'error',
             confirmButtonText: 'Reintentar'
           });
-        });
-    };
+         /*  return; */
+        }
   
-    // Si hay archivos (evidencias) en la cola, subirlos
-    if (this.uploader.queue.length > 0) {
-      // Primero, enviar la denuncia sin archivos para obtener el idRequest
-      this.apiService.enviarDenuncia(denunciaData).subscribe({
-        next: (response) => {
-          const idRequest = response.id;
-          
-          if (!idRequest) {
-            Swal.fire({
-              title: '❌ Error',
-              text: 'No se recibió el ID de la denuncia.',
-              icon: 'error',
-              confirmButtonText: 'Reintentar'
-            });
-            return;
+        // Función para enviar datos adicionales (sin función interna, se hace inline)
+        const enviarDatosAdicionales = () => {
+          const additionalPromises: Promise<any>[] = [];
+          console.log(this.isAnonymous)
+  
+
+          if (this.isAnonymous==='true') {
+            console.log(this.isAnonymous)
+            const requesterData = {
+              id_request: idRequest,
+              name: this.name || '',
+              position: this.position || null,
+              employee_number: this.employee_number || null,
+              phone: this.phone || null,
+              email: this.email || null
+            };
+            additionalPromises.push(this.apiService.enviarDatosPersonales(requesterData).toPromise());
           }
   
-          // Ahora, subir cada archivo pasando el idRequest obtenido
+          // Enviar datos de los involucrados
+          this.involvedList
+            .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
+            .forEach(inv => {
+              const involvedData = {
+                id_request: idRequest,
+                name: inv.name_inv || '',
+                position: inv.position_inv || '',
+                employee_number: inv.employee_number_inv || null
+              };
+              additionalPromises.push(this.apiService.enviarDatosInv(involvedData).toPromise());
+            });
+  
+          // Enviar datos de los testigos
+          this.witnessList
+            .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
+            .forEach(wit => {
+              const witnessData = {
+                id_request: idRequest,
+                name: wit.name_wit || '',
+                position: wit.position_wit || '',
+                employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null
+              };
+              additionalPromises.push(this.apiService.enviarDatosWit(witnessData).toPromise());
+            });
+  
+          Promise.all(additionalPromises)
+            .then(() => {
+              Swal.fire({
+                title: '✅ Denuncia Enviada',
+                html: `
+                  <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
+                  <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br><br>
+                  <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
+                  Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
+                `,
+                icon: 'success',
+                confirmButtonText: 'Cerrar'
+              }).then(() => {
+                this._router.navigate(['/Inicio']);
+              });
+            })
+            .catch((error) => {
+              console.error('❌ Error al guardar datos adicionales:', error);
+              Swal.fire({
+                title: '❌ Error',
+                text: 'Hubo un problema al guardar datos adicionales (involucrados, testigos o datos personales). Verifica los datos e intenta nuevamente.',
+                icon: 'error',
+                confirmButtonText: 'Reintentar'
+              });
+            });
+        };
+  
+        // Si existen archivos en la cola, subirlos y luego enviar datos adicionales
+        if (this.uploader.queue.length > 0) {
           const uploadObservables = this.uploader.queue.map(item =>
             this.apiService.uploadFile(item._file, idRequest)
           );
-          
           forkJoin(uploadObservables).subscribe({
-            next: (responses: any[]) => {
+            next: (uploadResponses: any[]) => {
               // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
-              const uploadedFiles = responses.map(resp => resp.fileName && resp.id);
+              const uploadedFiles = uploadResponses.map(resp => resp.fileName || resp.id);
               denunciaData.file = uploadedFiles.join(',');
-              // Enviar datos adicionales asociados a la denuncia
-              sendAdditionalData(idRequest, response);
+              enviarDatosAdicionales();
             },
             error: (error) => {
               console.error('Error al subir archivos:', error);
@@ -298,45 +300,23 @@ export class FormWizardComponent implements OnInit, OnDestroy {
               });
             }
           });
-        },
-        error: (error) => {
-          console.error('❌ Error al enviar la denuncia:', error);
-          Swal.fire({
-            title: '❌ Error',
-            text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
-            icon: 'error',
-            confirmButtonText: 'Reintentar'
-          });
+        } else {
+          // Si no hay archivos, enviar datos adicionales directamente
+          enviarDatosAdicionales();
         }
-      });
-    } else {
-      // Si no hay archivos, enviar la denuncia directamente
-      this.apiService.enviarDenuncia(denunciaData).subscribe({
-        next: (response) => {
-          const idRequest = response?.id;
-          if (!idRequest) {
-            Swal.fire({
-              title: '❌ Error',
-              text: 'No se recibió el ID de la denuncia.',
-              icon: 'error',
-              confirmButtonText: 'Reintentar'
-            });
-            return;
-          }
-          sendAdditionalData(idRequest, response);
-        },
-        error: (error) => {
-          console.error('❌ Error al enviar la denuncia:', error);
-          Swal.fire({
-            title: '❌ Error',
-            text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
-            icon: 'error',
-            confirmButtonText: 'Reintentar'
-          });
-        }
-      });
-    }
+      },
+      error: (error) => {
+        console.error('❌ Error al enviar la denuncia:', error);
+        Swal.fire({
+          title: '❌ Error',
+          text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Reintentar'
+        });
+      }
+    });
   }
+  
   
   
 

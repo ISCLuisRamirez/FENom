@@ -515,8 +515,8 @@
                     type="radio"
                     id="radio-opc-no"
                     name="no-anonimo"
-                    value="si"
-                    [(ngModel)]="isAnonymous"
+                    value="true"
+                    [(ngModel)]="!isAnonymous"
                     (change)="toggleAnonimato(true)"
                     required
                 />
@@ -526,7 +526,7 @@
                     type="radio"
                     id="radio-opc-si"
                     name="anonimo"
-                    value="no"
+                    value="false"
                     [(ngModel)]="isAnonymous"
                     (change)="toggleAnonimato(false)"
                     required
