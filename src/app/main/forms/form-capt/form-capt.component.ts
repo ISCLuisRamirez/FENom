@@ -10,9 +10,10 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 
-const URL = 'http://localhost:5101';
+const URL = 'http://localhost:5101/api/files/upload';
 
 @Component({
   
@@ -132,7 +133,7 @@ export class FormCaptComponent implements OnInit {
     private apiService: ApiService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   get isCapturista(): boolean {
@@ -245,38 +246,58 @@ export class FormCaptComponent implements OnInit {
       });
       return;
     }
-  
-    // Determinar si se debe guardar name_sublocation o id_sublocation
-    const ubicacionesConInput = ['unidadtransporte', 'anexos', 'navesfilialesysucursales'];
-    const usarNameSubLocation = ubicacionesConInput.includes(this.selectedUbicacion.toLowerCase());
-  
-    let idSubLocation: number | null = null;
-    let nameSubLocation: string | null = null;
-  
-    if (usarNameSubLocation) {
-      nameSubLocation = this.customInputValuelabel;
-    } else {
-      idSubLocation = this.getSubLocationId();
-    }
-  
-    // Datos de la denuncia
-    const denunciaData = {
+
+    // Armar los datos de la denuncia (antes de subir archivos)
+    const denunciaData: any = {
       id_user: this.currentUser?.id || null,
       id_via: this.selectedMedio || null,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: idSubLocation,
-      via_detail:this.email_medio || this.telefono_medio,
+      id_sublocation: this.getSubLocationId(),
       description: this.description,
+      reported: this.previousReportDetails || null,
       name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
-      date: this.specificDate || null, // :this.previousReportDetails || null,
-      period:this.approximateDatePeriod || null,
-      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
+      date: this.specificDate || null,
+      period: this.approximateDatePeriod || null,
+      file: '', // Se actualizará con los nombres o IDs de los archivos subidos
       status: 1
-    };  
+    };
 
-    this.apiService.enviarDenuncia(denunciaData).subscribe(
-      (response) => {
+    // Si existen archivos en la cola del uploader, se suben primero
+    if (this.uploader.queue.length > 0) {
+      const uploadObservables = this.uploader.queue.map(item =>
+        this.apiService.uploadFile(item._file)
+      );
+
+      // forkJoin espera que todas las subidas se completen
+      forkJoin(uploadObservables).subscribe({
+        next: (responses: any[]) => {
+          // Se asume que cada respuesta retorna un objeto que contiene 'fileName' o 'id'
+          const uploadedFiles = responses.map(resp => resp.fileName || resp.id);
+          // Se unen los nombres o IDs (por ejemplo, separados por comas)
+          denunciaData.file = uploadedFiles.join(',');
+          // Ahora se envía la denuncia con el campo file actualizado
+          this.enviarDenunciaConArchivo(denunciaData);
+        },
+        error: (error) => {
+          console.error('Error al subir archivos:', error);
+          Swal.fire({
+            title: 'Error al subir archivos',
+            text: 'No se pudieron subir los archivos. Intenta nuevamente.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+    } else {
+      // Si no hay archivos, se envía la denuncia directamente
+      this.enviarDenunciaConArchivo(denunciaData);
+    }
+  }
+
+  enviarDenunciaConArchivo(denunciaData: any) {
+    this.apiService.enviarDenuncia(denunciaData).subscribe({
+      next: (response) => {
         const idRequest = response?.id;
         if (!idRequest) {
           Swal.fire({
@@ -287,24 +308,24 @@ export class FormCaptComponent implements OnInit {
           });
           return;
         }
-  
-        // Enviar Datos Personales si no es anónimo
+
+        // Enviar datos del denunciante (si no es anónimo)
         let requesterPromise = Promise.resolve();
-        if (!this.isAnonymous===false) {
+        if (!this.isAnonymous) {
           const requesterData = {
             id_request: idRequest,
-            name: this.name|| '',
-            position: this.position|| null,
-            employee_number: this.employee_number|| null,
+            name: this.name || '',
+            position: this.position || null,
+            employee_number: this.employee_number || null,
             phone: this.phone || null,
             email: this.email || null
           };
           requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
         }
-  
-        // Enviar Involucrados (Subjects)
+
+        // Enviar datos de involucrados
         const involvedPromises = this.involvedList
-          .filter(inv => inv.name_inv)
+          .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
           .map((involved) => {
             const involvedData = {
               id_request: idRequest,
@@ -315,9 +336,9 @@ export class FormCaptComponent implements OnInit {
             return this.apiService.enviarDatosInv(involvedData).toPromise();
           });
 
-        // Enviar Testigos (Witnesses)
+        // Enviar datos de testigos
         const witnessPromises = this.witnessList
-          .filter(wit => wit.name_wit)
+          .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
           .map((witness) => {
             const witnessData = {
               id_request: idRequest,
@@ -328,8 +349,7 @@ export class FormCaptComponent implements OnInit {
             return this.apiService.enviarDatosWit(witnessData).toPromise();
           });
 
-  
-        // Esperar a que todas las promesas se completen
+        // Esperar a que se completen todas las llamadas
         Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
           .then(() => {
             Swal.fire({
@@ -337,7 +357,8 @@ export class FormCaptComponent implements OnInit {
               html: `
                 <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
                 <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
-                <em style="color: red;"><strong>IMPORTANTE:</strong> Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
+                <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
+                Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro.
               `,
               icon: 'success',
               confirmButtonText: 'Cerrar'
@@ -346,7 +367,7 @@ export class FormCaptComponent implements OnInit {
             });
           })
           .catch((error) => {
-            console.error('❌ Error al guardar Involucrados o Testigos:', error);
+            console.error('❌ Error al guardar involucrados o testigos:', error);
             Swal.fire({
               title: '❌ Error',
               text: 'Hubo un problema al guardar los involucrados o testigos. Verifica los datos e intenta nuevamente.',
@@ -355,7 +376,7 @@ export class FormCaptComponent implements OnInit {
             });
           });
       },
-      (error) => {
+      error: (error) => {
         console.error('❌ Error al enviar la denuncia:', error);
         Swal.fire({
           title: '❌ Error',
@@ -364,7 +385,7 @@ export class FormCaptComponent implements OnInit {
           confirmButtonText: 'Reintentar'
         });
       }
-    );
+    });
   }
   
   
@@ -422,7 +443,7 @@ export class FormCaptComponent implements OnInit {
         break;
     }
 
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
   verticalWizardPrevious() {
@@ -437,7 +458,7 @@ export class FormCaptComponent implements OnInit {
     this.apiService.getRoles().subscribe(
       (response) => {
         this.datos = response;
-        this.cdr.detectChanges(); // Forzar la detección de cambios
+        this.cdr.detectChanges(); 
       },
       (error) => {
         console.error('Error al obtener datos', error);
@@ -447,19 +468,18 @@ export class FormCaptComponent implements OnInit {
 
   onRegionChange(region: string): void {
     this.selectedRegion = region;
-    this.showTransportInput = !!region; // Si hay una región seleccionada, mostrar el input
+    this.showTransportInput = !!region;
     this.cdr.detectChanges();
   }
 
-  // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset del valor
+    this.customInputValue = ''; 
     this.showListbox = false;
     this.showInputBox = false;
-    this.showTransportOptions = false; // Ocultar regiones al cambiar de ubicación
-    this.showTransportInput = false; // Ocultar input al cambiar de ubicación
-    this.selectedRegion = ''; // Resetear región cuando se cambia de ubicación
+    this.showTransportOptions = false; 
+    this.showTransportInput = false; 
+    this.selectedRegion = ''; 
 
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':

@@ -287,12 +287,12 @@
                   />
                 </div>
               </div>
-
+          
               <div class="col-12 mt-3">
                 <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span>
                 <label for="description" style="font-size: small;">
                   Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió.
-              </label><br>
+                </label><br>
                 <textarea
                   id="description"
                   name="description"
@@ -301,60 +301,53 @@
                   placeholder="Por favor, proporciona una descripción detallada de la denuncia."
                   [(ngModel)]="description"
                   required
-                >
-                <small class="text-muted">Ingrese un número de 10 dígitos.</small>
-                <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
-                  El número de teléfono es obligatorio y debe tener 10 dígitos.
-                </div>
-              </textarea>
-
+                ></textarea>
               </div>
-
+          
               <div class="col-12 mt-3">
                 <p><strong>¿Ha reportado el incidente anteriormente?</strong></p>
                 <div class="form-check form-check-inline">
-                    <input
-                        class="form-check-input"
-                        type="radio"
-                        name="previousReport"
-                        id="previousReportYes"
-                        value="true"
-                        [(ngModel)]="previousReport"
-                        required
-                    />
-                    <label class="form-check-label" for="previousReportYes">Sí</label>
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="previousReport"
+                    id="previousReportYes"
+                    value="true"
+                    [(ngModel)]="previousReport"
+                    required
+                  />
+                  <label class="form-check-label" for="previousReportYes">Sí</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input
-                        class="form-check-input"
-                        type="radio"
-                        name="previousReport"
-                        id="previousReportNo"
-                        value="false"
-                        [(ngModel)]="previousReport"
-                        required
-                    />
-                    <label class="form-check-label" for="previousReportNo">No</label>
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="previousReport"
+                    id="previousReportNo"
+                    value="false"
+                    [(ngModel)]="previousReport"
+                    required
+                  />
+                  <label class="form-check-label" for="previousReportNo">No</label>
                 </div>
                 <div *ngIf="previousReport === 'true'" class="form-group mt-3">
-                    <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
-                    <textarea
-                        id="previousReportDetails"
-                        name="previousReportDetails"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
-                        [(ngModel)]="previousReportDetails"
-                        required
-                    ></textarea>
+                  <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
+                  <textarea
+                    id="previousReportDetails"
+                    name="previousReportDetails"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
+                    [(ngModel)]="previousReportDetails"
+                    required
+                  ></textarea>
                 </div>
-            </div>
-            
-            
-
+              </div>
+              
+              <!-- Sección de evidencia -->
               <div class="col-12 mt-3">
                 <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
-                <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
+                <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia.</p>
                 <div class="custom-file">
                   <input
                     type="file"
@@ -367,10 +360,20 @@
                     {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
                   </label>
                 </div>
-                <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
+                <!-- Cola de archivos -->
+                <div *ngIf="uploader.queue.length > 0" class="mt-2">
+                  <h6>Archivos en fila:</h6>
+                  <ul class="list-group">
+                    <li *ngFor="let fileItem of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
+                      {{ fileItem.file.name }} ({{ fileItem.file.size | number }} bytes)
+                      <button type="button" class="btn btn-sm btn-danger" (click)="fileItem.remove()">Eliminar</button>
+                    </li>
+                  </ul>
+                </div>
+                <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
               </div>
             </form>
-
+          
             <div class="d-flex justify-content-between mt-3">
               <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
@@ -382,6 +385,7 @@
               </button>
             </div>
           </div>
+          
 
           <!-- Paso 4: Involucrados -->
           <div id="section_involved" class="content">
