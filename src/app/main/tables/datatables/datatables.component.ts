@@ -25,29 +25,35 @@ export class DatatablesComponent implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any> = new Subject();
   private tempData: any[] = [];
+  
+  filteredRows = [];
+  tableLimit = 10; // Tamaño de la página
+  currentPage = 1; // Página actual
+  totalRecords = 0;
+  totalPages = 0;
 
-  public filters = {
+  filters = {
+    Pagina: this.currentPage,
+    TamanoPagina: this.tableLimit,
     IdReason: null,
     IdLocation: null,
     IdSublocation: null,
     FechaDesde: null,
     FechaHasta: null,
     Status: null,
-    Folio: ''
+    Folio: '',
+    OrdenarPor: 'id',
+    OrdenDesc: false
   };
   
   public rows: any[] = [];
   public kitchenSinkRows: any[] = [];
-  public filteredRows: any[] = [];
   public selected: any[] = [];
   public chkBoxSelected: any[] = [];
   public exportCSVData: any;
 
   // Control para la opción seleccionada en el dropdown (10, 25, 50, 100 o 'all')
   public basicSelectedOption: string | number = '10';
-
-  // Este será el límite REAL que usará ngx-datatable
-  public tableLimit: number = 10;
 
   // Filtro por estatus
   public selectedStatus: string = '';
@@ -70,7 +76,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   public _snippetCodeCustomCheckbox = snippet.snippetCodeCustomCheckbox;
   public _snippetCodeResponsive = snippet.snippetCodeResponsive;
   public _snippetCodeMultilangual = snippet.snippetCodeMultilangual;
-
+  Math = Math;
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @ViewChild('tableRowDetails') tableRowDetails: any;
 
@@ -89,53 +95,30 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   }
 
   loadRequests() {
-    this._datatablesService.getDataTableRows(this.filters).then((data) => {
-      console.log('Datos para la tabla:', data); // <-- Verificar que la tabla recibe los datos
-  
-      if (!Array.isArray(data)) {
-        console.error('Los datos recibidos no son un array:', data);
-        this.rows = [];
-        return;
-      }
-  
-      this.rows = [...data]; // Copia los datos para la tabla
-      this.tempData = [...this.rows];
-      this.kitchenSinkRows = [...this.rows];
-      this.filteredRows = [...this.kitchenSinkRows];
-      this.exportCSVData = [...this.rows];
-    }).catch(error => {
-      console.error('Error al cargar solicitudes:', error);
-      this.rows = [];
+    this.filters.Pagina = this.currentPage;
+    this.filters.TamanoPagina = this.tableLimit;
+
+    this._datatablesService.getRequests(this.filters).subscribe(response => {
+      this.filteredRows = response.datos;
+      this.totalRecords = response.TotalRegistros;
+      this.totalPages = response.TotalPaginas;
     });
   }
-  
-  
+
+  onPageChange(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.loadRequests();
+  }
+
+  onLimitChange() {
+    this.currentPage = 1;
+    this.loadRequests();
+  }
   
   ngOnDestroy(): void {
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
-  }
-
-  // ------------------------------------------------
-  // 3) Manejo de la paginación y la tabla
-  // ------------------------------------------------
-
-  /**
-   * Se llama cuando el usuario cambia la opción en el <select> (10, 25, 50, 100 o 'all')
-   */
-  onLimitChange() {
-    if (this.basicSelectedOption === 'all') {
-      // Si el usuario selecciona "Todos"
-      this.tableLimit = this.filteredRows.length; // Mostramos todas las filas en una sola página
-    } else {
-      // Convertimos la cadena a número (por ej. '10' -> 10)
-      this.tableLimit = +this.basicSelectedOption;
-    }
-
-    // Reiniciamos la paginación a la primera página
-    if (this.table) {
-      this.table.offset = 0;
-    }
   }
 
   /**
