@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { NumberFormatStyle } from '@angular/common';
 
 @Injectable({
   providedIn: 'root', // Disponible en toda la aplicación
@@ -50,12 +51,10 @@ export class ApiService {
     return this.http.get<any[]>(`${this.apiUrl}/api/witnesses`, { params: { id_request: id_request.toString() } });
   }
 
-  //Get para obtener informacion filtrada
   getSolicitanteInfoFiltrado(data: any ): Observable<any> {
     return this.http.get(`${this.apiUrl}/api/requesters?id_request=`+ data);
   }
  
-  // Método para enviar datos (POST)
   crearDato(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/datos`, data);
   }
@@ -64,14 +63,19 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/login`, { employee_number, password });
   }
   
-
-  // Método para actualizar datos (PUT)
   actualizarDato(id: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/datos/${id}`, data);
   }
 
-  // Método para eliminar datos (DELETE)
   eliminarDato(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/datos/${id}`);
   }
+
+  uploadFile(file: File, idRequest: number): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('id_request', idRequest.toString());
+    return this.http.post(`${this.apiUrl}/api/files/upload`, formData);
+  }
+  
 }

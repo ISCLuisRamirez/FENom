@@ -10,9 +10,10 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 
-const URL = 'http://localhost:5101';
+const URL = 'http://localhost:5101/api/files/upload';
 
 @Component({
   
@@ -132,7 +133,7 @@ export class FormCaptComponent implements OnInit {
     private apiService: ApiService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   get isCapturista(): boolean {
@@ -236,6 +237,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   onSubmit() {
+    // Validar que todos los campos requeridos estén completos
     if (!this.isStepValid()) {
       Swal.fire({
         title: '❌ Campos Incompletos',
@@ -246,126 +248,170 @@ export class FormCaptComponent implements OnInit {
       return;
     }
   
-    // Determinar si se debe guardar name_sublocation o id_sublocation
-    const ubicacionesConInput = ['unidadtransporte', 'anexos', 'navesfilialesysucursales'];
-    const usarNameSubLocation = ubicacionesConInput.includes(this.selectedUbicacion.toLowerCase());
-  
-    let idSubLocation: number | null = null;
-    let nameSubLocation: string | null = null;
-  
-    if (usarNameSubLocation) {
-      nameSubLocation = this.customInputValuelabel;
-    } else {
-      idSubLocation = this.getSubLocationId();
-    }
-  
-    // Datos de la denuncia
-    const denunciaData = {
+    // Armar los datos de la denuncia
+    const denunciaData: any = {
       id_user: this.currentUser?.id || null,
       id_via: this.selectedMedio || null,
+      via_detail:this.telefono_medio || this.email_medio,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: idSubLocation,
-      via_detail:this.email_medio || this.telefono_medio,
+      id_sublocation: this.getSubLocationId(),
       description: this.description,
+      reported: this.previousReportDetails || null,
       name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
-      date: this.specificDate || null, // :this.previousReportDetails || null,
-      period:this.approximateDatePeriod || null,
-      file: this.selectedFiles.length > 0 ? this.selectedFiles[0].file.name : '',
+      date: this.specificDate || null,
+      period: this.approximateDatePeriod || null,
+      file: '', // Se completará si existen evidencias
       status: 1
-    };  
-
-    this.apiService.enviarDenuncia(denunciaData).subscribe(
-      (response) => {
-        const idRequest = response?.id;
-        if (!idRequest) {
+    };
+  
+    // Función interna para enviar datos adicionales (denunciante, involucrados y testigos)
+    const sendAdditionalData = (idRequest: number, response: any) => {
+      let requesterPromise = Promise.resolve();
+      if (!this.isAnonymous) {
+        const requesterData = {
+          id_request: idRequest,
+          name: this.name || '',
+          position: this.position || null,
+          employee_number: this.employee_number || null,
+          phone: this.phone || null,
+          email: this.email || null
+        };
+        requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
+      }
+  
+      const involvedPromises = this.involvedList
+        .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
+        .map(inv => {
+          const involvedData = {
+            id_request: idRequest,
+            name: inv.name_inv || '',
+            position: inv.position_inv || '',
+            employee_number: inv.employee_number_inv || null
+          };
+          return this.apiService.enviarDatosInv(involvedData).toPromise();
+        });
+  
+      const witnessPromises = this.witnessList
+        .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
+        .map(wit => {
+          const witnessData = {
+            id_request: idRequest,
+            name: wit.name_wit || '',
+            position: wit.position_wit || '',
+            employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null
+          };
+          return this.apiService.enviarDatosWit(witnessData).toPromise();
+        });
+  
+      Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
+        .then(() => {
+          Swal.fire({
+            title: '✅ Denuncia Enviada',
+            html: `
+              <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
+              <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
+              <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
+              Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
+            `,
+            icon: 'success',
+            confirmButtonText: 'Cerrar'
+          }).then(() => {
+            this._router.navigate(['/Inicio']);
+          });
+        })
+        .catch((error) => {
+          console.error('❌ Error al guardar involucrados o testigos:', error);
           Swal.fire({
             title: '❌ Error',
-            text: 'No se recibió el ID de la denuncia.',
+            text: 'Hubo un problema al guardar los involucrados o testigos. Verifica los datos e intenta nuevamente.',
             icon: 'error',
             confirmButtonText: 'Reintentar'
           });
-          return;
-        }
+        });
+    };
   
-        // Enviar Datos Personales si no es anónimo
-        let requesterPromise = Promise.resolve();
-        if (!this.isAnonymous===false) {
-          const requesterData = {
-            id_request: idRequest,
-            name: this.name|| '',
-            position: this.position|| null,
-            employee_number: this.employee_number|| null,
-            phone: this.phone || null,
-            email: this.email || null
-          };
-          requesterPromise = this.apiService.enviarDatosPersonales(requesterData).toPromise();
-        }
-  
-        // Enviar Involucrados (Subjects)
-        const involvedPromises = this.involvedList
-          .filter(inv => inv.name_inv)
-          .map((involved) => {
-            const involvedData = {
-              id_request: idRequest,
-              name: involved.name_inv || '',
-              position: involved.position_inv || '',
-              employee_number: involved.employee_number_inv || null
-            };
-            return this.apiService.enviarDatosInv(involvedData).toPromise();
-          });
-
-        // Enviar Testigos (Witnesses)
-        const witnessPromises = this.witnessList
-          .filter(wit => wit.name_wit)
-          .map((witness) => {
-            const witnessData = {
-              id_request: idRequest,
-              name: witness.name_wit || '',
-              position: witness.position_wit || '',
-              employee_number: witness.employee_number_wit ? String(witness.employee_number_wit) : null
-            };
-            return this.apiService.enviarDatosWit(witnessData).toPromise();
-          });
-
-  
-        // Esperar a que todas las promesas se completen
-        Promise.all([requesterPromise, ...involvedPromises, ...witnessPromises])
-          .then(() => {
-            Swal.fire({
-              title: '✅ Denuncia Enviada',
-              html: `
-                <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
-                <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br>
-                <em style="color: red;"><strong>IMPORTANTE:</strong> Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.</em>
-              `,
-              icon: 'success',
-              confirmButtonText: 'Cerrar'
-            }).then(() => {
-              this._router.navigate(['/Inicio']);
-            });
-          })
-          .catch((error) => {
-            console.error('❌ Error al guardar Involucrados o Testigos:', error);
+    // Si hay archivos (evidencias) en la cola, subirlos
+    if (this.uploader.queue.length > 0) {
+      // Primero, enviar la denuncia sin archivos para obtener el idRequest
+      this.apiService.enviarDenuncia(denunciaData).subscribe({
+        next: (response) => {
+          const idRequest = response.id;
+          
+          if (!idRequest) {
             Swal.fire({
               title: '❌ Error',
-              text: 'Hubo un problema al guardar los involucrados o testigos. Verifica los datos e intenta nuevamente.',
+              text: 'No se recibió el ID de la denuncia.',
               icon: 'error',
               confirmButtonText: 'Reintentar'
             });
+            return;
+          }
+  
+          // Ahora, subir cada archivo pasando el idRequest obtenido
+          const uploadObservables = this.uploader.queue.map(item =>
+            this.apiService.uploadFile(item._file, idRequest)
+          );
+          
+          forkJoin(uploadObservables).subscribe({
+            next: (responses: any[]) => {
+              // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
+              const uploadedFiles = responses.map(resp => resp.fileName && resp.id);
+              denunciaData.file = uploadedFiles.join(',');
+              // Enviar datos adicionales asociados a la denuncia
+              sendAdditionalData(idRequest, response);
+            },
+            error: (error) => {
+              console.error('Error al subir archivos:', error);
+              Swal.fire({
+                title: 'Error al subir archivos',
+                text: 'No se pudieron subir los archivos. Intenta nuevamente.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              });
+            }
           });
-      },
-      (error) => {
-        console.error('❌ Error al enviar la denuncia:', error);
-        Swal.fire({
-          title: '❌ Error',
-          text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
-          icon: 'error',
-          confirmButtonText: 'Reintentar'
-        });
-      }
-    );
+        },
+        error: (error) => {
+          console.error('❌ Error al enviar la denuncia:', error);
+          Swal.fire({
+            title: '❌ Error',
+            text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
+            icon: 'error',
+            confirmButtonText: 'Reintentar'
+          });
+        }
+      });
+    } else {
+      // Si no hay archivos, enviar la denuncia directamente
+      this.apiService.enviarDenuncia(denunciaData).subscribe({
+        next: (response) => {
+          const idRequest = response?.id;
+          if (!idRequest) {
+            Swal.fire({
+              title: '❌ Error',
+              text: 'No se recibió el ID de la denuncia.',
+              icon: 'error',
+              confirmButtonText: 'Reintentar'
+            });
+            return;
+          }
+          sendAdditionalData(idRequest, response);
+        },
+        error: (error) => {
+          console.error('❌ Error al enviar la denuncia:', error);
+          Swal.fire({
+            title: '❌ Error',
+            text: 'Hubo un problema al enviar la denuncia. Revisa tu conexión e intenta nuevamente.',
+            icon: 'error',
+            confirmButtonText: 'Reintentar'
+          });
+        }
+      });
+    }
   }
+
+  
   
   
   verticalWizardNext() {
@@ -422,7 +468,7 @@ export class FormCaptComponent implements OnInit {
         break;
     }
 
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges();
   }
 
   verticalWizardPrevious() {
@@ -437,7 +483,7 @@ export class FormCaptComponent implements OnInit {
     this.apiService.getRoles().subscribe(
       (response) => {
         this.datos = response;
-        this.cdr.detectChanges(); // Forzar la detección de cambios
+        this.cdr.detectChanges(); 
       },
       (error) => {
         console.error('Error al obtener datos', error);
@@ -447,19 +493,18 @@ export class FormCaptComponent implements OnInit {
 
   onRegionChange(region: string): void {
     this.selectedRegion = region;
-    this.showTransportInput = !!region; // Si hay una región seleccionada, mostrar el input
+    this.showTransportInput = !!region;
     this.cdr.detectChanges();
   }
 
-  // Función para manejar el cambio de ubicación
   onUbicacionChange(ubicacion: string): void {
     this.selectedUbicacion = ubicacion;
-    this.customInputValue = ''; // Reset del valor
+    this.customInputValue = ''; 
     this.showListbox = false;
     this.showInputBox = false;
-    this.showTransportOptions = false; // Ocultar regiones al cambiar de ubicación
-    this.showTransportInput = false; // Ocultar input al cambiar de ubicación
-    this.selectedRegion = ''; // Resetear región cuando se cambia de ubicación
+    this.showTransportOptions = false; 
+    this.showTransportInput = false; 
+    this.selectedRegion = ''; 
 
     switch (ubicacion.toLowerCase()) {
       case 'sucursales':
