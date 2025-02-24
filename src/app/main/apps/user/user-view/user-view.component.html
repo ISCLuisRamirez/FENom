@@ -93,7 +93,7 @@
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    Estatus actual: 
+                    Estatus actual:
                   </span>
                   {{ getStatusString(data.status) }}
                 </div>
@@ -285,25 +285,84 @@
       <!-- Sección archivos adjuntos -->
       <div class="row">
         <!-- Archivos Adjuntos Section -->
+
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Archivos Adjuntos</h5>
               <hr>
-              <!-- Aquí podrías usar *ngFor si recibes un array de archivos en tu API -->
               <div class="file-list">
-                <div class="file-item d-flex justify-content-between align-items-center my-2">
-                  <a href="#" class="file-name text-truncate">Archivo1.pdf</a>
-                  <button class="btn btn-link btn-sm">Ver</button>
+                <!-- Itera dinámicamente con *ngFor -->
+                <div class="file-item d-flex justify-content-between align-items-center my-2"
+                  *ngFor="let file of files">
+                  <a href="#" class="file-name text-truncate" (click)="viewFile(file)">
+                    {{ file.file_name }}
+                  </a>
+                  <button class="btn btn-link btn-sm" (click)="viewFile(file)">Ver</button>
                 </div>
-                <div class="file-item d-flex justify-content-between align-items-center my-2">
-                  <a href="#" class="file-name text-truncate">Imagen2.jpg</a>
-                  <button class="btn btn-link btn-sm">Ver</button>
+
+                <!-- Muestra mensaje si no hay archivos -->
+                <div *ngIf="!files || files.length === 0">
+                  No hay archivos adjuntos.
                 </div>
-                <div class="file-item d-flex justify-content-between align-items-center my-2">
-                  <a href="#" class="file-name text-truncate">Documento3.png</a>
-                  <button class="btn btn-link btn-sm">Ver</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal de Vista Previa con dimensiones personalizadas y centrado -->
+        <div *ngIf="previewURL" class="modal fade show" tabindex="-1" style="
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Asegura que se superponga al resto del contenido */
+  ">
+          <!-- 
+    Puedes mantener "modal-xl" o cambiarlo por otra clase de Bootstrap
+    si deseas controlar únicamente vía estilos inline o CSS.
+  -->
+          <div class="modal-dialog modal-xl" style="width: 80vw; height: 80vh; max-width: 100%; max-height: 100%;">
+            <div class="modal-content" style="width: 100%; height: 100%;">
+              <!-- Encabezado -->
+              <div class="modal-header">
+                <h5 class="modal-title">{{ selectedFileName }}</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closePreview()"></button>
+              </div>
+
+              <!-- Cuerpo del modal -->
+              <div class="modal-body" style="height: calc(100% - 60px); overflow: auto;">
+
+                <!-- Vista previa para PDF -->
+                <iframe *ngIf="selectedFileName?.toLowerCase().endsWith('.pdf')" [src]="previewURL"
+                  style="width: 100%; height: 100%;" frameborder="0"></iframe>
+
+                <!-- Vista previa para imagen -->
+                <img *ngIf="selectedFileName?.toLowerCase().endsWith('.jpg') 
+               || selectedFileName?.toLowerCase().endsWith('.jpeg') 
+               || selectedFileName?.toLowerCase().endsWith('.png')" [src]="previewURL" alt="Vista previa de la imagen"
+                  style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+
+                <!-- Otros formatos: descarga -->
+                <div *ngIf="!selectedFileName?.toLowerCase().endsWith('.pdf') 
+               && !selectedFileName?.toLowerCase().endsWith('.jpg') 
+               && !selectedFileName?.toLowerCase().endsWith('.jpeg') 
+               && !selectedFileName?.toLowerCase().endsWith('.png')">
+                  <p>Archivo no soportado para vista previa. Puedes descargarlo aquí:</p>
+                  <a [href]="previewURL" [download]="selectedFileName" class="btn btn-primary">
+                    Descargar
+                  </a>
                 </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closePreview()">Cerrar</button>
               </div>
             </div>
           </div>
@@ -315,8 +374,7 @@
             <div class="card-body">
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
-
-              <!-- Formulario Reactivo para cambiar estatus -->
+              <!-- Formulario reactivo para cambiar estatus -->
               <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
@@ -326,7 +384,6 @@
                     </span>
                   </div>
                   <div>
-                    <!-- Si deseas que '1', '2', '3' sean números en el form, usa [ngValue] -->
                     <select class="form-control" id="denunciaStatus" formControlName="status">
                       <option [ngValue]="1">En proceso</option>
                       <option [ngValue]="2">Abierto</option>
@@ -334,25 +391,20 @@
                     </select>
                   </div>
                 </div>
-
-                <!-- Botones dentro del formulario -->
                 <div class="d-flex justify-content-end mt-3">
-                  <!-- type="button" para que NO envíe el formulario -->
                   <button type="button" class="btn btn-secondary mr-2" routerLink="/tables/datatables">
                     Cancelar
                   </button>
-
-                  <!-- type="submit" para que SÍ envíe el formulario y dispare (ngSubmit) -->
                   <button type="submit" class="btn btn-primary">
                     Guardar
                   </button>
                 </div>
               </form>
-              <!-- Fin del formulario -->
             </div>
           </div>
         </div>
       </div>
+
     </section>
   </div>
 </div>

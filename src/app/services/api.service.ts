@@ -77,5 +77,15 @@ export class ApiService {
     formData.append('id_request', idRequest.toString());
     return this.http.post(`${this.apiUrl}/api/files/upload`, formData);
   }
-  
+
+  getFile(idRequest: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/files/get/${idRequest}`);
+  }
+
+  // En api.service.ts
+  Viewfile(fileId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/files/${fileId}`, {
+      responseType: 'blob'
+    });
+  }
 }

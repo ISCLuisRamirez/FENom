@@ -9,6 +9,7 @@ import { environment } from 'environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from 'app/auth/models';
 import Swal from 'sweetalert2';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-view',
@@ -19,6 +20,7 @@ import Swal from 'sweetalert2';
 export class UserViewComponent implements OnInit, OnDestroy {
   // Variables públicas
   public url = this.router.url;
+  public files: any[] = [];
   public lastValue: string;
   public data: any;
   public solicitanteData: any;
@@ -26,6 +28,8 @@ export class UserViewComponent implements OnInit, OnDestroy {
   public implicados: any[] = [];
   public testigos: any[] = [];
   public currentUser: User | null = null;
+  public selectedFileName: string | null = null;
+  public previewURL: SafeResourceUrl | null = null;
 
   // Variables privadas
   private _unsubscribeAll: Subject<any>;
@@ -34,6 +38,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
   statusForm: FormGroup;
 
   constructor(
+    private sanitizer: DomSanitizer,
     private apiService: ApiService,
     private router: Router,
     private _userViewService: UserViewService,
@@ -51,22 +56,20 @@ export class UserViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Suscribirse al servicio para obtener la data de la denuncia
+    // Suscribirse al servicio que retorna la data de la denuncia
     this._userViewService.onUserViewChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
 
-        // Si ya tenemos this.data, podemos setear el valor del status en el formulario
+        // Si ya tenemos this.data, asignamos el estado al formulario
         if (this.data?.status) {
-          // Convertimos a número, si status es numérico
           this.statusForm.patchValue({ status: +this.data.status });
         }
 
-        // Obtener los datos del solicitante
-        if (this.data.id) {
-          this.apiService
-            .getSolicitanteInfoFiltrado(this.data.id)
+        if (this.data?.id) {
+          // Obtener información del solicitante
+          this.apiService.getSolicitanteInfoFiltrado(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (solicitanteData) => {
@@ -78,13 +81,11 @@ export class UserViewComponent implements OnInit, OnDestroy {
               }
             );
 
-          // Obtener los datos de los implicados
-          this.apiService
-            .getInvolucrados(this.data.id)
+          // Obtener información de los implicados
+          this.apiService.getInvolucrados(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (implicadosData) => {
-                // Verifica si implicadosData es un arreglo o un objeto
                 this.implicados = Array.isArray(implicadosData) ? implicadosData : [implicadosData];
               },
               (error) => {
@@ -92,22 +93,33 @@ export class UserViewComponent implements OnInit, OnDestroy {
               }
             );
 
-          // Obtener los datos de los testigos
-          this.apiService
-            .getTestigos(this.data.id)
+          // Obtener información de los testigos
+          this.apiService.getTestigos(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
               (testigosData) => {
-                // Verifica si testigosData es un arreglo o un objeto
                 this.testigos = Array.isArray(testigosData) ? testigosData : [testigosData];
               },
               (error) => {
                 console.error('Error al obtener los datos de los testigos:', error);
               }
             );
+
+          // Obtener la lista de archivos asociados
+          this.apiService.getFile(this.data.id)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(
+              (filesData) => {
+                this.files = filesData;
+              },
+              (error) => {
+                console.error('Error al obtener los archivos:', error);
+              }
+            );
         }
       });
   }
+
 
   actualizarStatus() {
     const nuevoStatus = this.statusForm.value.status;
@@ -291,7 +303,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  getemployee(id_user_updated:number): string {
+  getemployee(id_user_updated: number): string {
     switch (id_user_updated) {
       case 1:
         return '';
@@ -301,4 +313,40 @@ export class UserViewComponent implements OnInit, OnDestroy {
         return 'Usuario indefinido';
     }
   }
+
+  viewFile(file: any): void {
+    this.selectedFileName = file.file_name;
+  
+    this.apiService.Viewfile(file.id).subscribe({
+      next: (blob: Blob) => {
+        // Convertir el blob en una URL local
+        const objectUrl = URL.createObjectURL(blob);
+  
+        // Marcar la URL como “segura” para que Angular no la bloquee
+        this.previewURL = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+      },
+      error: err => console.error('Error al obtener el archivo:', err)
+    });
+  }
+  
+  
+  closePreview(): void {
+    // Libera la memoria del blob
+    if (this.previewURL) {
+      // Si quisieras liberar la URL original, primero habría que guardarla en una variable normal
+      // antes de sanitizarla, porque sanitizer produce un objeto "SafeResourceUrl".
+    }
+    this.previewURL = null;
+    this.selectedFileName = null;
+  }
+  isPDF(filename: string): boolean {
+    return filename.toLowerCase().endsWith('.pdf');
+  }
+  
+  isImage(filename: string): boolean {
+    const ext = filename.toLowerCase();
+    return ext.endsWith('.jpg') || ext.endsWith('.jpeg') || ext.endsWith('.png');
+  }
+    
+  
 }
