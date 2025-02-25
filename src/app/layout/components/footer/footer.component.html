@@ -2,16 +2,20 @@
 <p class="clearfix mb-0" style="color: white;">
   <!-- Contenedor principal de todo el footer alineado a la derecha -->
   <span class="float-right d-block col-md-12 mt-12" style="background-color: #008CBA; padding-left: 200px;">
-    <p style="font-size:11px; color: white; margin-bottom: 10px;"><strong><br>Políticas de denuncias</strong></p>
+    <p style="font-size:11px; color: white; margin-bottom: 10px;">
+      <strong><br>Políticas de denuncias</strong>
+    </p>
     <nav style="font-size: 9px; color: white;">
-      <a>Política 1</a><br>
-      <a>Política 2</a><br>
-      <a>Política 3</a><br>
-      <a>Política 4</a><br>
-    </nav><br>
+      <!-- Utilizamos routerLink y fragment para navegar a la página de policies y a un fragmento específico -->
+      <a routerLink="/pages/miscellaneous/policies" fragment="politica1" style="color: white; text-decoration: none;">Política 1</a><br>
+      <a routerLink="/pages/miscellaneous/policies" fragment="politica2" style="color: white; text-decoration: none;">Política 2</a><br>
+      <a routerLink="/pages/miscellaneous/policies" fragment="politica3" style="color: white; text-decoration: none;">Política 3</a><br>
+      <a routerLink="/pages/miscellaneous/policies" fragment="politica4" style="color: white; text-decoration: none;">Política 4</a><br>
+    </nav>
+    <br>
     <div class="footer-info" style="font-size: 9px;">
       COPYRIGHT &copy; {{ year }}
-      <a class="mr-25" target="_blank">Denuncia Protegida</a>
+      <a class="mr-25" target="_blank" style="color: white; text-decoration: none;">Denuncia Protegida</a>
       <span class="d-none d-sm-inline-block">All rights Reserved</span>
     </div>
   </span>
@@ -20,4 +24,3 @@
 
 <!-- Move to top Button-->
 <app-scroll-top *ngIf="coreConfig.layout.scrollTop"></app-scroll-top>
-
