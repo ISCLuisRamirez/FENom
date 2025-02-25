@@ -225,7 +225,7 @@
                 <small>Detalles de la denuncia.</small>
               </div>
               <div class="col-12">
-                <p>Por favor seleccione alguna de las siguientes opciones:</p>
+                <p>Por favor seleccione alguna de las siguientes opciones:<span style="color: #F44336;">*</span></p>
                 <div class="form-check form-check-inline">
                   <input
                     class="form-check-input"
@@ -305,7 +305,8 @@
               </div>
           
               <div class="col-12 mt-3">
-                <p><strong>¿Ha reportado el incidente anteriormente?</strong></p>
+                <p><strong>¿Ha reportado el incidente anteriormente?<span style="color: #F44336;">*</span></strong></p>
+
                 <div class="form-check form-check-inline">
                   <input
                     class="form-check-input"
@@ -322,7 +323,7 @@
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="previousReport"
+                    name="previousReport2"
                     id="previousReportNo"
                     value="false"
                     [(ngModel)]="previousReport"
@@ -441,8 +442,8 @@
                 </div>
               </div>
               <br />
-              <div class="content-header d-flex flex-column align-items-start">
-                <h5 class="mb-0">Testigos</h5><br>
+              <div class="content-header d-flex flex align-items-start">
+                <h5 class="mb-0 ml-1 mr-2">Testigos</h5><br>
                 <div class="d-flex">
                   <button class="btn btn-sm btn-primary mr-2" (click)="addWitness()">
                     <i class="fa fa-plus"></i>
@@ -452,7 +453,10 @@
                   </button>
                 </div>
               </div>
-              <div *ngFor="let witness of witnessList; let i = index" class="row">
+              <small class="ml-1">
+                En caso de existir algun testigo(s) por favor introduzca los datos de el(los) testigo(s). Los campos puesto y número de empleado son opcionales. De lo contrario porfavor presione el boton "-" para eliminar los campos de información de testigo.<br>
+              </small>
+              <div *ngFor="let witness of witnessList; let i = index" class="row"> 
                 <div class="form-group col-md-4">
                   <label class="form-label" for="witness-name-{{ i }}">Nombre Completo:</label><span style="color: #F44336;">*</span>
                   <input
@@ -514,9 +518,9 @@
                     class="input"
                     type="radio"
                     id="radio-opc-no"
-                    name="no-anonimo"
+                    name="noanonimo"
                     value="true"
-                    [(ngModel)]="!isAnonymous"
+                    [(ngModel)]="isAnonymous"
                     (change)="toggleAnonimato(true)"
                     required
                 />
