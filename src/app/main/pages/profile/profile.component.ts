@@ -13,6 +13,8 @@ import {
   ApexDataLabels,
   ApexFill
 } from 'ng-apexcharts';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -23,7 +25,6 @@ export type ChartOptions = {
   dataLabels: ApexDataLabels;
   fill: ApexFill;
 };
-
 
 @Component({
   selector: 'app-profile',
@@ -50,9 +51,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       series: [],
       chart: {
         type: 'pie',
-        width: '100%',
+        width: '90%',
         height: 600,
-        // Asumiendo la fuente de Vuexy (puedes cambiarla a la tuya)
         fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
       },
       labels: [],
@@ -109,8 +109,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Llamada a la API
-    this._apiService.getdatosgrafica() // Debe devolver { total, count, status }
+    // Llamada a la API para obtener datos de la gráfica
+    this._apiService.getdatosgrafica()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(response => {
         console.log('Respuesta /api/requests/counter:', response);
@@ -136,6 +136,39 @@ export class ProfileComponent implements OnInit, OnDestroy {
         ]
       }
     };
+  }
+
+  // Método para generar y descargar el archivo XLSX
+  downloadExcel(): void {
+    // Prepara los datos en formato Array of Arrays (AOA)
+    const wsData = [
+      ['Estatus', 'Cantidad']
+    ];
+
+    if (this.data && this.data.count && this.data.status) {
+      for (let i = 0; i < this.data.count.length; i++) {
+        wsData.push([this.data.status[i], this.data.count[i]]);
+      }
+    }
+
+    // Agrega una fila para el total
+    wsData.push(['Total', this.data?.total]);
+
+    // Crea la hoja de trabajo (worksheet) a partir de los datos
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Crea un nuevo libro de trabajo (workbook)
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+
+    // Agrega la hoja al libro de trabajo con el nombre "Estadísticas"
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Estadísticas');
+
+    // Escribe el libro en formato binario
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Convierte a Blob y dispara la descarga
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, 'estadisticas.xlsx');
   }
 
   ngOnDestroy(): void {
