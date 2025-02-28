@@ -166,6 +166,7 @@
                       <th>Nombre</th>
                       <th>Puesto</th>
                       <th>Número de empleado</th>
+                      <th>Área</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -173,6 +174,7 @@
                       <td>{{ implicado.name }}</td>
                       <td>{{ implicado.position }}</td>
                       <td>{{ implicado.employee_number }}</td>
+                      <td>{{ getDepartment (implicado.id_department)}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -197,6 +199,7 @@
                       <th>Nombre</th>
                       <th>Puesto</th>
                       <th>Número de empleado</th>
+                      <th>Área</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -204,6 +207,7 @@
                       <td>{{ testigo.name }}</td>
                       <td>{{ testigo.position }}</td>
                       <td>{{ testigo.employee_number }}</td>
+                      <td>{{ getDepartment (implicado.id_department)}}</td>
                     </tr>
                   </tbody>
                 </table>

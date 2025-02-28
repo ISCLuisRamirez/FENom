@@ -112,7 +112,6 @@
               </button>
             </div>
           </div>
-
           <!-- Paso 2: Ubicación -->
           <div id="address-step-vertical" class="content">
             <form #form2="ngForm">
@@ -216,7 +215,6 @@
               </button>
             </div>
           </div>
-
           <!-- Paso 3: Detalles -->
           <div id="social-links-vertical" class="content">
             <form #form3="ngForm">
@@ -386,7 +384,6 @@
               </button>
             </div>
           </div>
-          
           <!-- Paso 4: Involucrados -->
           <div id="section_involved" class="content">
             <form #form4="ngForm">
@@ -544,7 +541,6 @@
               </button>
             </div>
           </div>
-
           <!-- Paso 5: Privacidad -->
           <div id="section_anonimo" class="content">
             <form #form5="ngForm">
@@ -574,7 +570,7 @@
                     (change)="toggleAnonimato(false)"
                     required
                 />
-                No<br /><br />
+                No, no deseo agregar mis datos.<br /><br />
                 <!-- Sección de información adicional -->
                 <div *ngIf="isAnonymous === 'true'">
                     <h5>Información Adicional</h5>
@@ -674,8 +670,6 @@
                 </button>
             </div>
           </div>
-        
-        
         </div>
       </div>
     </section>

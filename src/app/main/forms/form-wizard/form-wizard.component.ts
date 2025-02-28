@@ -95,6 +95,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     { name: 'Innomex', id: 20 }
   ];
 
+  
+
   //Datos de la denuncia (endpoint request)
   public currentUser: User | null = null;
   public telefono: string = '';

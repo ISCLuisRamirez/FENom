@@ -185,6 +185,55 @@ export class UserViewComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
+  getDepartment(id_department: number): string {
+    switch (id_department) {
+      case 0:
+        return 'Área desconocida'
+      case 1:
+        return 'Capital Humano';
+      case 2:
+        return 'Legal';
+      case 3:
+        return 'Desarrollo';
+      case 4:
+        return 'Operaciones';
+      case 5:
+        return 'MKT Punto de Venta';
+      case 6:
+        return 'MKT Promociones';
+      case 7:
+        return 'MKT Publicidad';
+      case 8:
+        return 'TI';
+      case 9:
+        return 'Innovación y Planeación Estrategica';
+      case 10:
+        return 'Compras';
+      case 11:
+        return 'Compras Institucionales';
+      case 12:
+        return 'Auditoria Interna';
+      case 13:
+        return 'Finanzas';
+      case 14:
+        return 'Comercio Digital';
+      case 15:
+        return 'Caja de Ahorro';
+      case 16:
+        return 'Mantenimiento';
+      case 17:
+        return 'Kromi (fotosistemas)';
+      case 18:
+        return 'Servicios Medicos (MediCaf)';
+      case 19:
+        return 'Logistica (Tegua-TRATE)';
+      case 20:
+        return 'Innomex';
+      default:
+        return 'Área desconocida';
+    }
+  }
+
   // Método para convertir el estado numérico a texto
   getStatusString(status: number): string {
     switch (status) {

@@ -78,6 +78,29 @@ export class FormCaptComponent implements OnInit {
     { name: 'Manipulación de inventarios', id: 12 }
   ];
 
+  public selectArea = [
+    { name: 'Capital Humano', id: 1 },
+    { name: 'Legal', id: 2 },
+    { name: 'Desarrollo', id: 3 },
+    { name: 'Operaciones', id: 4 },
+    { name: 'MKT Punto de Venta', id: 5 },
+    { name: 'MKT Promociones', id: 6 },
+    { name: 'MKT Publicidad', id: 7 },
+    { name: 'TI', id: 8 },
+    { name: 'Innovación y Planeación Estrategica', id: 9 },
+    { name: 'Compras', id: 10 },
+    { name: 'Compras Institucionales', id: 11 },
+    { name: 'Auditoria Interna', id: 12 },
+    { name: 'Finanzas', id: 13 },
+    { name: 'Comercio Digital', id: 14 },
+    { name: 'Caja de Ahorro', id: 15 },
+    { name: 'Mantenimiento', id: 16 },
+    { name: 'Kromi (fotosistemas)', id: 17 },
+    { name: 'Servicios Medicos (MediCaf)', id: 18 },
+    { name: 'Logistica (Tegua-TRATE)', id: 19 },
+    { name: 'Innomex', id: 20 }
+  ];
+
   //Datos del endpoint request 
   public currentUser: User | null = null;
   public telefono: string = '';
@@ -106,8 +129,13 @@ export class FormCaptComponent implements OnInit {
   public today: string;
   public datereport: string = '';
   public selectedFiles: FileItem[] = [];
-  public involvedList = [{ name_inv: '', position_inv: '', employee_number_inv: '' }];
-  public witnessList = [{ name_wit: '', position_wit: '', employee_number_wit: '' }];
+  public involvedList = [
+    { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } // `area_inv` es solo el ID
+  ];
+  
+  public witnessList = [
+    { name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0 } // `area_wit` es solo el ID
+  ];
   public datos = [];
  
   public showValidation: boolean = false;
@@ -237,7 +265,6 @@ export class FormCaptComponent implements OnInit {
   }
 
   onSubmit() {
-    // Validar que todos los campos requeridos estén completos
     if (!this.isStepValid()) {
       Swal.fire({
         title: '❌ Campos Incompletos',
@@ -248,11 +275,10 @@ export class FormCaptComponent implements OnInit {
       return;
     }
   
-    // Armar los datos de la denuncia
     const denunciaData: any = {
       id_user: this.currentUser?.id || null,
       id_via: this.selectedMedio || null,
-      via_detail: this.telefono_medio || this.email_medio,
+      via_detail: this.email_medio || this.telefono_medio,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
       id_sublocation: this.getSubLocationId(),
@@ -261,11 +287,10 @@ export class FormCaptComponent implements OnInit {
       name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
-      file: '', // Se completará si existen evidencias
+      file: '',
       status: 1
     };
   
-    // Enviar la denuncia principal
     this.apiService.enviarDenuncia(denunciaData).subscribe({
       next: (response) => {
         const idRequest = response?.id;
@@ -279,12 +304,9 @@ export class FormCaptComponent implements OnInit {
           return;
         }
   
-        // Función para enviar datos adicionales (sin función interna, se hace inline)
         const enviarDatosAdicionales = () => {
           const additionalPromises: Promise<any>[] = [];
-  
-          // Si no es anónimo, enviar datos del denunciante
-          if (!this.isAnonymous) {
+          if (this.isAnonymous === true) {
             const requesterData = {
               id_request: idRequest,
               name: this.name || '',
@@ -296,7 +318,6 @@ export class FormCaptComponent implements OnInit {
             additionalPromises.push(this.apiService.enviarDatosPersonales(requesterData).toPromise());
           }
   
-          // Enviar datos de los involucrados
           this.involvedList
             .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
             .forEach(inv => {
@@ -304,12 +325,12 @@ export class FormCaptComponent implements OnInit {
                 id_request: idRequest,
                 name: inv.name_inv || '',
                 position: inv.position_inv || '',
-                employee_number: inv.employee_number_inv || null
+                employee_number: inv.employee_number_inv || null,
+                id_department: inv.area_inv || null
               };
               additionalPromises.push(this.apiService.enviarDatosInv(involvedData).toPromise());
             });
   
-          // Enviar datos de los testigos
           this.witnessList
             .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
             .forEach(wit => {
@@ -317,7 +338,8 @@ export class FormCaptComponent implements OnInit {
                 id_request: idRequest,
                 name: wit.name_wit || '',
                 position: wit.position_wit || '',
-                employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null
+                employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null,
+                id_department: wit.area_wit || null
               };
               additionalPromises.push(this.apiService.enviarDatosWit(witnessData).toPromise());
             });
@@ -349,14 +371,12 @@ export class FormCaptComponent implements OnInit {
             });
         };
   
-        // Si existen archivos en la cola, subirlos y luego enviar datos adicionales
         if (this.uploader.queue.length > 0) {
           const uploadObservables = this.uploader.queue.map(item =>
             this.apiService.uploadFile(item._file, idRequest)
           );
           forkJoin(uploadObservables).subscribe({
             next: (uploadResponses: any[]) => {
-              // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
               const uploadedFiles = uploadResponses.map(resp => resp.fileName || resp.id);
               denunciaData.file = uploadedFiles.join(',');
               enviarDatosAdicionales();
@@ -372,7 +392,6 @@ export class FormCaptComponent implements OnInit {
             }
           });
         } else {
-          // Si no hay archivos, enviar datos adicionales directamente
           enviarDatosAdicionales();
         }
       },
@@ -593,7 +612,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   addInvolved() {
-    this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '' });
+    this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 });
     this.cdr.detectChanges(); 
   }
 
@@ -605,7 +624,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   addWitness() {
-    this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '' });
+    this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0});
     this.cdr.detectChanges(); 
   }
 

@@ -160,131 +160,149 @@
                   </div>
                   <!-- Div Motivo -->
                   <div id="personal-info-vertical" class="content">
-                      <form #form1="ngForm">
-                        <div class="content-header">
-                          <h5 class="mb-0">Motivo</h5>
-                          <small>Seleccione el motivo.</small><br>
-                          <small><br><strong>¿Qué desea denunciar?</strong> </small><span style="color: #F44336;">*</span>
-                        </div>
-                        <div class="row">
-                          <div class="form-group col-md-12">
-                            <label class="form-label" for="selectLanguage">Seleccione el motivo</label>
-                            <ng-select  
-                              [items]="selectMotivo"
-                              [multiple]="false"
-                              [closeOnSelect]="true"
-                              [searchable]="false"
-                              bindLabel="name"
-                              [clearable]="false"
-                              name="selectLanguage"
-                              placeholder="Seleccione el motivo"
-                              [(ngModel)]="motivo"
-                              required
-                              #motivoInput="ngModel"
-                            >
-                              <ng-template ng-label-tmp let-item="item" let-clear="clear">
-                                <span class="ng-value-label">{{ item.name }}</span>
-                              </ng-template>
-                            </ng-select>
-                            <div *ngIf="motivoInput.invalid && motivoInput.touched" class="text-danger mt-1">
-                              Debe seleccionar un motivo.
-                            </div>
+                    <form #form1="ngForm">
+                      <div class="content-header">
+                        <h5 class="mb-0">Motivo</h5>
+                        <small>Seleccione el motivo.</small><br>
+                        <small><strong>¿Qué desea denunciar?</strong> </small><span style="color: #F44336;">*</span>
+                      </div>
+                      <div class="row">
+                        <div class="form-group col-md-12">
+                          <label class="form-label" for="selectLanguage">Seleccione el motivo</label>
+                          <ng-select
+                            [items]="selectMotivo"
+                            [multiple]="false"
+                            [closeOnSelect]="true"
+                            [searchable]="false"
+                            bindLabel="name"
+                            [clearable]="false"
+                            name="selectLanguage"
+                            placeholder="Seleccione el motivo"
+                            [(ngModel)]="motivo"
+                            required
+                            #motivoInput="ngModel"
+                          >
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                              <span class="ng-value-label">{{ item.name }}</span>
+                            </ng-template>
+                          </ng-select>
+                          <div *ngIf="motivoInput.invalid && motivoInput.touched" class="text-danger mt-1">
+                            Debe seleccionar un motivo.
                           </div>
                         </div>
-                      </form><!-- Aqui comienzan los botones de Div Motivo -->
-                      <div class="d-flex justify-content-between">
-                        <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
-                          <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                          <span class="align-middle d-sm-inline-block d-none">Anterior</span>
-                        </button>
-                        <button
-                          class="btn btn-primary btn-next"
-                          (click)="verticalWizardNext()"
-                          [disabled]="!form1.valid"
-                          rippleEffect
-                        >
-                          <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
-                          <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
-                        </button>
                       </div>
-                    
+                    </form>
+                    <!-- Botones del paso 1 -->
+                    <div class="d-flex justify-content-between">
+                      <button class="btn btn-secondary btn-prev" disabled rippleEffect>
+                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                        <span class="align-middle d-sm-inline-block d-none">Anterior</span>
+                      </button>
+                      <button
+                        class="btn btn-primary btn-next"
+                        (click)="verticalWizardNext()"
+                        [disabled]="!form1.valid"
+                        rippleEffect
+                      >
+                        <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
+                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                      </button>
+                    </div>
                   </div>
                   <!-- Div Ubicación -->
                   <div id="address-step-vertical" class="content">
                     <form #form2="ngForm">
                       <div class="content-header">
                         <h5 class="mb-0">Ubicación</h5>
-                        <small>Añada la ubicación.</small>
+                        <small>Ubicación donde se encuentra laborando el denunciante</small>
                       </div>
-                      <div class="section" id="sectionUbicacion" data-previous="sectionTipoDenuncia">
-                        <p><strong>Selecciona la ubicación:</strong><span style="color: #F44336;">*</span></p>
-                        <div class="form-group" aria-required="true">
-                          <label>
-                            <input type="radio" name="ubicacion" value="corporativo" (change)="onUbicacionChange('corporativo')" [(ngModel)]="selectedUbicacion" required />
-                            Corporativo
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="cedis" (change)="onUbicacionChange('cedis')" [(ngModel)]="selectedUbicacion" required />
-                            Cedis
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="sucursales" (change)="onUbicacionChange('sucursales')" [(ngModel)]="selectedUbicacion" required />
-                            Sucursales
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="navesanexas" (change)="onUbicacionChange('navesanexas')" [(ngModel)]="selectedUbicacion" required />
-                            Naves y anexas filiales
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="innomex" (change)="onUbicacionChange('innomex')" [(ngModel)]="selectedUbicacion" required />
-                            Innomex
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')" [(ngModel)]="selectedUbicacion" required />
-                            TRATE
-                          </label><br>
-                          <label>
-                            <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')" [(ngModel)]="selectedUbicacion" required />
-                            Unidad transporte
-                          </label><br>
+                      <p><strong>Selecciona la ubicación:</strong><span style="color: #F44336;">*</span></p>
+                      <div class="form-group" aria-required="true">
+                        <label>
+                          <input type="radio" name="ubicacion" value="corporativo" (change)="onUbicacionChange('corporativo')" [(ngModel)]="selectedUbicacion" required />
+                          Corporativo
+                        </label><br>
+                        <label>
+                          <input type="radio" name="ubicacion" value="cedis" (change)="onUbicacionChange('cedis')" [(ngModel)]="selectedUbicacion" required />
+                          Cedis
+                        </label><br>
+                        <label>
+                          <input type="radio" name="ubicacion" value="sucursales" (change)="onUbicacionChange('sucursales')" [(ngModel)]="selectedUbicacion" required />
+                          Sucursales
+                        </label><br>
+                        <label>
+                          <input type="radio" name="ubicacion" value="navesanexas" (change)="onUbicacionChange('navesanexas')" [(ngModel)]="selectedUbicacion" required />
+                          Naves y anexas filiales <label style="font-size: smaller; color: gray;"> (Ingeniería, mantenimiento, fotosistemas, seguridad) </label>
+                        </label><br>
+                        <label>
+                          <input type="radio" name="ubicacion" value="innomex" (change)="onUbicacionChange('innomex')" [(ngModel)]="selectedUbicacion" required />
+                          Innomex
+                        </label><br>
+                        <label>
+                          <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')" [(ngModel)]="selectedUbicacion" required />
+                          TRATE
+                        </label><br>
+                        <!-- <label>
+                          <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')" [(ngModel)]="selectedUbicacion" required />
+                          Unidad transporte
+                        </label><br> -->
+                      </div>
+                      <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
+                        <!-- Lista desplegable -->
+                        <div *ngIf="showListbox">
+                          <label>{{ locationLabel }}</label>
+                          <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" name="region" required>
+                            <option value="" disabled selected>Seleccione una opción</option>
+                            <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
+                          </select>
                         </div>
-                        <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
-                          <div *ngIf="showListbox">
-                            <label>{{ locationLabel }}</label>
-                            <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" name="region" required>
-                              <option value="" disabled selected>Seleccione una opción</option>
-                              <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
-                            </select>
-                          </div>
-                          <div *ngIf="showInputBox" >
-                            <label>{{ locationLabel }}</label>
-                            <input type="string" name="input" id="customInput" class="form-control" [(ngModel)]="customInputValuelabel" [placeholder]="locationLabel" required />
-                          </div>
+                        <!-- Input libre -->
+                        <div *ngIf="showInputBox">
+                          <label>{{ locationLabel }}</label>
+                          <input
+                            type="text"
+                            name="input"
+                            id="customInput"
+                            class="form-control"
+                            [(ngModel)]="customInputValuelabel"
+                            [placeholder]="locationLabel"
+                            required
+                          />
                         </div>
-                        <div *ngIf="selectedUbicacion === 'unidadtransporte'" class="mt-3">
-                          <p><strong>Selecciona la región:</strong></p>
-                          <label>
-                            <input type="radio" name="regionTransporte" value="NORTE" (change)="onRegionChange('norte')" [(ngModel)]="selectedRegion" required />
-                            Norte
-                          </label><br>
-                          <label>
-                            <input type="radio" name="regionTransporte" value="CENTRO" (change)="onRegionChange('centro')" [(ngModel)]="selectedRegion" required />
-                            Centro
-                          </label><br>
-                          <label>
-                            <input type="radio" name="regionTransporte" value="SUR" (change)="onRegionChange('sur')" [(ngModel)]="selectedRegion" required />
-                            Sur
-                          </label><br>
-                        </div>
-                        <div *ngIf="showTransportInput" class="mt-3">
-                          <label>Ingrese el número de la unidad de transporte:</label>
-                          <input type="text" id="customInputValue" class="form-control" [(ngModel)]="value_UT" placeholder="# de unidad de transporte" name="input_UT" required>
-                        </div>
+                      </div>
+        
+                      <!-- Radios para región de transporte -->
+                      <div *ngIf="selectedUbicacion === 'unidadtransporte'" class="mt-3">
+                        <p><strong>Selecciona la región:</strong></p>
+                        <label>
+                          <input type="radio" name="regionTransporte" value="NORTE" (change)="onRegionChange('norte')" [(ngModel)]="selectedRegion" required />
+                          Norte
+                        </label><br>
+                        <label>
+                          <input type="radio" name="regionTransporte" value="CENTRO" (change)="onRegionChange('centro')" [(ngModel)]="selectedRegion" required />
+                          Centro
+                        </label><br>
+                        <label>
+                          <input type="radio" name="regionTransporte" value="SUR" (change)="onRegionChange('sur')" [(ngModel)]="selectedRegion" required />
+                          Sur
+                        </label><br>
+                      </div>
+                      <div *ngIf="showTransportInput" class="mt-3">
+                        <label>Ingrese el número de la unidad de transporte:</label>
+                        <input
+                          type="text"
+                          id="customInputValue"
+                          class="form-control"
+                          [(ngModel)]="value_UT"
+                          placeholder="# de unidad de transporte"
+                          name="input_UT"
+                          required
+                        />
                       </div>
                     </form>
-                    <!-- Aqui empiezan los botones de div ubicación -->
+                    <!-- Botones del paso 2 -->
                     <div class="d-flex justify-content-between mt-3">
-                      <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                      <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                       </button>
@@ -302,7 +320,7 @@
                         <small>Detalles de la denuncia.</small>
                       </div>
                       <div class="col-12">
-                        <p>Por favor seleccione alguna de las siguientes opciones:</p>
+                        <p>Por favor seleccione alguna de las siguientes opciones:<span style="color: #F44336;">*</span></p>
                         <div class="form-check form-check-inline">
                           <input
                             class="form-check-input"
@@ -364,74 +382,68 @@
                           />
                         </div>
                       </div>
-
+                  
                       <div class="col-12 mt-3">
-                        <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span>
+                        <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span><br>
                         <label for="description" style="font-size: small;">
-                          Por favor, describe con detalle todo lo que recuerdes sobre el incidente. Intenta ser lo más específico posible en cuanto a cómo, cuándo y dónde ocurrió. La descripción no debe exceder los 500 caracteres.
-                      </label><br>
+                          Por favor, sea lo más específico posible en su denuncia. Incluya detalles sobre el lugar, el motivo y cómo ocurrió el incidente.
+                        </label><br>
                         <textarea
                           id="description"
                           name="description"
                           class="form-control"
                           rows="5"
-                          placeholder="Por favor, proporciona una descripción detallada de la denuncia. Máximo 500 caracteres."
+                          placeholder="Por favor, proporciona una descripción detallada de la denuncia."
                           [(ngModel)]="description"
-                          #descriptionInput="ngModel"
-                          maxlength="500"
                           required
                         ></textarea>
-                        <div *ngIf="descriptionInput.value?.length > 500" class="text-danger mt-1">
-                          La descripción no puede superar los 500 caracteres.
-                        </div>
                       </div>
-        
-
+                  
                       <div class="col-12 mt-3">
-                        <p><strong>¿Ha reportado el incidente anteriormente?</strong></p>
+                        <p><strong>¿Ha reportado el incidente anteriormente?<span style="color: #F44336;">*</span></strong></p>
+        
                         <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input"
-                                type="radio"
-                                name="previousReport"
-                                id="previousReportYes"
-                                value="true"
-                                [(ngModel)]="previousReport"
-                                required
-                            />
-                            <label class="form-check-label" for="previousReportYes">Sí</label>
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="previousReport"
+                            id="previousReportYes"
+                            value="true"
+                            [(ngModel)]="previousReport"
+                            required
+                          />
+                          <label class="form-check-label" for="previousReportYes">Sí</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input"
-                                type="radio"
-                                name="previousReport"
-                                id="previousReportNo"
-                                value="false"
-                                [(ngModel)]="previousReport"
-                                required
-                            />
-                            <label class="form-check-label" for="previousReportNo">No</label>
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="previousReport2"
+                            id="previousReportNo"
+                            value="false"
+                            [(ngModel)]="previousReport"
+                            required
+                          />
+                          <label class="form-check-label" for="previousReportNo">No</label>
                         </div>
                         <div *ngIf="previousReport === 'true'" class="form-group mt-3">
-                            <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
-                            <textarea
-                                id="previousReportDetails"
-                                name="previousReportDetails"
-                                class="form-control"
-                                rows="3"
-                                placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
-                                [(ngModel)]="previousReportDetails"
-                                required
-                            ></textarea>
+                          <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
+                          <textarea
+                            id="previousReportDetails"
+                            name="previousReportDetails"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
+                            [(ngModel)]="previousReportDetails"
+                            required
+                          ></textarea>
                         </div>
-                    </div>
-                    
-                    
-
+                      </div>
+                      
+                      <!-- Sección de evidencia -->
                       <div class="col-12 mt-3">
                         <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
-                        <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia </p>
+                        <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia.</p>
                         <div class="custom-file">
                           <input
                             type="file"
@@ -444,10 +456,20 @@
                             {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
                           </label>
                         </div>
-                        <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4 </strong></p>
+                        <!-- Cola de archivos -->
+                        <div *ngIf="uploader.queue.length > 0" class="mt-2">
+                          <h6>Archivos en fila:</h6>
+                          <ul class="list-group">
+                            <li *ngFor="let fileItem of uploader.queue" class="list-group-item d-flex justify-content-between align-items-center">
+                              {{ fileItem.file.name }} ({{ fileItem.file.size | number }} bytes)
+                              <button type="button" class="btn btn-sm btn-danger" (click)="fileItem.remove()">Eliminar</button>
+                            </li>
+                          </ul>
+                        </div>
+                        <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
                       </div>
                     </form>
-
+                  
                     <div class="d-flex justify-content-between mt-3">
                       <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
@@ -472,11 +494,13 @@
                             <i class="fa fa-minus"></i>
                           </button>
                         </div>
-                        <small class="mr-3"><br> Porfavor introduzca los datos de el(los) involucrado(s). Los campos puesto y número de empleado son completamente opcionales. </small>
+                        <small class="mr-3">
+                          <br>Por favor introduzca los datos de el(los) involucrado(s). Los campos puesto y número de empleado son opcionales.
+                        </small>
                       </div>
                       <div *ngFor="let person of involvedList; let i = index" class="row">
-                        <div class="form-group col-md-4">
-                          <label class="form-label"  for="name-{{ i }}">Nombre Completo:</label><span style="color: #F44336;">*</span>
+                        <div class="form-group col-md-3">
+                          <label class="form-label" for="name-{{ i }}">Nombre Completo:</label><span style="color: #F44336;">*</span>
                           <input
                             type="text"
                             id="name-{{ i }}"
@@ -487,7 +511,7 @@
                             required
                           />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <label class="form-label" for="position-{{ i }}">Puesto:</label>
                           <input
                             type="text"
@@ -498,7 +522,7 @@
                             [(ngModel)]="person.position_inv"
                           />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <label class="form-label" for="employee_number-{{ i }}">Número de empleado:</label>
                           <input
                             type="text"
@@ -509,10 +533,30 @@
                             [(ngModel)]="person.employee_number_inv"
                           />
                         </div>
+                        <div class="form-group col-md-3">
+                          <label>Área a la que pertenece:</label>
+                          <ng-select
+                            [items]="selectArea"
+                            [multiple]="false"
+                            [closeOnSelect]="true"
+                            [searchable]="false"
+                            bindLabel="name"
+                            bindValue="id"
+                            [clearable]="false"
+                            name="selectareainv"
+                            placeholder="Seleccione el área"
+                            [(ngModel)]="person.area_inv"
+                            
+                          >
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                              <span class="ng-value-label">{{ item.name }}</span>
+                            </ng-template>
+                          </ng-select> 
+                        </div>
                       </div>
                       <br />
-                      <div class="content-header d-flex flex-column align-items-start">
-                        <h5 class="mb-0">Testigos</h5><br>
+                      <div class="content-header d-flex flex align-items-start">
+                        <h5 class="mb-0 ml-1 mr-2">Testigos</h5><br>
                         <div class="d-flex">
                           <button class="btn btn-sm btn-primary mr-2" (click)="addWitness()">
                             <i class="fa fa-plus"></i>
@@ -522,8 +566,11 @@
                           </button>
                         </div>
                       </div>
-                      <div *ngFor="let witness of witnessList; let i = index" class="row">
-                        <div class="form-group col-md-4">
+                      <small class="ml-1">
+                        En caso de existir algun testigo(s) por favor introduzca los datos de el(los) testigo(s). Los campos puesto y número de empleado son opcionales. De lo contrario porfavor presione el boton "-" para eliminar los campos de información de testigo.<br>
+                      </small>
+                      <div *ngFor="let witness of witnessList; let i = index" class="row"> 
+                        <div class="form-group col-md-3">
                           <label class="form-label" for="witness-name-{{ i }}">Nombre Completo:</label><span style="color: #F44336;">*</span>
                           <input
                             type="text"
@@ -535,7 +582,7 @@
                             required
                           />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <label class="form-label" for="witness-contact-{{ i }}">Puesto:</label>
                           <input
                             type="text"
@@ -546,7 +593,7 @@
                             [(ngModel)]="witness.position_wit"
                           />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <label class="form-label" for="witness-contact-{{ i }}">Número de empleado:</label>
                           <input
                             type="number"
@@ -557,11 +604,31 @@
                             [(ngModel)]="witness.employee_number_wit"
                           />
                         </div>
+                        <div class="form-group col-md-3">
+                          <label>Área a la que pertenece:</label>
+                            <ng-select
+                              [items]="selectArea"
+                              [multiple]="false"
+                              [closeOnSelect]="true"
+                              [searchable]="false"
+                              bindValue="id"
+                              bindLabel="name"
+                              [clearable]="false"
+        
+                              name="selectareawit"
+                              placeholder="Seleccione el área"
+                              [(ngModel)]="witness.area_wit"
+                            >
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                              <span class="ng-value-label">{{ item.name }}</span>
+                            </ng-template>
+                          </ng-select> 
+                        </div>
                       </div>
                     </form>
-                    <br><!-- Sección de botones de div Involucrados -->
+                    <!-- Botones del paso 4 -->
                     <div class="d-flex justify-content-between mt-3">
-                      <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                      <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                       </button>
