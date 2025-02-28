@@ -13,6 +13,7 @@ import { ApiService } from 'app/services/api.service';
 import { AuthenticationService } from 'app/auth/service';
 import { Router } from '@angular/router';
 import { User } from 'app/auth/models';
+import { id } from '@swimlane/ngx-datatable';
 
 const URL = 'http://localhost:5101/api/files/upload';
 
@@ -71,20 +72,32 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     { name: 'Manipulación de inventarios', id: 12 }
   ];
 
+  public selectArea = [
+    { name: 'Capital Humano', id: 1 },
+    { name: 'Legal', id: 2 },
+    { name: 'Desarrollo', id: 3 },
+    { name: 'Operaciones', id: 4 },
+    { name: 'MKT Punto de Venta', id: 5 },
+    { name: 'MKT Promociones', id: 6 },
+    { name: 'MKT Publicidad', id: 7 },
+    { name: 'TI', id: 8 },
+    { name: 'Innovación y Planeación Estrategica', id: 9 },
+    { name: 'Compras', id: 10 },
+    { name: 'Compras Institucionales', id: 11 },
+    { name: 'Auditoria Interna', id: 12 },
+    { name: 'Finanzas', id: 13 },
+    { name: 'Comercio Digital', id: 14 },
+    { name: 'Caja de Ahorro', id: 15 },
+    { name: 'Mantenimiento', id: 16 },
+    { name: 'Kromi (fotosistemas)', id: 17 },
+    { name: 'Servicios Medicos (MediCaf)', id: 18 },
+    { name: 'Logistica (Tegua-TRATE)', id: 19 },
+    { name: 'Innomex', id: 20 }
+  ];
+
   //Datos de la denuncia (endpoint request)
   public currentUser: User | null = null;
   public telefono: string = '';
-
-  //Datos del endpoint involved
-  public employee_number_inv: string = '';
-  public position_inv: string = '';
-  public name_inv: string = '';
-
-  //Datos del endpoint witness
-  public employee_number_wit: string = '';
-  public position_wit: string = '';
-  public name_wit: string = '';
-
   public locationLabel: string = '';
   public contentHeader: object;
   public TDNameVar = '';
@@ -112,9 +125,13 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public dynamicLabel = '';
 
   // Involucrados / Testigos
-  public involvedList = [{ name_inv: '', position_inv: '', employee_number_inv: '' }];
-  public witnessList = [{ name_wit: '', position_wit: '', employee_number_wit: '' }];
-
+  public involvedList = [
+    { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } // `area_inv` es solo el ID
+  ];
+  
+  public witnessList = [
+    { name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0 } // `area_wit` es solo el ID
+  ];
   // Subida de archivos
   public uploader: FileUploader = new FileUploader({
     url: URL,
@@ -165,7 +182,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     });
   }
   onSubmit() {
-    // Validar que todos los campos requeridos estén completos
     if (!this.isStepValid()) {
       Swal.fire({
         title: '❌ Campos Incompletos',
@@ -176,7 +192,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       return;
     }
   
-    // Armar los datos de la denuncia
     const denunciaData: any = {
       id_user: this.currentUser?.id || null,
       id_via: this.selectedMedio || null,
@@ -188,11 +203,10 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
-      file: '', // Se completará si existen evidencias
+      file: '',
       status: 1
     };
   
-    // Enviar la denuncia principal
     this.apiService.enviarDenuncia(denunciaData).subscribe({
       next: (response) => {
         const idRequest = response?.id;
@@ -203,17 +217,13 @@ export class FormWizardComponent implements OnInit, OnDestroy {
             icon: 'error',
             confirmButtonText: 'Reintentar'
           });
-         /*  return; */
+          return;
         }
   
-        // Función para enviar datos adicionales (sin función interna, se hace inline)
         const enviarDatosAdicionales = () => {
           const additionalPromises: Promise<any>[] = [];
-          console.log(this.isAnonymous)
   
-
-          if (this.isAnonymous==='true') {
-            console.log(this.isAnonymous)
+          if (this.isAnonymous === 'true') {
             const requesterData = {
               id_request: idRequest,
               name: this.name || '',
@@ -225,7 +235,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
             additionalPromises.push(this.apiService.enviarDatosPersonales(requesterData).toPromise());
           }
   
-          // Enviar datos de los involucrados
           this.involvedList
             .filter(inv => inv.name_inv && inv.name_inv.trim() !== '')
             .forEach(inv => {
@@ -233,12 +242,12 @@ export class FormWizardComponent implements OnInit, OnDestroy {
                 id_request: idRequest,
                 name: inv.name_inv || '',
                 position: inv.position_inv || '',
-                employee_number: inv.employee_number_inv || null
+                employee_number: inv.employee_number_inv || null,
+                id_department: inv.area_inv || null
               };
               additionalPromises.push(this.apiService.enviarDatosInv(involvedData).toPromise());
             });
   
-          // Enviar datos de los testigos
           this.witnessList
             .filter(wit => wit.name_wit && wit.name_wit.trim() !== '')
             .forEach(wit => {
@@ -246,7 +255,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
                 id_request: idRequest,
                 name: wit.name_wit || '',
                 position: wit.position_wit || '',
-                employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null
+                employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null,
+                id_department: wit.area_wit || null
               };
               additionalPromises.push(this.apiService.enviarDatosWit(witnessData).toPromise());
             });
@@ -278,14 +288,12 @@ export class FormWizardComponent implements OnInit, OnDestroy {
             });
         };
   
-        // Si existen archivos en la cola, subirlos y luego enviar datos adicionales
         if (this.uploader.queue.length > 0) {
           const uploadObservables = this.uploader.queue.map(item =>
             this.apiService.uploadFile(item._file, idRequest)
           );
           forkJoin(uploadObservables).subscribe({
             next: (uploadResponses: any[]) => {
-              // Se asume que cada respuesta retorna un objeto con 'fileName' o 'id'
               const uploadedFiles = uploadResponses.map(resp => resp.fileName || resp.id);
               denunciaData.file = uploadedFiles.join(',');
               enviarDatosAdicionales();
@@ -301,7 +309,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
             }
           });
         } else {
-          // Si no hay archivos, enviar datos adicionales directamente
           enviarDatosAdicionales();
         }
       },
@@ -316,7 +323,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
   
   
 
@@ -441,7 +447,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         break;
       case 'navesanexas':
         this.showInputBox = true;
-        this.locationLabel = 'Ingrese el nombre o número de la nave';
+        this.locationLabel = 'Ingrese el nombre o número de la nave ';
         break;
       case 'unidadtransporte':
         this.showTransportOptions = true;
@@ -516,7 +522,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   //                  Manejo de Involucrados / Testigos
   // ----------------------------------------------------------------
   addInvolved() {
-    this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '' });
+    this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 });
     this.cdr.detectChanges();
   }
   removeInvolved() {
@@ -526,7 +532,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
   addWitness() {
-    this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '' });
+    this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0});
     this.cdr.detectChanges();
   }
   removeWitness() {
