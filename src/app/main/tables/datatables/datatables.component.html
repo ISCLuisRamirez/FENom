@@ -142,8 +142,8 @@
             </ngx-datatable-column>
           </ngx-datatable>
           <div class="d-flex justify-content-between align-items-center mt-2">
-            <p>Mostrando {{ (currentPage - 1) * tableLimit + 1 }} - 
-              {{ Math.min(currentPage * tableLimit, totalRecords) }} de {{ totalRecords }} registros</p>
+            <p> Mostrando {{ (currentPage - 1) * tableLimit + 1 }} - 
+              {{ Math.min(currentPage * tableLimit) }} de {{ totalRecords }} registros</p>
           
             <ul class="pagination">
               <li class="page-item" [class.disabled]="currentPage === 1">

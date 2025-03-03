@@ -100,7 +100,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
 
     this._datatablesService.getRequests(this.filters).subscribe(response => {
       this.filteredRows = response.datos;
-      this.totalRecords = response.TotalRegistros;
+      this.totalRecords = response.totalRegistros;
       this.totalPages = response.TotalPaginas;
     });
   }
@@ -167,13 +167,11 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   }
 
   onSelect({ selected }) {
-    console.log('Select Event', selected, this.selected);
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }
 
   onActivate(event) {
-    // console.log('Activate Event', event);
   }
 
   customChkboxOnSelect({ selected }) {
