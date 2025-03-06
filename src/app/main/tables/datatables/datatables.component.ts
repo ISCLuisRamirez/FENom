@@ -206,6 +206,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
     this.rows = [...this.rows];
   }
   onFilterChange() {
+    this.currentPage = 1;
     this.loadRequests();
   }  
 }
