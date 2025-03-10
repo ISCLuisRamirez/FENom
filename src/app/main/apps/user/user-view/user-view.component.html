@@ -84,8 +84,7 @@
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    Estatus actual:
-                  </span>
+                    Estatus actual: </span>
                   {{ getStatusString(data.status) }}
                 </div>
               </div>
@@ -97,7 +96,7 @@
                 <div class="denuncia-info-title">
                   <i data-feather="info" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    <strong>Descripción del reporte:</strong>{{data.reported}}
+                    <strong>Descripción del reporte: </strong>{{data.reported}}
                   </span>
                 </div>
               </div><br>
@@ -106,7 +105,7 @@
                 <div class="denuncia-info-title">
                   <i data-feather="calendar" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    <strong>Ultimo cambio de estatus por:</strong> {{ getemployee(data.id_user_updated) }}
+                    <strong>Ultimo cambio de estatus por: </strong> {{ getemployee(data.id_user_updated) }}
                   </span>
                 </div>
               </div>
@@ -198,7 +197,7 @@
                       <td>{{ testigo.name }}</td>
                       <td>{{ testigo.position }}</td>
                       <td>{{ testigo.employee_number }}</td>
-                      <td>{{ getDepartment (implicado.id_department)}}</td>
+                      <td>{{ getDepartment (testigo.id_department)}}</td>
                     </tr>
                   </tbody>
                 </table>

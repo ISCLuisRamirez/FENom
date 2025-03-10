@@ -298,8 +298,13 @@
                   rows="5"
                   placeholder="Por favor, proporciona una descripción detallada de la denuncia."
                   [(ngModel)]="description"
+                  (input)="updateCharCount('description')"
+                  maxlength="500"
                   required
                 ></textarea>
+                <div class="text-right">
+                  <small>{{ charCount.description }} caracteres restantes</small>
+                </div>
               </div>
           
               <div class="col-12 mt-3">
@@ -338,8 +343,13 @@
                     rows="3"
                     placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
                     [(ngModel)]="previousReportDetails"
+                    (input)="updateCharCount('previousReportDetails')"
+                    maxlength="500"
                     required
                   ></textarea>
+                  <div class="text-right">
+                    <small>{{ charCount.previousReportDetails }} caracteres restantes</small>
+                  </div>
                 </div>
               </div>
               

@@ -32,7 +32,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   @ViewChild('form3') form3!: NgForm; // Detalles
   @ViewChild('form4') form4!: NgForm; // Involucrados
   @ViewChild('form5') form5!: NgForm; // Privacidad
-
+  
   // Control del paso actual en el wizard
   public currentStep: number = 0;
   private verticalWizardStepper: Stepper;
@@ -160,6 +160,11 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   get isComite(): boolean {
     return this._authenticationService.isComite;
   }
+
+  charCount = {
+    previousReportDetails: 500,
+    description: 500
+  };
 
   ngOnInit() {
     this._authenticationService.currentUser$
@@ -326,7 +331,10 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     });
   }
   
-  
+  updateCharCount(field: string): void {
+    const maxLength = field === 'previousReportDetails' ? 500 : 500;
+    this.charCount[field] = maxLength - this[field].length;
+  }
 
   verticalWizardNext() {
     switch (this.currentStep) {
