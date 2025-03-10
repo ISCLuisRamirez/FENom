@@ -44,15 +44,6 @@
 
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
-                    <i data-feather="map-pin" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Ubicación:</strong> {{ getLocation(data.id_location) }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="d-flex flex-wrap my-50">
-                  <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
                       <strong>Fecha del suceso:</strong> {{ data.date }}
@@ -228,6 +219,16 @@
               <!-- Applicant Information -->
               <div class="applicant-info">
                 <!-- Verifica que row[0] exista antes de acceder a sus propiedades -->
+
+                <div class="d-flex flex-wrap my-50">
+                  <div class="denuncia-info-title">
+                    <i data-feather="map-pin" class="mr-1"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                      <strong>Ubicación:</strong> {{ getLocation(data.id_location) }}
+                    </span>
+                  </div>
+                </div>
+
                 <div class="d-flex flex-wrap my-50" *ngIf="row && row.length > 0">
                   <div class="denuncia-info-title">
                     <i data-feather="user" class="mr-1"></i>
