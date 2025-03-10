@@ -529,8 +529,10 @@
                             name="nempleado_inv"
                             id="employee_number-{{ i }}"
                             class="form-control"
-                            placeholder="112233"
+                            placeholder="11223300"
                             [(ngModel)]="person.employee_number_inv"
+                            #invemployee_numberInput="ngModel"
+                            maxlength="8"
                           />
                         </div>
                         <div class="form-group col-md-3">
@@ -594,14 +596,16 @@
                           />
                         </div>
                         <div class="form-group col-md-3">
-                          <label class="form-label" for="witness-contact-{{ i }}">Número de empleado:</label>
+                          <label class="form-label" for="witness-employee_number-{{ i }}">Número de empleado:</label>
                           <input
-                            type="number"
+                            type="text"
                             name="nempleado_tes"
                             id="witness-contact-{{ i }}"
                             class="form-control"
-                            placeholder="445566"
+                            placeholder="44556655"
                             [(ngModel)]="witness.employee_number_wit"
+                            #witemployee_numberInput="ngModel"
+                            maxlength="8"
                           />
                         </div>
                         <div class="form-group col-md-3">
