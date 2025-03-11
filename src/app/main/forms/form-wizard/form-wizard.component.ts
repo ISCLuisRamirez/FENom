@@ -5,19 +5,13 @@ import { takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
 import { Location } from '@angular/common';
-
-
 import Stepper from 'bs-stepper';
 import { FileUploader, FileItem } from 'ng2-file-upload';
-
 import { ApiService } from 'app/services/api.service';
 import { AuthenticationService } from 'app/auth/service';
 import { Router } from '@angular/router';
 import { User } from 'app/auth/models';
-import { id } from '@swimlane/ngx-datatable';
-
-const URL = 'http://localhost:5101/api/files/upload';
-
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-form-wizard',
@@ -137,7 +131,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   ];
   // Subida de archivos
   public uploader: FileUploader = new FileUploader({
-    url: URL,
+    url: environment.apiUrl,
     isHTML5: true,
     allowedFileType: ['image', 'pdf', 'doc', 'docx'],
     maxFileSize: 10 * 1024 * 1024

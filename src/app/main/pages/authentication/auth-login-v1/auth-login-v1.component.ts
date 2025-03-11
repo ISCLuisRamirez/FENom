@@ -8,8 +8,6 @@ import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
 import { ApiService } from 'app/services/api.service';
 
-const URL = 'http://localhost:5101';
-
 @Component({
   selector: 'app-auth-login-v1',
   templateUrl: './auth-login-v1.component.html',

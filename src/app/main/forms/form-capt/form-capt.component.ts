@@ -12,8 +12,7 @@ import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { Location } from '@angular/common';
-
-const URL = 'http://localhost:5101/api/files/upload';
+import { environment } from 'environments/environment';
 
 @Component({
   
@@ -149,7 +148,7 @@ export class FormCaptComponent implements OnInit {
   private verticalWizardStepper: Stepper;
 
   public uploader: FileUploader = new FileUploader({
-    url: URL,
+    url: environment.apiUrl,
     isHTML5: true,
     allowedFileType: ['image', 'pdf', 'doc', 'docx'],
     maxFileSize: 10 * 1024 * 1024
