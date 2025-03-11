@@ -169,7 +169,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.location.replaceState('/Create_complaint');
+    this.location.replaceState('/create_complaint');
   
     this._authenticationService.currentUser$
       .pipe(takeUntil(this._unsubscribeAll))

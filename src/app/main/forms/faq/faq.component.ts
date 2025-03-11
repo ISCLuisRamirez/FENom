@@ -11,7 +11,7 @@ export class FaqComponent implements OnInit {
   constructor(public location:Location) { }
 
   ngOnInit(): void {
-    this.location.replaceState('/Faq');
+    this.location.replaceState('/faq');
 
   }
 

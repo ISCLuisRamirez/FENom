@@ -178,7 +178,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.location.replaceState('/Create_complaint');
+    this.location.replaceState('/create_complaint');
     this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
       this.currentUser = user;
     });

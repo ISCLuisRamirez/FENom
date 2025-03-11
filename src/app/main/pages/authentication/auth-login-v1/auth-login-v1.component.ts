@@ -128,7 +128,7 @@ export class AuthLoginV1Component implements OnInit {
    * On Init
    */
   ngOnInit(): void {
-    this.location.replaceState('/Login');
+    this.location.replaceState('/login');
 
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({
