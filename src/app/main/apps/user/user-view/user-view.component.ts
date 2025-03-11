@@ -61,7 +61,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
 
     // Reemplazar la URL sin recargar ni afectar la navegación
-    history.replaceState({}, '', `/Denuncias/${this.lastValue}`);
+    history.replaceState({}, '', `/complaint/${this.lastValue}`);
   
     // Suscribirse al servicio que retorna la data de la denuncia
     this._userViewService.onUserViewChanged
