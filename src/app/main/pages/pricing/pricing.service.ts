@@ -2,13 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class PricingService implements Resolve<any> {
   rows: any;
   onPricingChanged: BehaviorSubject<any>;
-
-  private apiUrl = 'http://localhost:5101/api/requests/search'; // URL de la API
 
   constructor(private _httpClient: HttpClient) {
     this.onPricingChanged = new BehaviorSubject({});
@@ -52,6 +51,6 @@ export class PricingService implements Resolve<any> {
       .set('folio', folio)
       .set('password', password);
 
-    return this._httpClient.get<any>(this.apiUrl, { params });
+    return this._httpClient.get<any>(environment.apiUrl, { params });
   }
 }
