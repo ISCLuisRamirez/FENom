@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { forkJoin } from 'rxjs';
+import { Location } from '@angular/common';
 
 
 import Stepper from 'bs-stepper';
@@ -148,7 +149,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public location: Location
   ) {}
 
   get isCapturista(): boolean {
@@ -167,6 +169,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
+    this.location.replaceState('/Create_complaint');
+  
     this._authenticationService.currentUser$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(user => {

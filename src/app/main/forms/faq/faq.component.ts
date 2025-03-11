@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-faq',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FaqComponent implements OnInit {
 
-  constructor() { }
+  constructor(public location:Location) { }
 
   ngOnInit(): void {
+    this.location.replaceState('/Faq');
+
   }
 
 }

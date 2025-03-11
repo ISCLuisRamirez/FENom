@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@ang
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-
+import { Location } from '@angular/common';
 import { CoreTranslationService } from '@core/services/translation.service';
 import { locale as german } from 'app/main/tables/datatables/i18n/de';
 import { locale as english } from 'app/main/tables/datatables/i18n/en';
@@ -82,7 +82,8 @@ export class DatatablesComponent implements OnInit, OnDestroy {
 
   constructor(
     private _datatablesService: DatatablesService,
-    private _coreTranslationService: CoreTranslationService
+    private _coreTranslationService: CoreTranslationService,
+    public location: Location
   ) {
     this._coreTranslationService.translate(english, french, german, portuguese);
   }
@@ -91,6 +92,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   // 2) Ciclo de vida
   // ------------------------------------------------
   ngOnInit() {
+    this.location.replaceState('/Complaints_table');
     this.loadRequests();
   }
 

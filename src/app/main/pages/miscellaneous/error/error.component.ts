@@ -4,6 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { CoreConfigService } from '@core/services/config.service';
 
+
 @Component({
   selector: 'app-error',
   templateUrl: './error.component.html',
@@ -49,6 +50,7 @@ export class ErrorComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
+    this.location.replaceState('/Not_found');
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;

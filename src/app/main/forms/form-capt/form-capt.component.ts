@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-
+import { Location } from '@angular/common';
 
 const URL = 'http://localhost:5101/api/files/upload';
 
@@ -161,7 +161,8 @@ export class FormCaptComponent implements OnInit {
     private apiService: ApiService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public location: Location
   ) {}
 
   get isCapturista(): boolean {
@@ -177,6 +178,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.location.replaceState('/Create_complaint');
     this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
       this.currentUser = user;
     });

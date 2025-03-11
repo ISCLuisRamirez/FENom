@@ -3,7 +3,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-final-index',
   templateUrl: './final-index.component.html',
@@ -17,7 +17,8 @@ export class FinalIndexComponent implements OnInit, OnDestroy {
 
   constructor(
     private _coreConfigService: CoreConfigService,
-    private _authenticationService: AuthenticationService
+    private _authenticationService: AuthenticationService,
+    public location: Location
   ) {
     // Configure the layout
     this._coreConfigService.setConfig({
@@ -46,6 +47,7 @@ export class FinalIndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.location.replaceState('/Home');
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;

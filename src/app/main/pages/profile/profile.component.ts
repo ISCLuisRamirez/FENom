@@ -4,6 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ApiService } from 'app/services/api.service';
 import { AuthenticationService } from 'app/auth/service';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import {
   ChartComponent,
   ApexNonAxisChartSeries,
@@ -40,6 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public chartOptions: Partial<ChartOptions>;
 
   constructor(
+    public location:Location,
     private _apiService: ApiService,
     private _authenticationService: AuthenticationService,
     private _router: Router
@@ -97,6 +99,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.location.replaceState('/Committee_dashboard');
     // Verificar si el usuario está logueado
     if (!this.isLoggedIn) {
       this._router.navigate(['/pages/authentication/login-v1']);

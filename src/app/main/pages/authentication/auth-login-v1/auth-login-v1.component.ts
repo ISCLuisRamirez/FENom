@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, first } from 'rxjs/operators';
-
+import { Location } from '@angular/common';
 import { Subject } from 'rxjs';
 import { AuthenticationService } from 'app/auth/service';
 import { CoreConfigService } from '@core/services/config.service';
@@ -45,7 +45,8 @@ export class AuthLoginV1Component implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private _authenticationService: AuthenticationService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    public location:Location
   ) {
     // Check if the user is already logged in, if so, redirect to the home page
     if (this._authenticationService.currentUserValue) {
@@ -127,6 +128,7 @@ export class AuthLoginV1Component implements OnInit {
    * On Init
    */
   ngOnInit(): void {
+    this.location.replaceState('/Login');
 
     // Initialize the login form with validators
     this.loginForm = this._formBuilder.group({

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs/operators';
 import { PricingService } from 'app/main/pages/pricing/pricing.service';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-pricing',
   templateUrl: './pricing.component.html',
@@ -27,9 +27,10 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _unsubscribeAll: Subject<any> = new Subject();
 
-  constructor(private _pricingService: PricingService) { }
+  constructor(private _pricingService: PricingService,public location:Location ) { }
 
   ngOnInit(): void {
+    this.location.replaceState('/Status_inquiry');
     this._pricingService.onPricingChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
