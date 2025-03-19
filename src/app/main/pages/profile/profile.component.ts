@@ -116,7 +116,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this._apiService.getdatosgrafica()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(response => {
-        console.log('Respuesta /api/requests/counter:', response);
+        console.log('Respuesta /requests/counter:', response);
         // Ejemplo: { total: 57, count: [54, 2, 1], status: ["En proceso", "Cerradas", "Abiertas"] }
         this.data = response;
         if (this.data) {

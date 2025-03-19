@@ -13,46 +13,46 @@ export class ApiService {
 
   // Método para obtener roles (GET)
   getRoles(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/api/roles`); //Obtiene los datos de los roles.
+    return this.http.get(`${environment.apiUrl}/roles`); //Obtiene los datos de los roles.
   }
 
   getdatosgrafica(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/api/requests/counter`); //Obtiene los datos de los roles.
+    return this.http.get(`${environment.apiUrl}/requests/counter`); //Obtiene los datos de los roles.
   }
 
   // Método para enviar datos a mi tabla requests (Solicitudes)
   enviarDenuncia(data: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/requests`, data);
+    return this.http.post(`${environment.apiUrl}/requests`, data);
   }
   // Método para guardar los datos en `requesters` del denunciante.
   enviarDatosPersonales(data: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/requesters`, data);
+    return this.http.post(`${environment.apiUrl}/requesters`, data);
   }
 
   // Método para guardar los datos en `witnesses`.(Testigos)
   enviarDatosInv(data: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/subjects`, data, {
+    return this.http.post(`${environment.apiUrl}/subjects`, data, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
   
   enviarDatosWit(data: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/witnesses`, data, {
+    return this.http.post(`${environment.apiUrl}/witnesses`, data, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
 
   getInvolucrados(id_request: number) {
-    return this.http.get<any[]>(`${environment.apiUrl}/api/subjects`, { params: { id_request: id_request.toString() } });
+    return this.http.get<any[]>(`${environment.apiUrl}/subjects`, { params: { id_request: id_request.toString() } });
   }
   
   
   getTestigos(id_request: number) {
-    return this.http.get<any[]>(`${environment.apiUrl}/api/witnesses`, { params: { id_request: id_request.toString() } });
+    return this.http.get<any[]>(`${environment.apiUrl}/witnesses`, { params: { id_request: id_request.toString() } });
   }
 
   getSolicitanteInfoFiltrado(data: any ): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/api/requesters?id_request=`+ data);
+    return this.http.get(`${environment.apiUrl}/requesters?id_request=`+ data);
   }
  
   crearDato(data: any): Observable<any> {
@@ -75,16 +75,16 @@ export class ApiService {
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('id_request', idRequest.toString());
-    return this.http.post(`${environment.apiUrl}/api/files/upload`, formData);
+    return this.http.post(`${environment.apiUrl}/files/upload`, formData);
   }
 
   getFile(idRequest: number): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/api/files/get/${idRequest}`);
+    return this.http.get<any[]>(`${environment.apiUrl}/files/get/${idRequest}`);
   }
 
   // En api.service.ts
   Viewfile(fileId: number): Observable<Blob> {
-    return this.http.get(`${environment.apiUrl}/api/files/${fileId}`, {
+    return this.http.get(`${environment.apiUrl}/files/${fileId}`, {
       responseType: 'blob'
     });
   }

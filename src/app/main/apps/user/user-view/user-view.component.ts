@@ -154,7 +154,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
       cancelButtonColor: '#E42728',
     }).then((result) => {
       if (result.isConfirmed) {
-        const apiUrl = `${environment.apiUrl}/api/requests/${this.data.id}/status`;
+        const apiUrl = `${environment.apiUrl}/requests/${this.data.id}/status`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`

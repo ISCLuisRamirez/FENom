@@ -9,7 +9,7 @@ export class DatatablesService implements Resolve<any> {
   rows: any[] = [];
   onDatatablessChanged: BehaviorSubject<any>;
 
-  private apiUrl = `${environment.apiUrl}/api/requests`; // ✅ Definir API URL correctamente
+  private apiUrl = `${environment.apiUrl}/requests`; // ✅ Definir API URL correctamente
 
   /**
    * Constructor
