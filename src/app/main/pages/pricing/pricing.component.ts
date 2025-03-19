@@ -30,7 +30,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private _pricingService: PricingService,public location:Location ) { }
 
   ngOnInit(): void {
-    this.location.replaceState('/requests/status_inquiry');
+    this.location.replaceState('/status_inquiry');
     this._pricingService.onPricingChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {

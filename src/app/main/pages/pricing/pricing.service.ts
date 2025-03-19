@@ -51,6 +51,6 @@ export class PricingService implements Resolve<any> {
       .set('folio', folio)
       .set('password', password);
 
-    return this._httpClient.get<any>(environment.apiUrl, { params });
+    return this._httpClient.get<any>(environment.apiUrl+'/requests/search', { params });
   }
 }
