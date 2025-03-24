@@ -446,6 +446,7 @@
                     #invemployee_numberInput="ngModel"
                     pattern="^\d{0,8}$"
                     maxlength="8"
+                    (keypress)="numberOnly($event)"
                   />
                   <div *ngIf="invemployee_numberInput.invalid && invemployee_numberInput.touched" class="text-danger mt-1">
                     <span *ngIf="invemployee_numberInput.errors?.pattern">
@@ -525,6 +526,7 @@
                     #witemployee_numberInput="ngModel"
                     pattern="^\d{0,8}$"
                     maxlength="8"
+                    (keypress)="numberOnly($event)"
                     (input)="witness.employee_number_wit = witness.employee_number_wit.toString().slice(0, 8)"
                   />
                   <div *ngIf="witemployee_numberInput.invalid && witemployee_numberInput.touched" class="text-danger mt-1">

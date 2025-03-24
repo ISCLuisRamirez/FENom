@@ -540,6 +540,7 @@
                             pattern="^\d{0,8}$"
                             maxlength="8"
                             (input)="trimEmployeeNumber($event, i)"
+                            (keypress)="numberOnly($event)"
                           />
                           <div *ngIf="invemployee_numberInput.invalid && (invemployee_numberInput.touched || invemployee_numberInput.dirty)" class="text-danger mt-1">
                             <span *ngIf="invemployee_numberInput.errors?.pattern">
@@ -622,6 +623,7 @@
                             pattern="^\d{0,8}$"
                             maxlength="8"
                             (input)="trimEmployeeNumber($event, i, 'witness')"
+                            (keypress)="numberOnly($event)"
                           />
                           <div *ngIf="witemployee_numberInput.invalid && (witemployee_numberInput.touched || witemployee_numberInput.dirty)" class="text-danger mt-1">
                             <span *ngIf="witemployee_numberInput.errors?.pattern">

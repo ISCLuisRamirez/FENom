@@ -162,6 +162,17 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     description: 500
   };
 
+  numberOnly(event: KeyboardEvent) {
+    // Bloquea cualquier tecla que no sea un número
+    if (!/^[0-9]$/.test(event.key) && 
+        event.key !== 'Backspace' && 
+        event.key !== 'Delete' && 
+        event.key !== 'ArrowLeft' && 
+        event.key !== 'ArrowRight') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
    /*  this.location.replaceState('/create_complaint'); */
   

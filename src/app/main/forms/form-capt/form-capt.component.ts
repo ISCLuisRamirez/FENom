@@ -176,6 +176,17 @@ export class FormCaptComponent implements OnInit {
     return this._authenticationService.isComite;
   }
 
+  numberOnly(event: KeyboardEvent) {
+    // Bloquea cualquier tecla que no sea un número
+    if (!/^[0-9]$/.test(event.key) && 
+        event.key !== 'Backspace' && 
+        event.key !== 'Delete' && 
+        event.key !== 'ArrowLeft' && 
+        event.key !== 'ArrowRight') {
+      event.preventDefault();
+    }
+  }
+
 
   ngOnInit() {
     /* this.location.replaceState('/create_complaint');*/
