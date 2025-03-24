@@ -50,7 +50,7 @@ export class ErrorComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this.location.replaceState('/not_found');
+    /* this.location.replaceState('/not_found'); */
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;

@@ -525,25 +525,29 @@
                             [(ngModel)]="person.position_inv"
                           />
                         </div>
+
+
                         <div class="form-group col-md-3">
                           <label class="form-label" for="employee_number-{{ i }}">Número de empleado:</label>
                           <input
-                            type="number"
-                            name="nempleado_inv"
+                            type="text"
+                            name="nempleado_inv_{{i}}"
                             id="employee_number-{{ i }}"
                             class="form-control"
                             placeholder="11223300"
                             [(ngModel)]="person.employee_number_inv"
                             #invemployee_numberInput="ngModel"
-                            max="99999999"
-                            (input)="person.employee_number_inv = person.employee_number_inv.toString().slice(0, 8)"
+                            pattern="^\d{0,8}$"
+                            maxlength="8"
+                            (input)="trimEmployeeNumber($event, i)"
                           />
-                          <div *ngIf="invemployee_numberInput.invalid && invemployee_numberInput.touched" class="text-danger mt-1">
-                            <span *ngIf="invemployee_numberInput.errors?.min || invemployee_numberInput.errors?.max">
-                              El número de empleado no debe contener más de 8 dígitos.
+                          <div *ngIf="invemployee_numberInput.invalid && (invemployee_numberInput.touched || invemployee_numberInput.dirty)" class="text-danger mt-1">
+                            <span *ngIf="invemployee_numberInput.errors?.pattern">
+                              Solo se permiten hasta 8 dígitos numéricos.
                             </span>
                           </div>
                         </div>
+                        
                         
                         <div class="form-group col-md-3">
                           <label>Área a la que pertenece:</label>
@@ -608,19 +612,20 @@
                         <div class="form-group col-md-3">
                           <label class="form-label" for="witness-employee_number-{{ i }}">Número de empleado:</label>
                           <input
-                            type="number"
-                            name="nempleado_tes"
+                            type="text"
+                            name="nempleado_tes_{{ i }}"
                             id="witness-employee_number-{{ i }}"
                             class="form-control"
                             placeholder="44556655"
                             [(ngModel)]="witness.employee_number_wit"
                             #witemployee_numberInput="ngModel"
-                            max="99999999"
-                            (input)="witness.employee_number_wit = witness.employee_number_wit.toString().slice(0, 8)"
+                            pattern="^\d{0,8}$"
+                            maxlength="8"
+                            (input)="trimEmployeeNumber($event, i, 'witness')"
                           />
-                          <div *ngIf="witemployee_numberInput.invalid && witemployee_numberInput.touched" class="text-danger mt-1">
-                            <span *ngIf="witemployee_numberInput.errors?.min || witemployee_numberInput.errors?.max">
-                              El número de empleado no debe contener más de 8 dígitos.
+                          <div *ngIf="witemployee_numberInput.invalid && (witemployee_numberInput.touched || witemployee_numberInput.dirty)" class="text-danger mt-1">
+                            <span *ngIf="witemployee_numberInput.errors?.pattern">
+                              Solo se permiten hasta 8 dígitos numéricos.
                             </span>
                           </div>
                         </div>

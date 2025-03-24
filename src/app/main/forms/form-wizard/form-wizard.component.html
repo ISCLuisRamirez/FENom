@@ -436,18 +436,19 @@
                 <div class="form-group col-md-3">
                   <label class="form-label" for="employee_number-{{ i }}">Número de empleado:</label>
                   <input
-                    type="number"
+                    type="text"
                     name="nempleado_inv"
                     id="employee_number-{{ i }}"
                     class="form-control"
                     placeholder="11223300"
                     [(ngModel)]="person.employee_number_inv"
+                    [ngModelOptions]="{standalone: true}"
                     #invemployee_numberInput="ngModel"
-                    max="99999999"
-                    (input)="person.employee_number_inv = person.employee_number_inv.toString().slice(0, 8)"
+                    pattern="^\d{0,8}$"
+                    maxlength="8"
                   />
                   <div *ngIf="invemployee_numberInput.invalid && invemployee_numberInput.touched" class="text-danger mt-1">
-                    <span *ngIf="invemployee_numberInput.errors?.min || invemployee_numberInput.errors?.max">
+                    <span *ngIf="invemployee_numberInput.errors?.pattern">
                       El número de empleado no debe contener más de 8 dígitos.
                     </span>
                   </div>
@@ -515,14 +516,15 @@
                 <div class="form-group col-md-3">
                   <label class="form-label" for="witness-employee_number-{{ i }}">Número de empleado:</label>
                   <input
-                    type="number"
+                    type="text"
                     name="nempleado_tes"
                     id="witness-employee_number-{{ i }}"
                     class="form-control"
                     placeholder="44556655"
                     [(ngModel)]="witness.employee_number_wit"
                     #witemployee_numberInput="ngModel"
-                    max="99999999"
+                    pattern="^\d{0,8}$"
+                    maxlength="8"
                     (input)="witness.employee_number_wit = witness.employee_number_wit.toString().slice(0, 8)"
                   />
                   <div *ngIf="witemployee_numberInput.invalid && witemployee_numberInput.touched" class="text-danger mt-1">

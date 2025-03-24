@@ -99,7 +99,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.location.replaceState('/committee_dashboard');
+    /* this.location.replaceState('/committee_dashboard'); */
     // Verificar si el usuario está logueado
     if (!this.isLoggedIn) {
       this._router.navigate(['/pages/authentication/login-v1']);

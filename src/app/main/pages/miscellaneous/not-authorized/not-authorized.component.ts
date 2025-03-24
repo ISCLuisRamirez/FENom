@@ -49,7 +49,7 @@ export class NotAuthorizedComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this.location.replaceState('/not_authorized');
+    /* this.location.replaceState('/not_authorized'); */
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;

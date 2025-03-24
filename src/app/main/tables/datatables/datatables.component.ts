@@ -92,7 +92,7 @@ export class DatatablesComponent implements OnInit, OnDestroy {
   // 2) Ciclo de vida
   // ------------------------------------------------
   ngOnInit() {
-    this.location.replaceState('/complaints_table');
+   /*  this.location.replaceState('/complaints_table'); */
     this.loadRequests();
   }
 

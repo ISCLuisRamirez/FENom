@@ -74,7 +74,7 @@ export class AuthForgotPasswordV1Component implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this.location.replaceState('/forgot_password?');
+    /* this.location.replaceState('/forgot_password?'); */
 
     this.forgotPasswordForm = this._formBuilder.group({
       email: ['', [Validators.required, Validators.email]]

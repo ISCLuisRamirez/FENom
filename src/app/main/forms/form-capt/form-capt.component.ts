@@ -176,11 +176,12 @@ export class FormCaptComponent implements OnInit {
     return this._authenticationService.isComite;
   }
 
+
   ngOnInit() {
-    this.location.replaceState('/create_complaint');
+    /* this.location.replaceState('/create_complaint');*/
     this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
       this.currentUser = user;
-    });
+    }); 
 
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: true,
