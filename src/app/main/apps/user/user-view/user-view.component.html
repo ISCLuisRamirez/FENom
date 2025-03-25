@@ -291,9 +291,9 @@
                 <!-- Itera dinámicamente con *ngFor -->
                 <div class="file-item d-flex justify-content-between align-items-center my-2"
                   *ngFor="let file of files">
-                  <a href="#" class="file-name text-truncate" (click)="viewFile(file)">
+                  <label class="file-name text-truncate">
                     {{ file.file_name }}
-                  </a>
+                  </label>
                   <button class="btn btn-link btn-sm" (click)="viewFile(file)">Ver</button>
                 </div>
 
