@@ -66,10 +66,23 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private generateRandomCaptcha(): string {
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789';
-    return Array.from({ length: 6 }, () =>
-      characters.charAt(Math.floor(Math.random() * characters.length))
-    ).join('');
+    const uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lowercase = 'abcdefghjkmnpqrstuvwxyz';
+    const numbers = '0123456789';
+    const allChars = uppercase + lowercase + numbers;
+    
+    let captcha = '';
+    // Asegurarnos de que haya al menos una mayúscula y una minúscula
+    captcha += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+    captcha += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+    
+    // Completar el resto de caracteres
+    for (let i = 0; i < 4; i++) {
+      captcha += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+    
+    // Mezclar los caracteres para que no siempre estén en la misma posición
+    return captcha.split('').sort(() => 0.5 - Math.random()).join('');
   }
 
   private drawCaptchaBackground(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
@@ -113,7 +126,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateCaptcha(): void {
-    this.captchaError = this.captchaInput.trim().toUpperCase() !== this.captcha.toUpperCase();
+    this.captchaError = this.captchaInput.trim() !== this.captcha;
     this.isCaptchaValidated = !this.captchaError;
   }
 

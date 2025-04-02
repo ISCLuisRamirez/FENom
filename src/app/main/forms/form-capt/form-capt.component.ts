@@ -187,6 +187,15 @@ export class FormCaptComponent implements OnInit {
     }
   }
 
+  charCount = {
+    previousReportDetails: 500,
+    description: 500
+  };
+  updateCharCount(field: string): void {
+    const maxLength = field === 'previousReportDetails' ? 500 : 500;
+    this.charCount[field] = maxLength - this[field].length;
+  }
+
 
   ngOnInit() {
     /* this.location.replaceState('/create_complaint');*/

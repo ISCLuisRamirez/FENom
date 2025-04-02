@@ -107,7 +107,7 @@
                           <div *ngIf="selectedMedio === 1" class="form-group col-md-10 mt-2">
                             <label class="form-label">Número de Teléfono <span style="color: #F44336;">*</span></label>
                             <input
-                              type="number"
+                              type="text"
                               class="form-control"
                               placeholder="Ingrese su número de teléfono"
                               [(ngModel)]="telefono_medio"
@@ -147,7 +147,7 @@
                         </form>
                         <br><!-- Aqui comienzan los botones de div medio -->
                         <div class="d-flex justify-content-between">
-                          <button class="btn btn-outline-secondary btn-prev" disabled>
+                          <button class="btn btn-secondary btn-prev" disabled>
                             <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                             <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                           </button>
@@ -197,7 +197,7 @@
                     </form>
                     <!-- Botones del paso 1 -->
                     <div class="d-flex justify-content-between">
-                      <button class="btn btn-secondary btn-prev" disabled rippleEffect>
+                      <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                       </button>
@@ -397,9 +397,14 @@
                           class="form-control"
                           rows="5"
                           placeholder="Por favor, proporciona una descripción detallada de la denuncia."
+                          (input)="updateCharCount('description')"
                           [(ngModel)]="description"
+                          maxlength="500"
                           required
                         ></textarea>
+                        <div class="text-right">
+                          <small>{{ charCount.description }} caracteres restantes</small>
+                        </div>
                       </div>
                   
                       <div class="col-12 mt-3">
@@ -433,13 +438,18 @@
                           <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
                           <textarea
                             id="previousReportDetails"
+                            (input)="updateCharCount('previousReportDetails')"
                             name="previousReportDetails"
                             class="form-control"
                             rows="3"
                             placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
                             [(ngModel)]="previousReportDetails"
+                            maxlength="500"
                             required
                           ></textarea>
+                          <div class="text-right">
+                            <small>{{ charCount.previousReportDetails }} caracteres restantes</small>
+                          </div>
                         </div>
                       </div>
                       
@@ -474,7 +484,7 @@
                     </form>
                   
                     <div class="d-flex justify-content-between mt-3">
-                      <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                      <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                       </button>
@@ -807,7 +817,7 @@
                   
                     <!-- Botones de navegación -->
                     <div class="d-flex justify-content-between pb-0">
-                      <button class="btn btn-primary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
+                      <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                       </button>
