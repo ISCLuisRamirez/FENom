@@ -117,6 +117,7 @@
                               required
                               #telefonoInput="ngModel"
                               (input)="validatePhoneNumber()"
+                              (keypress)="numberOnly($event)"
                             />
                             <small class="text-muted">Ingrese un número de 10 dígitos.</small>
                             <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
@@ -753,17 +754,20 @@
                             <label class="form-label" for="numeroEmpleado">Número de empleado:</label>
                             <span style="color: #F44336;">*</span>
                             <input
-                              type="number"
+                              type="text"
                               id="numeroEmpleado"
                               class="form-control"
                               placeholder="658921"
                               name="numeroEmpleado"
                               [(ngModel)]="employee_number"
                               #employeeNumberInput="ngModel"
+                              pattern="^\d{0,8}$"
+                              maxlength="8"
+                              (input)="trimEmployeeNumber($event, i)"
+                              (keypress)="numberOnly($event)"
                               required
-                              max="99999999"
-                              (input)="employee_number = employee_number.toString().slice(0, 8)"
                             />
+
                             <div *ngIf="employeeNumberInput.invalid && employeeNumberInput.touched" class="text-danger mt-1">
                               <span *ngIf="employeeNumberInput.errors?.required">El número de empleado es obligatorio.</span>
                               <span *ngIf="employeeNumberInput.errors?.max">El número de empleado no debe contener más de 8 dígitos.</span>
@@ -774,23 +778,27 @@
                         <br />
                         <div class="row">
                           <div class="form-group col-md-4">
-                            <label class="form-label" for="telefono">Teléfono:</label>
-                            <span style="color: #F44336;">*</span>
+
+                            <label class="form-label">Teléfono: <span style="color: #F44336;">*</span></label>
                             <input
                               type="text"
                               id="telefono"
                               class="form-control"
                               placeholder="3334357534"
-                              name="telefono"
                               [(ngModel)]="phone"
-                              #phoneInput="ngModel"
-                              pattern="^[0-9]{10}$"
+                              name="telefono"
+                              pattern="[0-9]{10}"
                               maxlength="10"
+                              #phoneInput="ngModel"
+                              (input)="validatePhoneNumber()"
+                              (keypress)="numberOnly($event)"
                               required
                             />
-                            <div *ngIf="phoneInput.invalid && phoneInput.touched" class="text-danger mt-1">
-                              El número de teléfono debe contener exactamente 10 dígitos.
+                            <small class="text-muted">Ingrese un número de 10 dígitos.</small>
+                            <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
+                              El número de teléfono es obligatorio y debe tener 10 dígitos.
                             </div>
+                            
                           </div>
                           <div class="form-group col-md-4">
                             <label class="form-label" for="email">Email personal:</label>
