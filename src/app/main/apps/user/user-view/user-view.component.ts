@@ -11,7 +11,6 @@ import { User } from 'app/auth/models';
 import Swal from 'sweetalert2';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-
 @Component({
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
@@ -57,7 +56,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
 
     // Reemplazar la URL sin recargar ni afectar la navegación
@@ -68,6 +66,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
+        console.log(this.data);
         if (this.data?.status) {
           this.statusForm.patchValue({ status: +this.data.status });
         }
@@ -259,7 +258,9 @@ export class UserViewComponent implements OnInit, OnDestroy {
       case 2:
         return 'Abierto';
       case 3:
-        return 'Cerrado';
+        return 'Cerrado';      
+      case 4:
+        return 'Rechazado';
       default:
         return '';
     }

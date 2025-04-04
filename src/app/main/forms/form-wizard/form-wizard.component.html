@@ -636,15 +636,17 @@
                           <label class="form-label" for="numeroEmpleado">Número de empleado:</label>
                           <span style="color: #F44336;">*</span>
                           <input
-                            type="number"
+                            type="text"
                             id="numeroEmpleado"
                             class="form-control"
                             placeholder="658921"
                             name="numeroEmpleado"
                             [(ngModel)]="employee_number"
                             #employeeNumberInput="ngModel"
+                            maxlength="8"
+                            (keypress)="numberOnly($event)"
                             required
-                            max="99999999"
+                            
                             (input)="employee_number = employee_number.toString().slice(0, 8)"
                           />
                           <div *ngIf="employeeNumberInput.invalid && employeeNumberInput.touched" class="text-danger mt-1">
@@ -667,6 +669,7 @@
                                 #phoneInput="ngModel"
                                 pattern="^[0-9]{10}$"
                                 maxlength="10"
+                                (keypress)="numberOnly($event)"
                                 required
                             />
                             <div *ngIf="phoneInput.invalid && phoneInput.touched" class="text-danger mt-1">

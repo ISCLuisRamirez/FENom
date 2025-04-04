@@ -17,7 +17,8 @@
                 [legend]="chartOptions.legend"
                 [title]="chartOptions.title"
                 [dataLabels]="chartOptions.dataLabels"
-                [fill]="chartOptions.fill"
+                [fill]="chartOptions.fill.colors"
+                
               ></apx-chart>
             </div>
           </div>
@@ -30,17 +31,21 @@
             </div> 
             <div class="card-body mt-3">
               <div class="row text-center">
-                <div class="col-4" *ngIf="data?.count && data?.status">
+                <div class="col-3" *ngIf="data?.count && data?.status">
                   <h4 class="font-weight-bolder mb-0">{{ data.count[0] }}</h4>
                   <p class="card-text font-small-3 mb-0">{{ data.status[0] }}</p>
                 </div>
-                <div class="col-4" *ngIf="data?.count && data?.status">
+                <div class="col-3" *ngIf="data?.count && data?.status">
                   <h4 class="font-weight-bolder mb-0">{{ data.count[1] }}</h4>
                   <p class="card-text font-small-3 mb-0">{{ data.status[1] }}</p>
                 </div>
-                <div class="col-4" *ngIf="data?.count && data?.status">
+                <div class="col-3" *ngIf="data?.count && data?.status">
                   <h4 class="font-weight-bolder mb-0">{{ data.count[2] }}</h4>
                   <p class="card-text font-small-3 mb-0">{{ data.status[2] }}</p>
+                </div>
+                <div class="col-3" *ngIf="data?.count && data?.status">
+                  <h4 class="font-weight-bolder mb-0">{{ data.count[4] }}</h4>
+                  <p class="card-text font-small-3 mb-0">{{ data.status[4] }}</p>
                 </div>
               </div>
               <div class="text-center mt-4 mb-0">

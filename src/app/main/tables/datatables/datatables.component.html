@@ -35,9 +35,10 @@
                 (change)="onFilterChange()"
               >
                 <option value="">Todos</option>
-                <option value="1">En Proceso</option>
-                <option value="2">Abierto</option>
-                <option value="3">Cerrado</option>
+                <option value="1">Registrado</option>
+                <option value="2">En proceso</option>
+                <option value="3">Finalizado</option>
+                <option value="4">Rechazado</option>
               </select>
             </div>
           </div>
@@ -121,12 +122,14 @@
                 <div class="badge badge-pill" [ngClass]="{
                     'badge-light-primary': status == '1',
                     'badge-light-success': status == '2',
-                    'badge-light-danger': status == '3'
+                    'badge-light-secondary': status == '3',
+                    'badge-light-danger': status == '4'
                   }">
                   {{
-                  status == 1 ? 'En proceso'
-                  : status == 2 ? 'Abierto'
-                  : status == 3 ? 'Cerrado'
+                  status == 1 ? 'Registrado'
+                  : status == 2 ? 'En proceso'
+                  : status == 3 ? 'Finalizado'
+                  : status == 4 ? 'Rechazado'
                   : ''
                   }}
                 </div>

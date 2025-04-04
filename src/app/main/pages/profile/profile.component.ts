@@ -57,7 +57,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         height: 600,
         fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
       },
-      labels: [],
+      labels:['Registrado', 'En proceso', 'Finalizado', 'Rechazado'],
+      
       responsive: [
         {
           breakpoint: 480,
@@ -81,7 +82,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       },
       fill: {
-        opacity: 1
+        opacity: 1,
+        colors: ['#FEB019'/*amarillo*/, '#008FFB'/*azul*/,'#00E396'/*verde*/, '#FF4560'/*rojo*/]
       }
     };
   }
@@ -116,13 +118,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this._apiService.getdatosgrafica()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(response => {
-        console.log('Respuesta /requests/counter:', response);
-        // Ejemplo: { total: 57, count: [54, 2, 1], status: ["En proceso", "Cerradas", "Abiertas"] }
         this.data = response;
         if (this.data) {
-          // Asignar datos a la gráfica Apex
           this.chartOptions.series = this.data.count;
           this.chartOptions.labels = this.data.status;
+      
+          const colorMap: { [key: string]: string } = {
+            'Registrado': '#FEB019',  // Amarillo
+            'En proceso': '#008FFB',  // Azul
+            'Finalizado': '#00E396',  // Verde
+            'Rechazado': '#FF4560'    // Rojo
+          };
+      
+          this.chartOptions.fill.colors = this.data.status.map((status: string) => colorMap[status] || '#999999'); // fallback color
         }
       });
 

@@ -113,7 +113,7 @@
                 <div class="denuncia-info-title">
                   <i data-feather="calendar" class="mr-1"></i>
                   <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                    <strong>Cerrada por: </strong> {{data.employee_number_user_closed || "No aplica" }}
+                    <strong>Cerrada por: </strong> {{ data.employee_number_user_closed || "No aplica" }}
                   </span>
                 </div>
               </div><br>
@@ -392,6 +392,7 @@
                       <option [ngValue]="1">En proceso</option>
                       <option [ngValue]="2">Abierto</option>
                       <option [ngValue]="3">Cerrado</option>
+                      <option [ngValue]="4">Rechazado</option>
                     </select>
                   </div>
                 </div>

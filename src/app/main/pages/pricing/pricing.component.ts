@@ -41,10 +41,6 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.generateCaptcha();
   }
-
-  /**
-   * ✅ Método para alternar la visibilidad de la información adicional.
-   */
   toggleInfo(): void {
     this.showInfo = !this.showInfo;
   }
@@ -138,34 +134,37 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitForm(): void {
     this.validateCaptcha();
-
+ 
     if (this.isCaptchaValidated) {
       if (this.folio.trim() && this.password.trim()) {
         this._pricingService.searchStatus(this.folio, this.password).subscribe({
           next: (response) => {
             this.statusResponse = response;
             if (response.requestStatus == 1) {
-              Swal.fire({
-                titleText: 'Tu solicitud se encuentra:',
-                html: '<span style="color: blue; font-size: 28px;"><strong>En proceso.</strong></span> <br>',
-                confirmButtonText: 'Cerrar'
-              });
-            }else{
-              if (response.requestStatus == 2) {
                 Swal.fire({
-                  title: 'Tu solicitud se encuentra:',
-                  html: '<span style="color: yellow; font-size: 28px;"><strong>Abierta.</strong></span> <br>',
+                    html: '<span style=" font-size: 20px;"><strong>Denuncia registrada.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido registrada en nuestro sistema. En los próximos dias, revisaremos la información que has proporcionado para continuar con la investigación.</label>',
+                    confirmButtonText: 'Cerrar'
+                });
+            } else if (response.requestStatus == 2) {
+                Swal.fire({
+                   
+                    html: '<span style=" font-size: 20px;"><strong>En proceso de investigación.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido aceptada y el equipo correspondiente está revisando la información.</label>',
+                    confirmButtonText: 'Cerrar'
+                });
+            } else if (response.requestStatus == 3) {
+                Swal.fire({
+                 
+                    html: '<span style="font-size: 20px;"><strong>Investigación finalizada</strong></span><br><br> <label style=" font-size: 16px;">La investigación ha concluido. Gracias por tu colaboración y confianza.</label>',
+                    confirmButtonText: 'Cerrar'
+                });
+            } else if (response.requestStatus == 4) {
+                Swal.fire({
+               
+                  html: '<span style=" font-size: 20px;"><strong>Investigación finalizada</strong></span><br><br> <label style=" font-size: 16px;">La investigación ha concluido. Gracias por tu colaboración y confianza.</label>',
                   confirmButtonText: 'Cerrar'
                 });
-              }else{
-                Swal.fire({
-                  title: 'Tu solicitud se encuentra:',
-                  html: '<span style="color: green; font-size: 28px;"><strong>Cerrada.</strong></span> <br>',
-                  confirmButtonText: 'Cerrar'
-                });
-              }
             }
-          },
+        },
           error: (error) => {
             Swal.fire({
               title: 'Error.',
