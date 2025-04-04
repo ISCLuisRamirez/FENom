@@ -369,10 +369,11 @@ export class FormCaptComponent implements OnInit {
           Promise.all(additionalPromises)
             .then(() => {
               Swal.fire({
-                title: '✅ Denuncia Enviada',
+                title: '✅ Denuncia registrada',
                 html: `
                   <strong>Folio:</strong> <span style="color: green;"><strong>${response.folio}</strong></span><br>
                   <strong>Contraseña:</strong> <span style="color: green;"><strong>${response.password}</strong></span><br><br>
+                  <small>Tu denuncia ha sido ingresada en el sistema. En los próximos días, revisaremos la información que has proporcionado para continuar con la investigación.  </small><br><br>
                   <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
                   Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
                 `,

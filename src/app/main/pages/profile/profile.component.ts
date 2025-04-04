@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       },
       fill: {
         opacity: 1,
-        colors: ['#FEB019'/*amarillo*/, '#008FFB'/*azul*/,'#00E396'/*verde*/, '#FF4560'/*rojo*/]
+        colors: ['#008FFB'/*azul*/, '#FEB019'/*amarillo*/, '#00E396'/*verde*/, '#FF4560'/*rojo*/]
       }
     };
   }
