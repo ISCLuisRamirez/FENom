@@ -107,6 +107,17 @@ export class DatatablesComponent implements OnInit, OnDestroy {
     });
   }
 
+  numberOnly(event: KeyboardEvent) {
+    // Bloquea cualquier tecla que no sea un número
+    if (!/^[0-9]$/.test(event.key) && 
+        event.key !== 'Backspace' && 
+        event.key !== 'Delete' && 
+        event.key !== 'ArrowLeft' && 
+        event.key !== 'ArrowRight') {
+      event.preventDefault();
+    }
+  }
+
   onPageChange(page: number) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
