@@ -369,21 +369,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // En tu user-view.component.ts, actualiza la función getemployee así:
-  getemployee(id_user_updated: number): string {
-    // Verifica si tenemos datos del usuario actual
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    
-    // Si el id_user_updated coincide con el usuario actual o si hay un employee_number
-    if (id_user_updated && currentUser && currentUser.employee_number) {
-      return currentUser.employee_number;
-    } else if (id_user_updated && this.data && this.data.user_updated_employee_number) {
-      // Si viene en los datos de la denuncia
-      return this.data.user_updated_employee_number;
-    } else {
-      return 'Usuario indefinido';
-    }
-  }
+
 
   viewFile(file: any): void {
     this.selectedFileName = file.file_name;
