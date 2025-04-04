@@ -124,8 +124,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.chartOptions.labels = this.data.status;
       
           const colorMap: { [key: string]: string } = {
-            'Registrado': '#FEB019',  // Amarillo
-            'En proceso': '#008FFB',  // Azul
+            'Registrado': '#008FFB',  // Azul
+            'En proceso': '#FEB019',  // Amarillo
             'Finalizado': '#00E396',  // Verde
             'Rechazado': '#FF4560'    // Rojo
           };
