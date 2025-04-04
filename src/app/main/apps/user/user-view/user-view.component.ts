@@ -254,11 +254,11 @@ export class UserViewComponent implements OnInit, OnDestroy {
   getStatusString(status: number): string {
     switch (status) {
       case 1:
-        return 'En proceso';
+        return 'Registrado';
       case 2:
-        return 'Abierto';
+        return 'En proceso';
       case 3:
-        return 'Cerrado';      
+        return 'Finalizado';      
       case 4:
         return 'Rechazado';
       default:
