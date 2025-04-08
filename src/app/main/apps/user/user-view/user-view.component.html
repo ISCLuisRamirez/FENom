@@ -19,7 +19,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Medio de denuncia:</strong> {{ getMedio(data.id_via) }}
+                      <strong>Medio de denuncia:</strong> {{ getMedio(data.id_via) || "No aplica" }}
                     </span>
                   </div>
                 </div>
@@ -28,7 +28,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="flag" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Información del medio:</strong> {{ data.via_detail }}
+                      <strong>Información del medio:</strong> {{ data.via_detail  }}
                     </span>
                   </div>
                 </div>
@@ -46,7 +46,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Fecha del suceso:</strong> {{ data.date }}
+                      <strong>Fecha del suceso:</strong> {{ data.date || "No aplica" }}
                     </span>
                   </div>
                 </div>
@@ -55,7 +55,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Periodo aproximado:</strong> {{ data.period }}
+                      <strong>Periodo aproximado:</strong> {{ data.period || "No aplica" }}
                     </span>
                   </div>
                 </div><br>
@@ -73,7 +73,7 @@
                   <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
                     <span class="card-text denuncia-info-title font-weight-bold mb-0">
-                      <strong>Descripción del reporte: </strong>{{data.reported}}
+                      <strong>Descripción del reporte previo: </strong>{{data.reported  || "No existe reporte previo"}}
                     </span>
                   </div>
                 </div>
