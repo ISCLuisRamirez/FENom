@@ -88,4 +88,9 @@ export class ApiService {
       responseType: 'blob'
     });
   }
+
+  getExcelData(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/requests/excel`);
+  }
+
 }

@@ -101,6 +101,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
     /* this.location.replaceState('/committee_dashboard'); */
     // Verificar si el usuario está logueado
     if (!this.isLoggedIn) {
@@ -150,37 +151,57 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   // Método para generar y descargar el archivo XLSX
-  downloadExcel(): void {
-    // Prepara los datos en formato Array of Arrays (AOA)
-    const wsData = [
-      ['Estatus', 'Cantidad']
-    ];
-
-    if (this.data && this.data.count && this.data.status) {
-      for (let i = 0; i < this.data.count.length; i++) {
-        wsData.push([this.data.status[i], this.data.count[i]]);
+  generateExcelFromBackend(): void {
+    this.data.datos.getExcelData().subscribe({
+      next: (datos) => {
+        if (!datos || datos.length === 0) {
+          console.error('No hay datos disponibles para generar el archivo Excel.');
+          return;
+        }
+  
+        const wsData = [
+          ['Folio', 'Descripción', 'Estatus', 'Fecha de creación', 'Medio', 'Razón', 'Ubicación', 'Sububicación', 'Fecha o periodo', 'Implicados', 'Testigos'],
+        ];
+  
+        datos.forEach((item: any) => {
+          wsData.push([
+            item.folio || '',
+            item.description || '',
+            item.status || '',
+            item.created_at || '',
+            item.medium || '',
+            item.reason || '',
+            item.location || '',
+            item.sub_location || '',
+            item.period || '',
+            item.subjects?.map((subject: any) => subject.name).join(', ') || '',
+            item.witnesses?.map((witness: any) => witness.name).join(', ') || ''
+          ]);
+        });
+  
+        const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+  
+        const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+  
+        // Crear un enlace para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error al obtener los datos del backend:', err);
       }
-    }
-
-    // Agrega una fila para el total
-    wsData.push(['Total', this.data?.total]);
-
-    // Crea la hoja de trabajo (worksheet) a partir de los datos
-    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Crea un nuevo libro de trabajo (workbook)
-    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-
-    // Agrega la hoja al libro de trabajo con el nombre "Estadísticas"
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Estadísticas');
-
-    // Escribe el libro en formato binario
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-
-    // Convierte a Blob y dispara la descarga
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    saveAs(blob, 'estadisticas.xlsx');
+    });
   }
+  
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next();
