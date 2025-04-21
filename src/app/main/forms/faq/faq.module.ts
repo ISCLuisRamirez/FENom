@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';  // Agregado para ngb-accordion
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; 
 import { NgSelectModule } from '@ng-select/ng-select';
 
 import { CoreCommonModule } from '@core/common.module';
@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'faq',
     component: FaqComponent,
-    data: { animation: 'faq' }  // Se ha añadido un nombre de animación (opcional)
+    data: { animation: 'faq' }
   }
 ];
 
@@ -32,7 +32,7 @@ const routes: Routes = [
     FormsModule,
     CoreDirectivesModule,
     NgSelectModule,
-    NgbModule  // Asegúrate de incluir este módulo para usar ngb-accordion
+    NgbModule
   ]
 })
 export class FaqModule {}

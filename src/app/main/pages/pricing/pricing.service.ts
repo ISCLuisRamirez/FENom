@@ -21,9 +21,6 @@ export class PricingService implements Resolve<any> {
     });
   }
 
-  /**
-   * Obtiene los datos de la tabla de precios.
-   */
   getDataTableRows(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this._httpClient.get('api/pricing-data').subscribe(
@@ -41,7 +38,7 @@ export class PricingService implements Resolve<any> {
   }
 
   /**
-   * Consulta el estatus de un folio con su contraseña.
+   *
    * @param folio Número de folio
    * @param password Contraseña asociada al folio
    * @returns Observable con la respuesta del servidor

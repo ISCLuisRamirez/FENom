@@ -11,14 +11,13 @@ import { Location } from '@angular/common';
 })
 export class FinalIndexComponent implements OnInit, OnDestroy {
   public coreConfig: any;
-  // Private
   private _unsubscribeAll: Subject<void> = new Subject<void>();
   constructor(
     private _coreConfigService: CoreConfigService,
     private _authenticationService: AuthenticationService,
     public location: Location
   ) {
-    // Configure the layout
+
     this._coreConfigService.setConfig({
       layout: {
         navbar: {
@@ -45,15 +44,12 @@ export class FinalIndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    /* this.location.replaceState('/home'); */
-    // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

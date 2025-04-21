@@ -4,16 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FileUploadModule } from 'ng2-file-upload';
-
-// Core imports
 import { CoreCommonModule } from '@core/common.module';
 import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
 import { CoreDirectivesModule } from '@core/directives/directives';
-
-// Layout imports
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-
-// Component imports
 import { FormWizardComponent } from 'app/main/forms/form-wizard/form-wizard.component';
 
 const routes: Routes = [

@@ -81,7 +81,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
    */
   submit(form) {
     if (form.valid) {
-      console.log('Submitted...!');
     }
   }
 

@@ -11,8 +11,6 @@ import { CoreConfigService } from '@core/services/config.service';
 })
 export class NotAuthorizedComponent implements OnInit {
   public coreConfig: any;
-
-  // Private
   private _unsubscribeAll: Subject<any>;
 
   /**
@@ -24,7 +22,6 @@ export class NotAuthorizedComponent implements OnInit {
   constructor(private _coreConfigService: CoreConfigService, private location: Location) {
     this._unsubscribeAll = new Subject();
 
-    // Configure the layout
     this._coreConfigService.config = {
       layout: {
         navbar: {
@@ -42,32 +39,17 @@ export class NotAuthorizedComponent implements OnInit {
     };
   }
 
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * On init
-   */
   ngOnInit(): void {
-    /* this.location.replaceState('/not_authorized'); */
-    // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
   }
 
-  /**
-   * Go back to the previous page
-   */
   goBack(): void {
     this.location.back();
   }
 
-  /**
-   * On destroy
-   */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

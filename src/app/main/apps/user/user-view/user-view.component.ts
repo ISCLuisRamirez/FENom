@@ -66,7 +66,7 @@ export class UserViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
-        console.log(this.data);
+
         if (this.data?.status) {
           this.statusForm.patchValue({ status: +this.data.status });
         }
@@ -90,7 +90,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
             .subscribe(
               (solicitanteData) => {
                 this.row = solicitanteData;
-                console.log('Datos del solicitante:', this.row);
               },
               (error) => {
                 console.error('Error al obtener los datos del solicitante:', error);

@@ -47,8 +47,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private _router: Router
   ) {
     this._unsubscribeAll = new Subject();
-
-    // Configuración inicial de la gráfica Apex
     this.chartOptions = {
       series: [],
       chart: {
@@ -83,7 +81,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       },
       fill: {
         opacity: 1,
-        colors: ['#008FFB'/*azul*/, '#FEB019'/*amarillo*/, '#00E396'/*verde*/, '#FF4560'/*rojo*/]
+        colors: ['#008FFB', '#FEB019', '#00E396', '#FF4560']
       }
     };
   }
@@ -101,21 +99,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
-    /* this.location.replaceState('/committee_dashboard'); */
-    // Verificar si el usuario está logueado
     if (!this.isLoggedIn) {
       this._router.navigate(['/pages/authentication/login-v1']);
       return;
     }
 
-    // Verificar permisos
     if (!(this.isComite || this.isCapturista)) {
       this._router.navigate(['/']);
       return;
     }
 
-    // Llamada a la API para obtener datos de la gráfica
     this._apiService.getdatosgrafica()
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(response => {
@@ -125,17 +118,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.chartOptions.labels = this.data.status;
       
           const colorMap: { [key: string]: string } = {
-            'Registrado': '#008FFB',  // Azul
-            'En proceso': '#FEB019',  // Amarillo
-            'Finalizado': '#00E396',  // Verde
-            'Rechazado': '#FF4560'    // Rojo
+            'Registrado': '#008FFB',  
+            'En proceso': '#FEB019',  
+            'Finalizado': '#00E396',  
+            'Rechazado': '#FF4560'    
           };
       
-          this.chartOptions.fill.colors = this.data.status.map((status: string) => colorMap[status] || '#999999'); // fallback color
+          this.chartOptions.fill.colors = this.data.status.map((status: string) => colorMap[status] || '#999999'); 
         }
       });
 
-    // Configuración del encabezado
     this.contentHeader = {
       headerTitle: 'Profile',
       actionButton: true,
@@ -151,10 +143,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   generateExcelFromBackend(): void {
-    // Llamada al servicio para obtener los datos del backend
     this._apiService.getExcelData().subscribe({
       next: (response) => {
-        // Verificar si la respuesta contiene la propiedad "datos"
         if (!response || !response.datos || response.datos.length === 0) {
           console.error('No hay datos disponibles para generar el archivo Excel.');
           return;
@@ -162,7 +152,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
         const datos = response.datos;
   
-        // Crear los datos para el archivo Excel
         const wsData = [
           ['Folio', 'Descripción', 'Estatus', 'Fecha de creación', 'Medio', 'Razón', 'Ubicación', 'Sububicación', 'Fecha o periodo', 'Implicados', 'Testigos'],
           ...datos.map((item: any) => [
@@ -180,18 +169,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
           ])
         ];
   
-        // Crear la hoja de cálculo
         const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
   
-        // Generar el archivo Excel
         const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([wbout], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
   
-        // Crear un enlace para descargar el archivo
         const url = window.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;

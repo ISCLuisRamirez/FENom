@@ -38,12 +38,10 @@ export class FormCaptComponent implements OnInit {
   public showTransportInput: boolean = false; 
   public selectedRegion: string = ''; 
 
-  //Datos para el reporte previo
   public previousReport:string ='';
   public previousReportDetails: string ='';
 
 
-  //Datos de endpoint requesters en caso de no ser anónimo
   public employee_number: string ='';
   public position: string = '';
   public phone: string = '';
@@ -51,7 +49,7 @@ export class FormCaptComponent implements OnInit {
   public email: string = '';
   public isAnonymous: boolean = false;
 
-  //Datos de endpoint medio
+
   public telefono_medio: string = '';
   public email_medio: string = '';
   public selectedMedio: any;
@@ -60,7 +58,7 @@ export class FormCaptComponent implements OnInit {
     { name: 'Correo', id: 2 }
   ];
 
-  //Datos del motivo (Listado de motivos y respectivos ID's)
+
   public motivo: any;
   public selectMotivo = [
     { name: 'Abuso de autoridad', id: 1 },
@@ -100,16 +98,14 @@ export class FormCaptComponent implements OnInit {
     { name: 'Innomex', id: 20 }
   ];
 
-  //Datos del endpoint request 
+
   public currentUser: User | null = null;
   public telefono: string = '';
 
-  //Datos del endpoint involved 
   public employee_number_inv: string ='';
   public position_inv: string = '';
   public name_inv: '';
 
-  //Datos del endpoint witness
   public employee_number_wit: string ='';
   public position_wit: string = '';
   public name_wit: ''; 
@@ -129,11 +125,11 @@ export class FormCaptComponent implements OnInit {
   public datereport: string = '';
   public selectedFiles: FileItem[] = [];
   public involvedList = [
-    { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } // `area_inv` es solo el ID
+    { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } 
   ];
   
   public witnessList = [
-    { name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0 } // `area_wit` es solo el ID
+    { name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0 } 
   ];
   public datos = [];
  
@@ -177,7 +173,7 @@ export class FormCaptComponent implements OnInit {
   }
 
   numberOnly(event: KeyboardEvent) {
-    // Bloquea cualquier tecla que no sea un número
+
     if (!/^[0-9]$/.test(event.key) && 
         event.key !== 'Backspace' && 
         event.key !== 'Delete' && 
@@ -198,7 +194,6 @@ export class FormCaptComponent implements OnInit {
 
 
   ngOnInit() {
-    /* this.location.replaceState('/create_complaint');*/
     this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
       this.currentUser = user;
     }); 
@@ -537,7 +532,7 @@ export class FormCaptComponent implements OnInit {
         this.locationLabel = 'Ingrese el nombre o número de la nave';
         break;
       case 'unidadtransporte':
-        this.showTransportOptions = true; // Mostrar radios de región
+        this.showTransportOptions = true; 
         this.locationLabel = 'Seleccione la región y luego ingrese la unidad de transporte';
         break;
       case 'corporativo':
@@ -561,7 +556,7 @@ export class FormCaptComponent implements OnInit {
         this.listboxOptions = ['Occidente', 'Noreste', 'Centro', 'CDA Villahermosa', 'CDA Mérida', 'CDA Chihuahua'];
         break;
     }
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges(); 
   }
 
   isUbicacionValid(): boolean {
@@ -589,7 +584,7 @@ export class FormCaptComponent implements OnInit {
     this.showInputBox = false;
     this.listboxOptions = [];
     this.customInputValue = '';
-    this.cdr.detectChanges(); // Forzar la detección de cambios
+    this.cdr.detectChanges(); 
   }
 
   getLocationId(): number {

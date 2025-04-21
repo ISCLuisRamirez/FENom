@@ -3,7 +3,6 @@
     <section class="app-denuncia-view">
 
       <div class="row">
-        <!-- Sección Informacion de la denuncia -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
@@ -82,13 +81,12 @@
             </div>
           </div>
         </div>
-        <!-- Sección Estatus -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Estado de la Denuncia</h5>
               <hr>
-              <!-- Current Status -->
+    
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
                   <i data-feather="alert-circle" class="mr-1"></i>
@@ -97,8 +95,6 @@
                   {{ getStatusString(data.status) }}
                 </div>
               </div>
-
-              <!-- Previous Report Status -->
 
               <div class="d-flex flex-wrap my-50">
                 <div class="denuncia-info-title">
@@ -150,7 +146,7 @@
           </div>
         </div>
       </div>
-      <!-- Sección Implicados -->
+
       <div class="row">
         <div class="col-md-6">
           <div class="card denuncia-card">
@@ -177,19 +173,19 @@
                   </tbody>
                 </table>
               </div>
-              <!-- End Table for Involved People -->
+
             </div>
           </div>
         </div>
 
-        <!-- Tabla de Testigos -->
+
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Testigos</h5>
               <hr>
 
-              <!-- Table for Witnesses -->
+
               <div class="table-responsive">
                 <table class="table table-bordered">
                   <thead>
@@ -210,23 +206,19 @@
                   </tbody>
                 </table>
               </div>
-              <!-- End Table for Witnesses -->
+
             </div>
           </div>
         </div>
       </div>
-      <!-- Sección Info del solicitante -->
+
       <div class="row">
         <div class="col-md-12">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Información del Solicitante</h5>
               <hr>
-
-              <!-- Applicant Information -->
               <div class="applicant-info">
-                <!-- Verifica que row[0] exista antes de acceder a sus propiedades -->
-
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="map-pin" class="mr-1"></i>
@@ -281,22 +273,17 @@
                   </div>
                 </div>
               </div>
-              <!-- End Applicant Information -->
             </div>
           </div>
         </div>
       </div>
-      <!-- Sección archivos adjuntos -->
       <div class="row">
-        <!-- Archivos Adjuntos Section -->
-
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Archivos Adjuntos</h5>
               <hr>
               <div class="file-list">
-                <!-- Itera dinámicamente con *ngFor -->
                 <div class="file-item d-flex justify-content-between align-items-center my-2"
                   *ngFor="let file of files">
                   <label class="file-name text-truncate">
@@ -304,8 +291,6 @@
                   </label>
                   <button class="btn btn-link btn-sm" (click)="viewFile(file)">Ver</button>
                 </div>
-
-                <!-- Muestra mensaje si no hay archivos -->
                 <div *ngIf="!files || files.length === 0">
                   No hay archivos adjuntos.
                 </div>
@@ -314,7 +299,6 @@
           </div>
         </div>
 
-        <!-- Modal de Vista Previa con dimensiones personalizadas y centrado -->
         <div *ngIf="previewURL" class="modal fade show" tabindex="-1" style="
     background: rgba(0, 0, 0, 0.5);
     display: flex;
@@ -327,32 +311,23 @@
     left: 0;
     z-index: 1050; /* Asegura que se superponga al resto del contenido */
   ">
-          <!-- 
-    Puedes mantener "modal-xl" o cambiarlo por otra clase de Bootstrap
-    si deseas controlar únicamente vía estilos inline o CSS.
-  -->
           <div class="modal-dialog modal-xl" style="width: 80vw; height: 80vh; max-width: 100%; max-height: 100%;">
             <div class="modal-content" style="width: 100%; height: 100%;">
-              <!-- Encabezado -->
+       
               <div class="modal-header">
                 <h5 class="modal-title">{{ selectedFileName }}</h5>
                 <button type="button" class="btn-close" aria-label="Close" (click)="closePreview()"></button>
               </div>
 
-              <!-- Cuerpo del modal -->
               <div class="modal-body" style="height: calc(100% - 60px); overflow: auto;">
-
-                <!-- Vista previa para PDF -->
                 <iframe *ngIf="selectedFileName?.toLowerCase().endsWith('.pdf')" [src]="previewURL"
                   style="width: 100%; height: 100%;" frameborder="0"></iframe>
 
-                <!-- Vista previa para imagen -->
                 <img *ngIf="selectedFileName?.toLowerCase().endsWith('.jpg') 
                || selectedFileName?.toLowerCase().endsWith('.jpeg') 
                || selectedFileName?.toLowerCase().endsWith('.png')" [src]="previewURL" alt="Vista previa de la imagen"
                   style="max-width: 100%; max-height: 100%; object-fit: contain;" />
 
-                <!-- Otros formatos: descarga -->
                 <div *ngIf="!selectedFileName?.toLowerCase().endsWith('.pdf') 
                && !selectedFileName?.toLowerCase().endsWith('.jpg') 
                && !selectedFileName?.toLowerCase().endsWith('.jpeg') 
@@ -364,7 +339,6 @@
                 </div>
               </div>
 
-              <!-- Footer -->
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closePreview()">Cerrar</button>
               </div>
@@ -372,13 +346,12 @@
           </div>
         </div>
 
-        <!-- Estatus Change Section -->
         <div class="col-md-6">
           <div class="card denuncia-card">
             <div class="card-body">
               <h5 class="text-primary">Cambio de Estatus</h5>
               <hr>
-              <!-- Formulario reactivo para cambiar estatus -->
+
               <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
@@ -409,7 +382,6 @@
           </div>
         </div>
       </div>
-
     </section>
   </div>
 </div>

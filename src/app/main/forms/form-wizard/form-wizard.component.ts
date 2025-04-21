@@ -21,14 +21,12 @@ import { environment } from 'environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormWizardComponent implements OnInit, OnDestroy {
-  // --------------- Referencias a formularios de cada paso ---------------
-  @ViewChild('form1') form1!: NgForm; // Motivo
-  @ViewChild('form2') form2!: NgForm; // Ubicación
-  @ViewChild('form3') form3!: NgForm; // Detalles
-  @ViewChild('form4') form4!: NgForm; // Involucrados
-  @ViewChild('form5') form5!: NgForm; // Privacidad
+  @ViewChild('form1') form1!: NgForm;
+  @ViewChild('form2') form2!: NgForm;
+  @ViewChild('form3') form3!: NgForm;
+  @ViewChild('form4') form4!: NgForm;
+  @ViewChild('form5') form5!: NgForm;
   
-  // Control del paso actual en el wizard
   public currentStep: number = 0;
   private verticalWizardStepper: Stepper;
   readonly maxFiles = 5;
@@ -42,7 +40,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public showTransportInput: boolean = false;
   public selectedRegion: string = '';
 
-  //Datos de endpoint requesters en caso de no ser anónimo
   public employee_number: string = '';
   public position: string = '';
   public phone: string = '';
@@ -50,7 +47,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public email: string = '';
   public isAnonymous: string = 'false';
 
-  //Datos del motivo
   public motivo: any;
   public selectMotivo = [
     { name: 'Abuso de autoridad', id: 1 },
@@ -90,9 +86,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     { name: 'Innomex', id: 20 }
   ];
 
-  
 
-  //Datos de la denuncia (endpoint request)
   public currentUser: User | null = null;
   public telefono: string = '';
   public locationLabel: string = '';
@@ -103,8 +97,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public approximateDatePeriod: string = '';
   public specificDate: string = '';
   public description: string = '';
-
-  //Datos para el reporte previo
   public previousReport:string ='';
   public previousReportDetails: string ='';
 
@@ -121,7 +113,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public customInputValuelabel = '';
   public dynamicLabel = '';
 
-  // Involucrados / Testigos
   public involvedList = [
     { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } // `area_inv` es solo el ID
   ];
@@ -129,7 +120,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public witnessList = [
     { name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0 } // `area_wit` es solo el ID
   ];
-  // Subida de archivos
+
   public uploader: FileUploader = new FileUploader({
     url: environment.apiUrl,
     isHTML5: true,
@@ -163,7 +154,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   };
 
   numberOnly(event: KeyboardEvent) {
-    // Bloquea cualquier tecla que no sea un número
     if (!/^[0-9]$/.test(event.key) && 
         event.key !== 'Backspace' && 
         event.key !== 'Delete' && 
@@ -174,15 +164,12 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-   /*  this.location.replaceState('/create_complaint'); */
-  
     this._authenticationService.currentUser$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(user => {
         this.currentUser = user;
       });
 
-    // Inicializar el wizard (bs-stepper)
     this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
       linear: true,
       animation: true
@@ -349,7 +336,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   verticalWizardNext() {
     switch (this.currentStep) {
       case 0:
-        // Paso 0 => Motivo (form1)
         if (this.form1.valid) {
           this.currentStep++;
           this.verticalWizardStepper.next();
@@ -358,7 +344,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         }
         break;
       case 1:
-        // Paso 1 => Ubicación (form2)
         if (this.form2.valid) {
           this.currentStep++;
           this.verticalWizardStepper.next();
@@ -367,7 +352,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         }
         break;
       case 2:
-        // Paso 2 => Detalles (form3)
         if (this.form3.valid) {
           this.currentStep++;
           this.verticalWizardStepper.next();
@@ -376,7 +360,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         }
         break;
       case 3:
-        // Paso 3 => Involucrados (form4)
         if (this.form4.valid) {
           this.currentStep++;
           this.verticalWizardStepper.next();
@@ -385,7 +368,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         }
         break;
       case 4:
-        // Paso 4 => Privacidad (form5)
         if (this.form5.valid) {
           this.onSubmit();
         } else {
@@ -412,30 +394,20 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     const currentStep = this.currentStep;
 
     switch (currentStep) {
-      // Paso 0 => Motivo
       case 0:
         return !!this.motivo;
-
-      // Paso 1 => Ubicación
       case 1:
         return this.isUbicacionValid();
-
-      // Paso 2 => Detalles
       case 2:
         return !!this.datereport && (
           (this.datereport === 'date' && !!this.specificDate) ||
           (this.datereport === 'dateaprox' && !!this.approximateDatePeriod) ||
           (this.datereport === 'NA')
         );
-
-      // Paso 3 => Involucrados
       case 3:
         return this.involvedList.every(person => person.name_inv.trim() !== '');
-
-      // Paso 4 => Privacidad
       case 4:
         if (this.showAdditionalInfo) {
-          // Revisa que name, email, etc. tengan datos
           return !!this.name && !!this.email && !!this.phone && !!this.position && !!this.employee_number;
         }
         return true;
@@ -538,9 +510,6 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  // ----------------------------------------------------------------
-  //                  Manejo de Involucrados / Testigos
-  // ----------------------------------------------------------------
   addInvolved() {
     this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 });
     this.cdr.detectChanges();
@@ -562,23 +531,16 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ----------------------------------------------------------------
-  //                  Manejo de la sección Privacidad
-  // ----------------------------------------------------------------
   toggleAnonimato(value: boolean) {
     this.showAdditionalInfo = value;
     this.cdr.detectChanges();
   }
 
-  // ----------------------------------------------------------------
-  //                  Subir archivos
-  // ----------------------------------------------------------------
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const files = Array.from(input.files);
-  
-      // Verificar cantidad total de archivos (los que ya están en la cola + los nuevos)
+
       if (this.uploader.queue.length + files.length > 5) {
         Swal.fire({
           title: 'Límite de archivos',
@@ -589,12 +551,10 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         return;
       }
   
-      // Calcular el tamaño total actual (en bytes) de la cola
       let totalSize = this.uploader.queue.reduce((acc, fileItem) => acc + fileItem._file.size, 0);
-      // Sumar el tamaño de los archivos recién seleccionados
       totalSize += files.reduce((acc, file) => acc + file.size, 0);
   
-      if (totalSize > 25 * 1024 * 1024) { // 25 MB en bytes
+      if (totalSize > 25 * 1024 * 1024) { 
         Swal.fire({
           title: 'Tamaño excedido',
           text: 'El tamaño total de los archivos no puede superar 25 MB.',
@@ -603,8 +563,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         });
         return;
       }
-  
-      // Agregar cada archivo a la cola
+
       files.forEach(file => {
         this.uploader.addToQueue([file]);
       });

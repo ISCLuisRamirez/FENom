@@ -4,9 +4,8 @@
       <h3 class="card-title text-primary">Crea tu denuncia</h3>
       <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
       <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
-        <!-- Encabezado del wizard -->
+    
         <div class="bs-stepper-header">
-          <!-- Paso 1: Motivo -->
           <div class="step" data-target="#personal-info-vertical">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">1</span>
@@ -16,7 +15,6 @@
               </span>
             </button>
           </div>
-          <!-- Paso 2: Ubicación -->
           <div class="step" data-target="#address-step-vertical">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">2</span>
@@ -26,7 +24,6 @@
               </span>
             </button>
           </div>
-          <!-- Paso 3: Detalles -->
           <div class="step" data-target="#social-links-vertical">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">3</span>
@@ -36,7 +33,6 @@
               </span>
             </button>
           </div>
-          <!-- Paso 4: Involucrados -->
           <div class="step" data-target="#section_involved">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">4</span>
@@ -46,7 +42,6 @@
               </span>
             </button>
           </div>
-          <!-- Paso 5: Privacidad -->
           <div class="step" data-target="#section_anonimo">
             <button type="button" class="step-trigger">
               <span class="bs-stepper-box">5</span>
@@ -57,9 +52,9 @@
             </button>
           </div>
         </div>
-        <!-- Contenido del wizard -->
+
         <div class="bs-stepper-content">
-          <!-- Paso 1: Motivo -->
+
           <div id="personal-info-vertical" class="content">
             <form #form1="ngForm">
               <div class="content-header">
@@ -93,7 +88,7 @@
                 </div>
               </div>
             </form>
-            <!-- Botones del paso 1 -->
+      
             <div class="d-flex justify-content-between">
               <button class="btn btn-secondary btn-prev" disabled rippleEffect>
                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
@@ -110,7 +105,7 @@
               </button>
             </div>
           </div>
-          <!-- Paso 2: Ubicación -->
+
           <div id="address-step-vertical" class="content">
             <form #form2="ngForm">
               <div class="content-header">
@@ -143,13 +138,10 @@
                   <input type="radio" name="ubicacion" value="trate" (change)="onUbicacionChange('trate')" [(ngModel)]="selectedUbicacion" required />
                   TRATE
                 </label><br>
-                <!-- <label>
-                  <input type="radio" name="ubicacion" value="unidadtransporte" (change)="onUbicacionChange('unidadtransporte')" [(ngModel)]="selectedUbicacion" required />
-                  Unidad transporte
-                </label><br> -->
+              
               </div>
               <div id="ubicacionContainer" *ngIf="selectedUbicacion" class="mt-3">
-                <!-- Lista desplegable -->
+         
                 <div *ngIf="showListbox">
                   <label>{{ locationLabel }}</label>
                   <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" name="region" required>
@@ -157,7 +149,7 @@
                     <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
                   </select>
                 </div>
-                <!-- Input libre -->
+                
                 <div *ngIf="showInputBox">
                   <label>{{ locationLabel }}</label>
                   <input
@@ -172,7 +164,7 @@
                 </div>
               </div>
 
-              <!-- Radios para región de transporte -->
+        
               <div *ngIf="selectedUbicacion === 'unidadtransporte'" class="mt-3">
                 <p><strong>Selecciona la región:</strong></p>
                 <label>
@@ -201,7 +193,7 @@
                 />
               </div>
             </form>
-            <!-- Botones del paso 2 -->
+   
             <div class="d-flex justify-content-between mt-3">
               <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
@@ -213,7 +205,7 @@
               </button>
             </div>
           </div>
-          <!-- Paso 3: Detalles -->
+
           <div id="social-links-vertical" class="content">
             <form #form3="ngForm">
               <div class="content-header">
@@ -351,7 +343,7 @@
                 </div>
               </div>
               
-              <!-- Sección de evidencia -->
+          
               <div class="col-12 mt-3">
                 <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
                 <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia.</p>
@@ -367,7 +359,7 @@
                     {{ uploader.queue.length > 0 ? 'Archivos seleccionados' : 'Seleccionar archivos' }}
                   </label>
                 </div>
-                <!-- Cola de archivos -->
+           
                 <div *ngIf="uploader.queue.length > 0" class="mt-2">
                   <h6>Archivos en fila:</h6>
                   <ul class="list-group">
@@ -392,7 +384,7 @@
               </button>
             </div>
           </div>
-          <!-- Paso 4: Involucrados -->
+
           <div id="section_involved" class="content">
             <form #form4="ngForm">
               <div class="content-header d-flex flex-column align-items-start">
@@ -557,7 +549,7 @@
                 </div>
               </div>
             </form>
-            <!-- Botones del paso 4 -->
+            
             <div class="d-flex justify-content-between mt-3">
               <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
@@ -569,14 +561,13 @@
               </button>
             </div>
           </div>
-          <!-- Paso 5: Privacidad -->
+
           <div id="section_anonimo" class="content">
             <form #form5="ngForm">
                 <div class="content-header">
                     <h5 class="mb-0">Privacidad</h5>
                     <small>¿Desea agregar su información?</small>
                 </div>
-                <!-- Opciones de privacidad -->
                 <input
                     class="input"
                     type="radio"
@@ -599,7 +590,7 @@
                     required
                 />
                 No, no deseo agregar mis datos.<br /><br />
-                <!-- Sección de información adicional -->
+                
                 <div *ngIf="isAnonymous === 'true'">
                     <h5>Información Adicional</h5>
                     <label style="font-size: small;">
@@ -698,7 +689,7 @@
                 </div>
             </form>
         
-            <!-- Botones de navegación -->
+    
             <div class="d-flex justify-content-between pb-0">
                 <button class="btn btn-secondary btn-prev" (click)="verticalWizardPrevious()" rippleEffect>
                     <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>

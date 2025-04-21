@@ -26,7 +26,6 @@ export class NumberInputComponent implements OnInit {
    */
   countChange(value) {
     // this.dateValue = value;
-    console.log(value);
   }
 
   // Lifecycle Hooks

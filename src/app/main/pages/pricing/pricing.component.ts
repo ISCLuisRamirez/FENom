@@ -19,18 +19,17 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
   public captchaError: boolean = false;
   public isCaptchaValidated: boolean = false;
 
-  public folio: string = '';        // Campo para el folio
-  public password: string = '';     // Campo para la contraseña
-  public statusResponse: any;       // Respuesta del backend
+  public folio: string = '';        
+  public password: string = '';     
+  public statusResponse: any;       
 
-  public showInfo: boolean = false; // ✅ Propiedad para controlar la visibilidad de la información
+  public showInfo: boolean = false; 
 
   private _unsubscribeAll: Subject<any> = new Subject();
 
   constructor(private _pricingService: PricingService,public location:Location ) { }
 
   ngOnInit(): void {
-   /*  this.location.replaceState('/status_inquiry'); */
     this._pricingService.onPricingChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
@@ -68,16 +67,13 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
     const allChars = uppercase + lowercase + numbers;
     
     let captcha = '';
-    // Asegurarnos de que haya al menos una mayúscula y una minúscula
     captcha += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
     captcha += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
     
-    // Completar el resto de caracteres
     for (let i = 0; i < 4; i++) {
       captcha += allChars.charAt(Math.floor(Math.random() * allChars.length));
     }
     
-    // Mezclar los caracteres para que no siempre estén en la misma posición
     return captcha.split('').sort(() => 0.5 - Math.random()).join('');
   }
 

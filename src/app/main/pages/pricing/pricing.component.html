@@ -6,7 +6,6 @@
         <p class="card-text text-center mb-2">Introduce tu folio para consultar el estatus:</p>
 
         <form class="faq-search-input">
-          <!-- Campo de búsqueda de folio -->
           <label>Introduce el número de folio:</label>
           <div class="mb-2">
             <input 
@@ -19,7 +18,6 @@
             />
           </div>
 
-          <!-- Campo de contraseña -->
           <div class="mb-2">
             <label class="d-flex align-items-center">
               Introduce tu contraseña:
@@ -42,13 +40,11 @@
               required
             />
 
-            <!-- Mensaje de información adicional -->
             <small *ngIf="showInfo" class="text-muted">
               La contraseña fue generada automáticamente al enviar tu denuncia.
             </small>
           </div>
 
-          <!-- CAPTCHA -->
           <div class="text-center">
             <p class="card-text mb-2">Resuelve el captcha:</p>
             <div class="d-flex flex-column align-items-center">
@@ -83,7 +79,6 @@
             </small>
           </div>
 
-          <!-- Botón de envío -->
           <div class="text-center mt-4">
             <button
               type="button"

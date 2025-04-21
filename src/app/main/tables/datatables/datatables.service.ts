@@ -9,7 +9,7 @@ export class DatatablesService implements Resolve<any> {
   rows: any[] = [];
   onDatatablessChanged: BehaviorSubject<any>;
 
-  private apiUrl = `${environment.apiUrl}/requests`; // ✅ Definir API URL correctamente
+  private apiUrl = `${environment.apiUrl}/requests`;
 
   /**
    * Constructor
@@ -20,9 +20,6 @@ export class DatatablesService implements Resolve<any> {
     this.onDatatablessChanged = new BehaviorSubject([]);
   }
 
-  /**
-   * Resolver
-   */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
     return new Promise<void>((resolve, reject) => {
       Promise.all([this.getDataTableRows()]).then(() => {
@@ -30,10 +27,6 @@ export class DatatablesService implements Resolve<any> {
       }, reject);
     });
   }
-
-  /**
-   * Obtiene las solicitudes con paginación desde el backend
-   */
   getRequests(filtro: any): Observable<any> {
     let params = new HttpParams()
       .set('Pagina', filtro.Pagina.toString())
@@ -52,9 +45,6 @@ export class DatatablesService implements Resolve<any> {
     return this._httpClient.get<any>(this.apiUrl, { params });
   }
 
-  /**
-   * Obtiene las filas para la tabla con filtros aplicados
-   */
   getDataTableRows(filters: any = {}): Promise<any[]> {
     return new Promise((resolve, reject) => {
       let params = new HttpParams();
@@ -66,10 +56,10 @@ export class DatatablesService implements Resolve<any> {
 
       this._httpClient.get<any>(this.apiUrl, { params }).subscribe(
         (response) => {
-          console.log('Respuesta API:', response);
+         
 
           if (response && response.datos && Array.isArray(response.datos)) {
-            this.rows = response.datos; // ✅ Asegurar que se toma correctamente el array de datos
+            this.rows = response.datos;
           } else {
             console.error('La API no devolvió un array en response.Datos:', response);
             this.rows = [];
