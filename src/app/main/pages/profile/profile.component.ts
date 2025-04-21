@@ -150,39 +150,42 @@ export class ProfileComponent implements OnInit, OnDestroy {
     };
   }
 
-  // Método para generar y descargar el archivo XLSX
   generateExcelFromBackend(): void {
-    this.data.datos.getExcelData().subscribe({
-      next: (datos) => {
-        if (!datos || datos.length === 0) {
+    // Llamada al servicio para obtener los datos del backend
+    this._apiService.getExcelData().subscribe({
+      next: (response) => {
+        // Verificar si la respuesta contiene la propiedad "datos"
+        if (!response || !response.datos || response.datos.length === 0) {
           console.error('No hay datos disponibles para generar el archivo Excel.');
           return;
         }
   
+        const datos = response.datos;
+  
+        // Crear los datos para el archivo Excel
         const wsData = [
           ['Folio', 'Descripción', 'Estatus', 'Fecha de creación', 'Medio', 'Razón', 'Ubicación', 'Sububicación', 'Fecha o periodo', 'Implicados', 'Testigos'],
+          ...datos.map((item: any) => [
+            item.folio || '',
+            item.descripcion || '',
+            item.estatus || '',
+            item.fecha_creacion || '',
+            item.medio || '',
+            item.razon || '',
+            item.ubicacion || '',
+            item.sububicacion || '',
+            item.fecha_o_periodo || '',
+            item.implicados?.map((implicado: any) => `${implicado.nombre} (${implicado.puesto})`).join(', ') || '',
+            item.testigos?.map((testigo: any) => `${testigo.nombre} (${testigo.puesto})`).join(', ') || ''
+          ])
         ];
   
-        datos.forEach((item: any) => {
-          wsData.push([
-            item.folio || '',
-            item.description || '',
-            item.status || '',
-            item.created_at || '',
-            item.medium || '',
-            item.reason || '',
-            item.location || '',
-            item.sub_location || '',
-            item.period || '',
-            item.subjects?.map((subject: any) => subject.name).join(', ') || '',
-            item.witnesses?.map((witness: any) => witness.name).join(', ') || ''
-          ]);
-        });
-  
+        // Crear la hoja de cálculo
         const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
   
+        // Generar el archivo Excel
         const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([wbout], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

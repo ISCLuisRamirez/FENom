@@ -89,8 +89,7 @@ export class ApiService {
     });
   }
 
-  getExcelData(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/requests/excel`);
+  getExcelData(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/requests/excel`); //Obtiene los datos de los roles.
   }
-
 }
