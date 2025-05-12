@@ -1,3 +1,19 @@
 @import '@core/scss/angular/libs/form-wizard.component.scss';
 @import '@core/scss/angular/libs/select.component.scss';
 
+.ng-select.is-invalid .ng-select-container {
+    border-color: #ea5455 !important;
+    background-color: rgba(234, 84, 85, 0.1) !important;
+  }
+  
+  /* Efecto hover para inválidos */
+  .ng-select.is-invalid:hover .ng-select-container {
+    border-color: #ea5455 !important;
+    box-shadow: 0 3px 10px 0 rgba(234, 84, 85, 0.35) !important;
+  }
+  
+  /* Efecto focus para inválidos */
+  .ng-select.is-invalid.ng-select-focused .ng-select-container {
+    border-color: #ea5455 !important;
+    box-shadow: 0 3px 10px 0 rgba(234, 84, 85, 0.35) !important;
+  }

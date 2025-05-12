@@ -106,6 +106,7 @@
                             <input
                               type="text"
                               class="form-control"
+                              [class.is-invalid]="telefonoInput.invalid && telefonoInput.touched"
                               placeholder="Ingrese su número de teléfono"
                               [(ngModel)]="telefono_medio"
                               name="telefono_medio"
@@ -117,7 +118,7 @@
                               (keypress)="numberOnly($event)"
                             />
                             <small class="text-muted">Ingrese un número de 10 dígitos.</small>
-                            <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
+                            <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="invalid-feedback">
                               El número de teléfono es obligatorio y debe tener 10 dígitos.
                             </div>
                           </div>
@@ -126,6 +127,7 @@
                             <input
                               type="email"
                               class="form-control"
+                              [class.is-invalid]="emailMedioInput.invalid && emailMedioInput.touched"
                               placeholder="Ingrese su correo electrónico"
                               [(ngModel)]="email_medio"
                               name="email_medio"
@@ -368,7 +370,12 @@
                             placeholder="Ejemplo: Mayo-Junio 2023"
                             [(ngModel)]="approximateDatePeriod"
                             required
+                            #datePeriodInput="ngModel"
+                            [class.is-invalid]="datePeriodInput.invalid && datePeriodInput.touched"
                           />
+                          <div *ngIf="datePeriodInput.invalid && datePeriodInput.touched" class="invalid-feedback">
+                            Por favor ingrese un período aproximado válido.
+                          </div>
                         </div>
                       </div>
                   
@@ -377,17 +384,30 @@
                         <label for="description" style="font-size: small;">
                           Por favor, sea lo más específico posible en su denuncia. Incluya detalles sobre el lugar, el motivo y cómo ocurrió el incidente.
                         </label><br>
-                        <textarea
-                          id="description"
-                          name="description"
-                          class="form-control"
-                          rows="5"
-                          placeholder="Por favor, proporciona una descripción detallada de la denuncia."
-                          (input)="updateCharCount('description')"
-                          [(ngModel)]="description"
-                          maxlength="500"
-                          required
-                        ></textarea>
+                        <div class="form-group">
+                          <label for="description"><strong>Descripción del incidente:</strong></label><span style="color: #F44336;">*</span><br>
+                          <textarea
+                            id="description"
+                            name="description"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Por favor, proporciona una descripción detallada de la denuncia."
+                            [(ngModel)]="description"
+                            (input)="updateCharCount('description')"
+                            maxlength="500"
+                            required
+                            #descripcionInput="ngModel"
+                            [class.is-invalid]="descripcionInput.invalid && descripcionInput.touched"
+                          ></textarea>
+                          <div class="d-flex justify-content-between">
+                            <div *ngIf="descripcionInput.invalid && descripcionInput.touched" class="invalid-feedback">
+                              La descripción es obligatoria.
+                            </div>
+                            <div class="text-muted">
+                              <small>{{ charCount.description }} caracteres restantes</small>
+                            </div>
+                          </div>
+                        </div>
                         <div class="text-right">
                           <small>{{ charCount.description }} caracteres restantes</small>
                         </div>
@@ -395,9 +415,11 @@
                   
                       <div class="col-12 mt-3">
                         <p><strong>¿Ha reportado el incidente anteriormente?<span style="color: #F44336;">*</span></strong></p>
-        
+                      
+                        
                         <div class="form-check form-check-inline">
                           <input
+                            [class.is-invalid]="previousReportInput.invalid && previousReportInput.touched"
                             class="form-check-input"
                             type="radio"
                             name="previousReport"
@@ -405,14 +427,18 @@
                             value="true"
                             [(ngModel)]="previousReport"
                             required
+                            #previousReportInput="ngModel"
                           />
                           <label class="form-check-label" for="previousReportYes">Sí</label>
                         </div>
+                      
+                        
                         <div class="form-check form-check-inline">
                           <input
+                            [class.is-invalid]="previousReportInput.invalid && previousReportInput.touched"
                             class="form-check-input"
                             type="radio"
-                            name="previousReport2"
+                            name="previousReport"
                             id="previousReportNo"
                             value="false"
                             [(ngModel)]="previousReport"
@@ -420,19 +446,37 @@
                           />
                           <label class="form-check-label" for="previousReportNo">No</label>
                         </div>
+                      
+                        
+                        <div *ngIf="previousReportInput.invalid && previousReportInput.touched" class="text-danger mt-1">
+                          Por favor seleccione una opción.
+                        </div>
+                      
+                       
                         <div *ngIf="previousReport === 'true'" class="form-group mt-3">
-                          <label for="previousReportDetails">Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:</label><span style="color: #F44336;">*</span>
+                          <label for="previousReportDetails">
+                            Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:
+                          </label><span style="color: #F44336;">*</span>
                           <textarea
                             id="previousReportDetails"
-                            (input)="updateCharCount('previousReportDetails')"
                             name="previousReportDetails"
                             class="form-control"
+                            [class.is-invalid]="previousReportDetailsInput.invalid && previousReportDetailsInput.touched"
                             rows="3"
                             placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
                             [(ngModel)]="previousReportDetails"
                             maxlength="500"
                             required
+                            #previousReportDetailsInput="ngModel"
+                            (input)="updateCharCount('previousReportDetails')"
                           ></textarea>
+                      
+                         
+                          <div *ngIf="previousReportDetailsInput.invalid && previousReportDetailsInput.touched" class="text-danger mt-1">
+                            Este campo es obligatorio.
+                          </div>
+                      
+                         
                           <div class="text-right">
                             <small>{{ charCount.previousReportDetails }} caracteres restantes</small>
                           </div>
@@ -464,7 +508,7 @@
                             </li>
                           </ul>
                         </div>
-                        <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
+                        <p style="font-size: small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
                       </div>
                     </form>
                   
@@ -499,15 +543,20 @@
                       <div *ngFor="let person of involvedList; let i = index" class="row">
                         <div class="form-group col-md-3">
                           <label class="form-label" for="name-{{ i }}">Nombre Completo:</label><span style="color: #F44336;">*</span>
-                          <input
-                            type="text"
-                            id="name-{{ i }}"
-                            name="nombre_inv"
-                            class="form-control"
-                            placeholder="Nombre(s) Apellido Paterno Apellido Materno"
-                            [(ngModel)]="person.name_inv"
-                            required
-                          />
+                              <input
+                                type="text"
+                                id="name-{{ i }}"
+                                name="nombre_inv"
+                                class="form-control"
+                                [class.is-invalid]="nameInput.invalid && (nameInput.touched || nameInput.dirty)"
+                                placeholder="Nombre(s) Apellido Paterno Apellido Materno"
+                                [(ngModel)]="person.name_inv"
+                                required
+                                #nameInput="ngModel"
+                              />
+                              <div *ngIf="nameInput.invalid && (nameInput.touched || nameInput.dirty)" class="text-danger mt-1">
+                                <span>Este campo es obligatorio.</span>
+                              </div>
                         </div>
                         <div class="form-group col-md-3">
                           <label class="form-label" for="position-{{ i }}">Puesto:</label>
@@ -589,10 +638,15 @@
                             name="nombre_tes"
                             id="witness-name-{{ i }}"
                             class="form-control"
+                            [class.is-invalid]="witnessNameInput.invalid && (witnessNameInput.touched || witnessNameInput.dirty)"
                             placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                             [(ngModel)]="witness.name_wit"
                             required
+                            #witnessNameInput="ngModel"
                           />
+                          <div *ngIf="witnessNameInput.invalid && (witnessNameInput.touched || witnessNameInput.dirty)" class="text-danger mt-1">
+                            <span>Este campo es obligatorio.</span>
+                          </div>
                         </div>
                         <div class="form-group col-md-3">
                           <label class="form-label" for="witness-contact-{{ i }}">Puesto:</label>
@@ -703,8 +757,9 @@
                         <p style="font-size: small;">
                           <strong style="color: red;">IMPORTANTE:</strong> Su información será únicamente solicitada para el seguimiento de su denuncia y será tratada con máxima confidencialidad.
                         </p>
-                  
+                      
                         <div class="row">
+                          <!-- Nombre Completo -->
                           <div class="form-group col-md-4">
                             <label class="form-label" for="nombre">Nombre Completo:</label>
                             <span style="color: #F44336;">*</span>
@@ -712,12 +767,19 @@
                               type="text"
                               id="nombre"
                               class="form-control"
+                              [class.is-invalid]="nameInput.invalid && (nameInput.touched || nameInput.dirty)"
                               placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                               name="nombre"
                               [(ngModel)]="name"
                               required
+                              #nameInput="ngModel"
                             />
+                            <div *ngIf="nameInput.invalid && (nameInput.touched || nameInput.dirty)" class="text-danger mt-1">
+                              <span>El nombre completo es obligatorio.</span>
+                            </div>
                           </div>
+                      
+                          <!-- Puesto -->
                           <div class="form-group col-md-4">
                             <label class="form-label" for="puesto">Puesto:</label>
                             <span style="color: #F44336;">*</span>
@@ -725,12 +787,19 @@
                               type="text"
                               id="puesto"
                               class="form-control"
+                              [class.is-invalid]="positionInput.invalid && (positionInput.touched || positionInput.dirty)"
                               placeholder="Operador"
                               name="puesto"
                               [(ngModel)]="position"
                               required
+                              #positionInput="ngModel"
                             />
+                            <div *ngIf="positionInput.invalid && (positionInput.touched || positionInput.dirty)" class="text-danger mt-1">
+                              <span>El puesto es obligatorio.</span>
+                            </div>
                           </div>
+                      
+                          <!-- Número de empleado -->
                           <div class="form-group col-md-4">
                             <label class="form-label" for="numeroEmpleado">Número de empleado:</label>
                             <span style="color: #F44336;">*</span>
@@ -738,6 +807,7 @@
                               type="text"
                               id="numeroEmpleado"
                               class="form-control"
+                              [class.is-invalid]="employeeNumberInput.invalid && (employeeNumberInput.touched || employeeNumberInput.dirty)"
                               placeholder="658921"
                               name="numeroEmpleado"
                               [(ngModel)]="employee_number"
@@ -748,23 +818,24 @@
                               (keypress)="numberOnly($event)"
                               required
                             />
-
-                            <div *ngIf="employeeNumberInput.invalid && employeeNumberInput.touched" class="text-danger mt-1">
+                            <div *ngIf="employeeNumberInput.invalid && (employeeNumberInput.touched || employeeNumberInput.dirty)" class="text-danger mt-1">
                               <span *ngIf="employeeNumberInput.errors?.required">El número de empleado es obligatorio.</span>
-                              <span *ngIf="employeeNumberInput.errors?.max">El número de empleado no debe contener más de 8 dígitos.</span>
+                              <span *ngIf="employeeNumberInput.errors?.pattern">El número de empleado no debe contener más de 8 dígitos.</span>
                             </div>
                           </div>
-                          
                         </div>
+                      
                         <br />
+                      
                         <div class="row">
+                          <!-- Teléfono -->
                           <div class="form-group col-md-4">
-
                             <label class="form-label">Teléfono: <span style="color: #F44336;">*</span></label>
                             <input
                               type="text"
                               id="telefono"
                               class="form-control"
+                              [class.is-invalid]="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)"
                               placeholder="3334357534"
                               [(ngModel)]="phone"
                               name="telefono"
@@ -776,11 +847,12 @@
                               required
                             />
                             <small class="text-muted">Ingrese un número de 10 dígitos.</small>
-                            <div *ngIf="telefonoInput.invalid && telefonoInput.touched" class="text-danger mt-1">
-                              El número de teléfono es obligatorio y debe tener 10 dígitos.
+                            <div *ngIf="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)" class="text-danger mt-1">
+                              <span>El número de teléfono es obligatorio y debe tener 10 dígitos.</span>
                             </div>
-                            
                           </div>
+                      
+                          <!-- Email -->
                           <div class="form-group col-md-4">
                             <label class="form-label" for="email">Email personal:</label>
                             <span style="color: #F44336;">*</span>
@@ -788,6 +860,7 @@
                               type="email"
                               id="email"
                               class="form-control"
+                              [class.is-invalid]="emailInput.invalid && (emailInput.touched || emailInput.dirty)"
                               placeholder="ejemplo@mail.com"
                               name="email"
                               [(ngModel)]="email"
@@ -795,11 +868,12 @@
                               pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
                               required
                             />
-                            <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger mt-1">
-                              Ingrese un correo electrónico válido.
+                            <div *ngIf="emailInput.invalid && (emailInput.touched || emailInput.dirty)" class="text-danger mt-1">
+                              <span>Ingrese un correo electrónico válido.</span>
                             </div>
                           </div>
                         </div>
+                      
                         <br />
                       </div>
                     </form>

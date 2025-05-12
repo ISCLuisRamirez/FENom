@@ -271,8 +271,13 @@
                     class="form-control"
                     placeholder="Ejemplo: Mayo-Junio 2023"
                     [(ngModel)]="approximateDatePeriod"
+                    [class.is-invalid]="approximateDatePeriodInput.invalid && approximateDatePeriodInput.touched"
                     required
+                    #approximateDatePeriodInput="ngModel"
                   />
+                  <div *ngIf="approximateDatePeriodInput.invalid && approximateDatePeriodInput.touched" class="text-danger mt-1">
+                    <span>El periodo aproximado es obligatorio.</span>
+                  </div>
                 </div>
               </div>
           
@@ -288,10 +293,15 @@
                   rows="5"
                   placeholder="Por favor, proporciona una descripción detallada de la denuncia."
                   [(ngModel)]="description"
+                  [class.is-invalid]="descriptionInput.invalid && descriptionInput.touched"
                   (input)="updateCharCount('description')"
                   maxlength="500"
                   required
+                  #descriptionInput="ngModel"
                 ></textarea>
+                <div *ngIf="descriptionInput.invalid && descriptionInput.touched" class="text-danger mt-1">
+                  <span>La descripción del incidente es obligatoria.</span>
+                </div>
                 <div class="text-right">
                   <small>{{ charCount.description }} caracteres restantes</small>
                 </div>
@@ -333,10 +343,15 @@
                     rows="3"
                     placeholder="Describa cuándo y cómo reportó el incidente anteriormente."
                     [(ngModel)]="previousReportDetails"
+                    [class.is-invalid]="previousReportDetailsInput.invalid && previousReportDetailsInput.touched"
                     (input)="updateCharCount('previousReportDetails')"
                     maxlength="500"
                     required
+                    #previousReportDetailsInput="ngModel"
                   ></textarea>
+                  <div *ngIf="previousReportDetailsInput.invalid && previousReportDetailsInput.touched" class="text-danger mt-1">
+                    <span>Este campo es obligatorio.</span>
+                  </div>
                   <div class="text-right">
                     <small>{{ charCount.previousReportDetails }} caracteres restantes</small>
                   </div>
@@ -369,7 +384,7 @@
                     </li>
                   </ul>
                 </div>
-                <p style="font-size: xx-small;"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
+                <p style="font-size:small"><strong>Formatos de archivos admitidos: PDF, WORD, JPG, PNG, MP3, MPEG, MP4</strong></p>
               </div>
             </form>
           
@@ -407,12 +422,17 @@
                   <input
                     type="text"
                     id="name-{{ i }}"
-                    name="nombre_inv"
+                    name="nombre_inv_{{ i }}"
                     class="form-control"
                     placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                     [(ngModel)]="person.name_inv"
                     required
+                    #nameInput="ngModel"
+                    [class.is-invalid]="nameInput.invalid && nameInput.touched"
                   />
+                  <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger mt-1">
+                    El nombre completo es obligatorio.
+                  </div>
                 </div>
                 <div class="form-group col-md-3">
                   <label class="form-label" for="position-{{ i }}">Puesto:</label>
@@ -492,8 +512,13 @@
                     class="form-control"
                     placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                     [(ngModel)]="witness.name_wit"
+                    [class.is-invalid]="witnessNameInput.invalid && witnessNameInput.touched"
                     required
+                    #witnessNameInput="ngModel"
                   />
+                  <div *ngIf="witnessNameInput.invalid && witnessNameInput.touched" class="text-danger mt-1">
+                    <span>El nombre completo es obligatorio.</span>
+                  </div>
                 </div>
                 <div class="form-group col-md-3">
                   <label class="form-label" for="witness-contact-{{ i }}">Puesto:</label>
@@ -599,30 +624,40 @@
                     </label><br /><br />
         
                     <div class="row">
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="nombre">Nombre Completo:</label><span style="color: #F44336;">*</span>
-                            <input
-                                type="text"
-                                id="nombre"
-                                class="form-control"
-                                placeholder="Nombre(s) Apellido Paterno Apellido Materno"
-                                name="nombre"
-                                [(ngModel)]="name"
-                                required
-                            />
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="nombre">Nombre Completo:</label><span style="color: #F44336;">*</span>
+                        <input
+                          type="text"
+                          id="nombre"
+                          class="form-control"
+                          placeholder="Nombre(s) Apellido Paterno Apellido Materno"
+                          name="nombre"
+                          [(ngModel)]="name"
+                          required
+                          #nameInput="ngModel"
+                          [class.is-invalid]="nameInput.invalid && nameInput.touched"
+                        />
+                        <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger mt-1">
+                          El nombre completo es obligatorio.
                         </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="puesto">Puesto:</label><span style="color: #F44336;">*</span>
-                            <input
-                                type="text"
-                                id="puesto"
-                                class="form-control"
-                                placeholder="Operador"
-                                name="puesto"
-                                [(ngModel)]="position"
-                                required
-                            />
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="puesto">Puesto:</label><span style="color: #F44336;">*</span>
+                        <input
+                          type="text"
+                          id="puesto"
+                          class="form-control"
+                          placeholder="Operador"
+                          name="puesto"
+                          [(ngModel)]="position"
+                          [class.is-invalid]="positionInput.invalid && positionInput.touched"
+                          required
+                          #positionInput="ngModel"
+                        />
+                        <div *ngIf="positionInput.invalid && positionInput.touched" class="text-danger mt-1">
+                          <span>El puesto es obligatorio.</span>
                         </div>
+                      </div>
                         <div class="form-group col-md-4">
                           <label class="form-label" for="numeroEmpleado">Número de empleado:</label>
                           <span style="color: #F44336;">*</span>
@@ -637,6 +672,7 @@
                             maxlength="8"
                             (keypress)="numberOnly($event)"
                             required
+                            [class.is-invalid]="employeeNumberInput.invalid && employeeNumberInput.touched"
                             
                             (input)="employee_number = employee_number.toString().slice(0, 8)"
                           />
@@ -661,6 +697,7 @@
                                 pattern="^[0-9]{10}$"
                                 maxlength="10"
                                 (keypress)="numberOnly($event)"
+                                [class.is-invalid]="phoneInput.invalid && phoneInput.touched"
                                 required
                             />
                             <div *ngIf="phoneInput.invalid && phoneInput.touched" class="text-danger mt-1">
@@ -678,6 +715,7 @@
                                 [(ngModel)]="email"
                                 #emailInput="ngModel"
                                 pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                [class.is-invalid]="emailInput.invalid && emailInput.touched"
                                 required
                             />
                             <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger mt-1">
