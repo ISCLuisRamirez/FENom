@@ -144,7 +144,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
             } else if (response.requestStatus == 2) {
                 Swal.fire({
                    
-                    html: '<span style=" font-size: 20px;"><strong>En proceso de investigación.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido aceptada y el equipo correspondiente está revisando la información.</label>',
+                    html: '<span style=" font-size: 20px;"><strong>Denuncia registrada.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido registrada en nuestro sistema. En los próximos dias, revisaremos la información que has proporcionado para continuar con la investigación.</label>',
                     confirmButtonText: 'Cerrar'
                 });
             } else if (response.requestStatus == 3) {
