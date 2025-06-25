@@ -32,7 +32,7 @@ export class FormCaptComponent implements OnInit {
 
 
   public currentStep: number = 0;
-
+  public name_sublocation: string = '';
   public value_UT:string='';
   public showTransportOptions: boolean = false;
   public showTransportInput: boolean = false; 
@@ -298,10 +298,10 @@ export class FormCaptComponent implements OnInit {
       via_detail: this.email_medio || this.telefono_medio,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
+      id_sublocation: this.getsubLocationId1() || this.getsubLocationId2() ||this.getsubLocationId3() || this.getsubLocationId4(),
       description: this.description,
       reported: this.previousReportDetails || null,
-      name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
+      name_sublocation: this.name_sublocation ||  null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
       file: '',
@@ -600,12 +600,42 @@ export class FormCaptComponent implements OnInit {
     }
   }
 
-  getSubLocationId(): number {
-    if (this.customInputValue) {
-      const index = this.listboxOptions.indexOf(this.customInputValue);
-      return index + 1;
+  getsubLocationId1(): number {
+    switch (this.customInputValue) {
+      case 'Corporativo': return 1;
+      case 'Mar Báltico': return 2;
+      case 'Podium': return 3;
+      case 'Pedro Loza': return 4;
+      case 'Oficinas de RRHH MTY': return 5;
+      default: return 0;
     }
-    return 0;
+  }
+
+  getsubLocationId2(): number {
+    switch (this.customInputValue) {
+      case 'Occidente': return 6;
+      case 'Noreste': return 7;
+      case 'Centro': return 8;
+      default: return 0;
+    }
+  }
+  getsubLocationId3(): number {
+    switch (this.customInputValue) {
+      case 'Embotelladora': return 9;
+      case 'Dispositivos Médicos': return 10;
+      default: return 0;
+    }
+  }
+  getsubLocationId4(): number {
+    switch (this.customInputValue) {
+      case 'Occidente': return 11;
+      case 'Noreste': return 12;
+      case 'Centro': return 13;
+      case 'CDA Villahermosa': return 14;
+      case 'CDA Mérida': return 15;
+      case 'CDA Chihuahua': return 16;
+      default: return 0;
+    }
   }
 
   onMedioChange() {
