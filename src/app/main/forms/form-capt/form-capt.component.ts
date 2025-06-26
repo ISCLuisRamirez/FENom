@@ -601,42 +601,60 @@ export class FormCaptComponent implements OnInit {
   }
 
   getsubLocationId1(): number {
-    switch (this.customInputValue) {
-      case 'Corporativo': return 1;
-      case 'Mar Báltico': return 2;
-      case 'Podium': return 3;
-      case 'Pedro Loza': return 4;
-      case 'Oficinas de RRHH MTY': return 5;
-      default: return 0;
+      if (this.selectedUbicacion === 'Corporativo' && this.customInputValuelabel === 'E Diaz') {
+      return 1;
+      }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Mar Báltico') {
+        return 2; 
+      }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Podium') {
+        return 3;
+      } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Pedro Loza') {
+        return 4;
+      } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Oficinas de RRHH MTY') {
+        return 5;
+      } else {
+        return 0;
+      }
     }
-  }
-
-  getsubLocationId2(): number {
-    switch (this.customInputValue) {
-      case 'Occidente': return 6;
-      case 'Noreste': return 7;
-      case 'Centro': return 8;
-      default: return 0;
+    
+  
+    getsubLocationId2(): number {
+      if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Occidente') {
+        return 6;
+      } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Noreste') {
+        return 7;
+      } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Centro') {
+        return 8;
+      } else {
+        return 0;
+      }
     }
-  }
-  getsubLocationId3(): number {
-    switch (this.customInputValue) {
-      case 'Embotelladora': return 9;
-      case 'Dispositivos Médicos': return 10;
-      default: return 0;
+    
+    getsubLocationId3(): number {
+      if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Embotelladora') {
+        return 9;
+      } else if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Dispositivos Médicos') {
+       return 10;
+      }
     }
-  }
-  getsubLocationId4(): number {
-    switch (this.customInputValue) {
-      case 'Occidente': return 11;
-      case 'Noreste': return 12;
-      case 'Centro': return 13;
-      case 'CDA Villahermosa': return 14;
-      case 'CDA Mérida': return 15;
-      case 'CDA Chihuahua': return 16;
-      default: return 0;
+  
+    getsubLocationId4(): number {
+      if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Occidente') {
+        return 11;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Noreste') {
+        return 12;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Centro') {
+        return 13;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Villahermosa') {
+        return 14;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Mérida') {
+        return 15;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Chihuahua') {
+        return 16;
+      } else {
+        return 0;
+      }
     }
-  }
+    
 
   onMedioChange() {
 
