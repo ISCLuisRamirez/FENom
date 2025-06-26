@@ -144,7 +144,7 @@
          
                 <div *ngIf="showListbox">
                   <label>{{ locationLabel }}</label>
-                  <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" name="region" required>
+                  <select id="ubicacionListbox" class="form-control" [(ngModel)]="customInputValue" name="customInputValue" required>
                     <option value="" disabled selected>Seleccione una opción</option>
                     <option *ngFor="let option of listboxOptions" [value]="option">{{ option }}</option>
                   </select>
@@ -154,11 +154,10 @@
                   <label>{{ locationLabel }}</label>
                   <input
                     type="text"
-                    name="input"
-                    id="customInput"
+                    name="name_sublocation"
+                    id="name_sublocation"
                     class="form-control"
-                    [(ngModel)]="customInputValuelabel"
-                    [placeholder]="locationLabel"
+                    [(ngModel)]="name_sublocation"
                     required
                   />
                 </div>

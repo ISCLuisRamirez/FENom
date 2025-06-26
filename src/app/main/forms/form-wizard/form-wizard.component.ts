@@ -12,6 +12,7 @@ import { AuthenticationService } from 'app/auth/service';
 import { Router } from '@angular/router';
 import { User } from 'app/auth/models';
 import { environment } from 'environments/environment';
+import { id } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-form-wizard',
@@ -31,7 +32,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   private verticalWizardStepper: Stepper;
   readonly maxFiles = 5;
   readonly maxTotalSize = 25 * 1024 * 1024; 
-  
+
   public selectedMedio: any = 0;
   public selectedFiles: FileItem[] = [];
 
@@ -62,6 +63,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     { name: 'Incumplimiento de las políticas internas', id: 11 },
     { name: 'Manipulación de inventarios', id: 12 }
   ];
+  
 
   public selectArea = [
     { name: 'Capital Humano', id: 1 },
@@ -85,6 +87,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     { name: 'Logistica (Tegua-TRATE)', id: 19 },
     { name: 'Innomex', id: 20 }
   ];
+
+
 
 
   public currentUser: User | null = null;
@@ -112,6 +116,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public customInputValue = '';
   public customInputValuelabel = '';
   public dynamicLabel = '';
+  public name_sublocation: string = '';
 
   public involvedList = [
     { name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 } // `area_inv` es solo el ID
@@ -200,10 +205,10 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       id_via: this.selectedMedio || null,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
+      id_sublocation: this.getsubLocationId1() || this.getsubLocationId2() ||this.getsubLocationId3() || this.getsubLocationId4(),
       description: this.description,
       reported: this.previousReportDetails || null,
-      name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
+      name_sublocation: this.name_sublocation ||  null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
       file: '',
@@ -260,11 +265,13 @@ export class FormWizardComponent implements OnInit, OnDestroy {
                 position: wit.position_wit || '',
                 employee_number: wit.employee_number_wit ? String(wit.employee_number_wit) : null,
                 id_department: wit.area_wit || null
+               
               };
               additionalPromises.push(this.apiService.enviarDatosWit(witnessData).toPromise());
             });
   
           Promise.all(additionalPromises)
+          
             .then(() => {
               Swal.fire({
                 title: '✅ Denuncia Enviada',
@@ -275,9 +282,11 @@ export class FormWizardComponent implements OnInit, OnDestroy {
                   <em style="color: red;"><strong>IMPORTANTE:</strong></em><br>
                   Recuerda que tu folio y contraseña son únicos. Guárdalos en un lugar seguro. Con este folio y contraseña podrás revisar el estatus de tu denuncia.
                 `,
+                
                 icon: 'success',
                 confirmButtonText: 'Cerrar'
               }).then(() => {
+                
                 this._router.navigate(['/Inicio']);
               });
             })
@@ -475,9 +484,9 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     switch (this.selectedUbicacion.toLowerCase()) {
       case 'sucursales':
       case 'navesanexas':
-      case 'unidadtransporte':
+/*       case 'unidadtransporte':
         return !!this.customInputValuelabel?.trim() || !!this.value_UT?.trim();
-
+ */
       case 'corporativo':
       case 'cedis':
       case 'innomex':
@@ -493,7 +502,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     switch (this.selectedUbicacion.toLowerCase()) {
       case 'corporativo': return 1;
       case 'cedis': return 2;
-      case 'navesfilialesysucursales': return 3;
+      case 'sucursales': return 3;
       case 'anexos': return 4;
       case 'innomex': return 5;
       case 'trate': return 6;
@@ -502,13 +511,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSubLocationId(): number {
-    if (this.showListbox && this.customInputValue) {
-      const index = this.listboxOptions.indexOf(this.customInputValue);
-      return index + 1;
-    }
-    return 0;
-  }
+
 
   addInvolved() {
     this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 });
@@ -570,6 +573,65 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     }
   }
+
+    
+  
+getsubLocationId1(): number {
+    if (this.selectedUbicacion === 'Corporativo' && this.customInputValuelabel === 'E Diaz') {
+    return 1;
+    }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Mar Báltico') {
+      return 2; 
+    }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Podium') {
+      return 3;
+    } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Pedro Loza') {
+      return 4;
+    } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Oficinas de RRHH MTY') {
+      return 5;
+    } else {
+      return 0;
+    }
+  }
+  
+
+  getsubLocationId2(): number {
+    if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Occidente') {
+      return 6;
+    } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Noreste') {
+      return 7;
+    } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Centro') {
+      return 8;
+    } else {
+      return 0;
+    }
+  }
+  
+  getsubLocationId3(): number {
+    if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Embotelladora') {
+      return 9;
+    } else if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Dispositivos Médicos') {
+     return 10;
+    }
+  }
+
+  getsubLocationId4(): number {
+    if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Occidente') {
+      return 11;
+    } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Noreste') {
+      return 12;
+    } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Centro') {
+      return 13;
+    } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Villahermosa') {
+      return 14;
+    } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Mérida') {
+      return 15;
+    } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Chihuahua') {
+      return 16;
+    } else {
+      return 0;
+    }
+  }
+  
+
   
 
   ngOnDestroy(): void {

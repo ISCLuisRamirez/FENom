@@ -32,7 +32,7 @@ export class FormCaptComponent implements OnInit {
 
 
   public currentStep: number = 0;
-
+  public name_sublocation: string = '';
   public value_UT:string='';
   public showTransportOptions: boolean = false;
   public showTransportInput: boolean = false; 
@@ -298,10 +298,10 @@ export class FormCaptComponent implements OnInit {
       via_detail: this.email_medio || this.telefono_medio,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: this.getSubLocationId(),
+      id_sublocation: this.getsubLocationId1() || this.getsubLocationId2() ||this.getsubLocationId3() || this.getsubLocationId4(),
       description: this.description,
       reported: this.previousReportDetails || null,
-      name_sublocation: this.selectedRegion + "-" + this.value_UT || null,
+      name_sublocation: this.name_sublocation ||  null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
       file: '',
@@ -600,13 +600,61 @@ export class FormCaptComponent implements OnInit {
     }
   }
 
-  getSubLocationId(): number {
-    if (this.customInputValue) {
-      const index = this.listboxOptions.indexOf(this.customInputValue);
-      return index + 1;
+  getsubLocationId1(): number {
+      if (this.selectedUbicacion === 'Corporativo' && this.customInputValuelabel === 'E Diaz') {
+      return 1;
+      }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Mar Báltico') {
+        return 2; 
+      }else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Podium') {
+        return 3;
+      } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Pedro Loza') {
+        return 4;
+      } else if (this.selectedUbicacion === 'corporativo' && this.customInputValue === 'Oficinas de RRHH MTY') {
+        return 5;
+      } else {
+        return 0;
+      }
     }
-    return 0;
-  }
+    
+  
+    getsubLocationId2(): number {
+      if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Occidente') {
+        return 6;
+      } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Noreste') {
+        return 7;
+      } else if (this.selectedUbicacion === 'cedis' && this.customInputValue === 'Centro') {
+        return 8;
+      } else {
+        return 0;
+      }
+    }
+    
+    getsubLocationId3(): number {
+      if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Embotelladora') {
+        return 9;
+      } else if (this.selectedUbicacion === 'innomex' && this.customInputValue === 'Dispositivos Médicos') {
+       return 10;
+      }
+    }
+  
+    getsubLocationId4(): number {
+      if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Occidente') {
+        return 11;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Noreste') {
+        return 12;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'Centro') {
+        return 13;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Villahermosa') {
+        return 14;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Mérida') {
+        return 15;
+      } else if (this.selectedUbicacion === 'trate' && this.customInputValue === 'CDA Chihuahua') {
+        return 16;
+      } else {
+        return 0;
+      }
+    }
+    
 
   onMedioChange() {
 
