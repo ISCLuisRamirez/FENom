@@ -146,8 +146,16 @@ export class FormCaptComponent implements OnInit {
   public uploader: FileUploader = new FileUploader({
     url: environment.apiUrl,
     isHTML5: true,
-    allowedFileType: ['image', 'pdf', 'doc', 'docx'],
-    maxFileSize: 10 * 1024 * 1024
+    allowedMimeType: [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png',
+      'audio/mpeg',
+      'video/mp4'
+    ],
+    maxFileSize: 25 * 1024 * 1024 // 25 MB
   });
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -668,14 +676,62 @@ export class FormCaptComponent implements OnInit {
 
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length > 0) {
       const files = Array.from(input.files);
-      files.forEach((file) => {
+
+      const currentQueueLength = this.uploader.queue.length;
+  
+      if (currentQueueLength + files.length > 5) {
+        Swal.fire({
+          title: 'Límite de archivos',
+          text: 'Solo se permiten máximo 5 archivos en total.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
+  
+      const allowedFormats = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'mp3', 'mpeg', 'mp4'];
+      const invalidFiles = files.filter(file => {
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+        return !allowedFormats.includes(fileExtension || '');
+      });
+  
+      if (invalidFiles.length > 0) {
+        Swal.fire({
+          title: 'Formato no válido',
+          text: `Algunos archivos tienen formatos no permitidos. Los formatos admitidos son: ${allowedFormats.join(', ')}`,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
+
+      const existingSize = this.uploader.queue.reduce((acc, item) => acc + item.file.size, 0);
+      const newFilesSize = files.reduce((acc, file) => acc + file.size, 0);
+      const totalSize = existingSize + newFilesSize;
+  
+      if (totalSize > 25 * 1024 * 1024) {
+        Swal.fire({
+          title: 'Tamaño excedido',
+          text: 'El tamaño total de los archivos no puede superar 25 MB.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
+  
+      // Agregar archivos válidos al queue
+      files.forEach(file => {
         this.uploader.addToQueue([file]);
       });
-      this.cdr.detectChanges(); 
+  
+      this.cdr.detectChanges();
     }
   }
+  
+  
 
   addInvolved() {
     this.involvedList.push({ name_inv: '', position_inv: '', employee_number_inv: '', area_inv: 0 });
