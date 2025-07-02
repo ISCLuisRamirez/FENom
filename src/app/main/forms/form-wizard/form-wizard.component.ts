@@ -177,6 +177,18 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
+  validateDate(): void {
+    if (this.specificDate > this.today) {
+      this.specificDate = ''; // Limpia el campo si la fecha es inválida
+      Swal.fire({
+        title: 'Fecha inválida',
+        text: 'La fecha no puede ser posterior a la fecha actual.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  }s
+
   ngOnInit() {
     this._authenticationService.currentUser$
       .pipe(takeUntil(this._unsubscribeAll))
@@ -351,6 +363,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     this.charCount[field] = maxLength - this[field].length;
   }
 
+
+
   verticalWizardNext() {
     switch (this.currentStep) {
       case 0:
@@ -441,9 +455,11 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   }
 
   onUbicacionChange(ubicacion: string): void {
+    
     this.selectedUbicacion = ubicacion;
     this.customInputValue = '';
     this.customInputValuelabel = '';
+    this.name_sublocation = '';
     this.showListbox = false;
     this.showInputBox = false;
     this.showTransportOptions = false;
@@ -487,6 +503,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  
+
   isUbicacionValid(): boolean {
     if (!this.selectedUbicacion) return false;
 
@@ -520,6 +538,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
+  
+
 
 
   addInvolved() {
@@ -534,13 +554,16 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   }
   addWitness() {
     this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0});
-    this.cdr.detectChanges();
+    /* this.cdr.detectChanges(); */
   }
   removeWitness() {
     if (this.witnessList.length > 0) {
       this.witnessList.pop();
       this.cdr.detectChanges();
     }
+  }
+  trackByFn(index: number, item: any): number {
+    return index; 
   }
 
   toggleAnonimato(value: boolean) {
@@ -595,7 +618,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         });
         return;
       }
-      
+
       files.forEach(file => {
         this.uploader.addToQueue([file]);
       });
