@@ -129,9 +129,18 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   public uploader: FileUploader = new FileUploader({
     url: environment.apiUrl,
     isHTML5: true,
-    allowedFileType: ['image', 'pdf', 'doc', 'docx'],
-    maxFileSize: 10 * 1024 * 1024
+    allowedMimeType: [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png',
+      'audio/mpeg',
+      'video/mp4'
+    ],
+    maxFileSize: 25 * 1024 * 1024 // 25 MB
   });
+  
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -167,6 +176,18 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
   }
+
+  validateDate(): void {
+    if (this.specificDate > this.today) {
+      this.specificDate = ''; // Limpia el campo si la fecha es inválida
+      Swal.fire({
+        title: 'Fecha inválida',
+        text: 'La fecha no puede ser posterior a la fecha actual.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  }s
 
   ngOnInit() {
     this._authenticationService.currentUser$
@@ -342,6 +363,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     this.charCount[field] = maxLength - this[field].length;
   }
 
+
+
   verticalWizardNext() {
     switch (this.currentStep) {
       case 0:
@@ -432,9 +455,11 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   }
 
   onUbicacionChange(ubicacion: string): void {
+    
     this.selectedUbicacion = ubicacion;
     this.customInputValue = '';
     this.customInputValuelabel = '';
+    this.name_sublocation = '';
     this.showListbox = false;
     this.showInputBox = false;
     this.showTransportOptions = false;
@@ -478,6 +503,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  
+
   isUbicacionValid(): boolean {
     if (!this.selectedUbicacion) return false;
 
@@ -511,6 +538,8 @@ export class FormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
+  
+
 
 
   addInvolved() {
@@ -525,13 +554,16 @@ export class FormWizardComponent implements OnInit, OnDestroy {
   }
   addWitness() {
     this.witnessList.push({ name_wit: '', position_wit: '', employee_number_wit: '', area_wit: 0});
-    this.cdr.detectChanges();
+    /* this.cdr.detectChanges(); */
   }
   removeWitness() {
     if (this.witnessList.length > 0) {
       this.witnessList.pop();
       this.cdr.detectChanges();
     }
+  }
+  trackByFn(index: number, item: any): number {
+    return index; 
   }
 
   toggleAnonimato(value: boolean) {
@@ -541,23 +573,43 @@ export class FormWizardComponent implements OnInit, OnDestroy {
 
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length > 0) {
       const files = Array.from(input.files);
 
-      if (this.uploader.queue.length + files.length > 5) {
+      const currentQueueLength = this.uploader.queue.length;
+
+      if (currentQueueLength + files.length > 5) {
         Swal.fire({
           title: 'Límite de archivos',
-          text: 'Solo se permiten máximo 5 archivos.',
+          text: 'Solo se permiten máximo 5 archivos en total.',
           icon: 'warning',
           confirmButtonText: 'Aceptar'
         });
         return;
       }
+
+      const allowedFormats = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'mp3', 'mpeg', 'mp4'];
+      const invalidFiles = files.filter(file => {
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+        return !allowedFormats.includes(fileExtension || '');
+      });
   
-      let totalSize = this.uploader.queue.reduce((acc, fileItem) => acc + fileItem._file.size, 0);
-      totalSize += files.reduce((acc, file) => acc + file.size, 0);
+      if (invalidFiles.length > 0) {
+        Swal.fire({
+          title: 'Formato no válido',
+          text: `Algunos archivos tienen formatos no permitidos. Los formatos admitidos son: ${allowedFormats.join(', ')}`,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
   
-      if (totalSize > 25 * 1024 * 1024) { 
+      const existingSize = this.uploader.queue.reduce((acc, item) => acc + item.file.size, 0);
+      const newFilesSize = files.reduce((acc, file) => acc + file.size, 0);
+      const totalSize = existingSize + newFilesSize;
+  
+      if (totalSize > 25 * 1024 * 1024) {
         Swal.fire({
           title: 'Tamaño excedido',
           text: 'El tamaño total de los archivos no puede superar 25 MB.',
@@ -570,9 +622,12 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       files.forEach(file => {
         this.uploader.addToQueue([file]);
       });
+  
       this.cdr.detectChanges();
     }
   }
+  
+  
 
     
   

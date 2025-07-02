@@ -136,28 +136,40 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
         this._pricingService.searchStatus(this.folio, this.password).subscribe({
           next: (response) => {
             this.statusResponse = response;
+            const resetForm = () => {
+              this.folio = '';
+              this.password = '';
+              this.isCaptchaValidated = false;
+              this.resetCaptchaValidation(); 
+          };
+
+
             if (response.requestStatus == 1) {
                 Swal.fire({
                     html: '<span style=" font-size: 20px;"><strong>Denuncia registrada.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido registrada en nuestro sistema. En los próximos dias, revisaremos la información que has proporcionado para continuar con la investigación.</label>',
-                    confirmButtonText: 'Cerrar'
+                    confirmButtonText: 'Cerrar',
+                    onAfterClose: resetForm
                 });
             } else if (response.requestStatus == 2) {
                 Swal.fire({
                    
                     html: '<span style=" font-size: 20px;"><strong>Denuncia registrada.</strong></span><br><br><label style=" font-size: 16px;">Tu denuncia ha sido registrada en nuestro sistema. En los próximos dias, revisaremos la información que has proporcionado para continuar con la investigación.</label>',
-                    confirmButtonText: 'Cerrar'
+                    confirmButtonText: 'Cerrar',
+                    onAfterClose: resetForm
                 });
             } else if (response.requestStatus == 3) {
                 Swal.fire({
                  
                     html: '<span style="font-size: 20px;"><strong>Investigación finalizada</strong></span><br><br> <label style=" font-size: 16px;">La investigación ha concluido. Gracias por tu colaboración y confianza.</label>',
-                    confirmButtonText: 'Cerrar'
+                    confirmButtonText: 'Cerrar',
+                    onAfterClose: resetForm
                 });
             } else if (response.requestStatus == 4) {
                 Swal.fire({
                
                   html: '<span style=" font-size: 20px;"><strong>Investigación finalizada</strong></span><br><br> <label style=" font-size: 16px;">La investigación ha concluido. Gracias por tu colaboración y confianza.</label>',
-                  confirmButtonText: 'Cerrar'
+                  confirmButtonText: 'Cerrar',
+                  onAfterClose: resetForm
                 });
             }
         },

@@ -29,16 +29,17 @@ export class AuthenticationService {
   
 
   // Validaciones de roles
+  // Validaciones de roles
   get isLoggedIn(): boolean {
     return this.currentUserValue !== null;
   }
 
   get isCapturista(): boolean {
-    return this.currentUserValue.role === 'Capturista';
+    return this.currentUserValue !== null && this.currentUserValue.role === 'Capturista';
   }
 
   get isComite(): boolean {
-    return this.currentUserValue.role === 'Comite';
+    return this.currentUserValue !== null && this.currentUserValue.role === 'Comite';
   }
 
   get isAdmin(): boolean {
