@@ -5,7 +5,6 @@
         <p><strong>Para poder proceder con su solicitud por favor complete el siguiente formulario.</strong></p>
         <div id="stepper2" class="bs-stepper vertical vertical-wizard-example">
           <div class="bs-stepper-header">
-            <!-- Medio -->
             <div class="step" data-target="#account-details-vertical" >
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">0</span>
@@ -15,7 +14,6 @@
                 </span>
               </button>
             </div>
-            <!-- Motivo -->
             <div class="step" data-target="#personal-info-vertical">
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">1</span>
@@ -25,7 +23,6 @@
                 </span>
               </button>
             </div>
-            <!-- Ubicación -->
             <div class="step" data-target="#address-step-vertical">
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">2</span>
@@ -35,7 +32,6 @@
                 </span>
               </button>
             </div>
-            <!-- Detalles -->
             <div class="step" data-target="#social-links-vertical">
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">3</span>
@@ -45,7 +41,6 @@
                 </span>
               </button>
             </div>
-            <!-- Involucrados -->
             <div class="step" data-target="#section_involved">
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">4</span>
@@ -55,7 +50,6 @@
                 </span>
               </button>
             </div>
-            <!-- Privacidad -->
             <div class="step" data-target="#section_anonimo">
               <button type="button" class="step-trigger">
                 <span class="bs-stepper-box">5</span>
@@ -74,7 +68,6 @@
                             <small class="text-muted">Añada el medio por el cual está realizando la denuncia.</small>
                             <span style="color: #F44336;">*</span>
                           </div>
-                      
                           <div class="row">
                             <div class="form-group col-md-10">
                               <label class="form-label" for="medio">Seleccione el medio por el cual se está realizando la denuncia.</label>
@@ -85,11 +78,11 @@
                                 [searchable]="false"
                                 bindLabel="name"
                                 bindValue="id"
+                                [clearable]="false"
                                 name="medio"
                                 placeholder="Seleccione un medio"
                                 [(ngModel)]="selectedMedio"
                                 (change)="onMedioChange()"
-                                [clearable]="false"
                                 required
                               >
                                 <ng-template ng-label-tmp let-item="item" let-clear="clear">
@@ -258,6 +251,7 @@
                             id="name_sublocation"
                             class="form-control"
                             [(ngModel)]="name_sublocation"
+                            maxlength="150"
                             required
                           />
                         </div>
@@ -445,13 +439,9 @@
                           />
                           <label class="form-check-label" for="previousReportNo">No</label>
                         </div>
-                      
-                        
                         <div *ngIf="previousReportInput.invalid && previousReportInput.touched" class="text-danger mt-1">
                           Por favor seleccione una opción.
                         </div>
-                      
-                       
                         <div *ngIf="previousReport === 'true'" class="form-group mt-3">
                           <label for="previousReportDetails">
                             Por favor indique a quién lo reportó y cuál fue el resultado (si lo sabe) a continuación:
@@ -469,19 +459,14 @@
                             #previousReportDetailsInput="ngModel"
                             (input)="updateCharCount('previousReportDetails')"
                           ></textarea>
-                      
-                         
                           <div *ngIf="previousReportDetailsInput.invalid && previousReportDetailsInput.touched" class="text-danger mt-1">
                             Este campo es obligatorio.
                           </div>
-                      
-                         
                           <div class="text-right">
                             <small>{{ charCount.previousReportDetails }} caracteres restantes</small>
                           </div>
                         </div>
                       </div>
-
                       <div class="col-12 mt-3">
                         <p><strong>¿Cuentas con alguna evidencia? Sube tus archivos a continuación:</strong></p>
                         <p style="font-size: small;">Por favor, sube únicamente las evidencias más relevantes y concluyentes para tu caso. Ten en cuenta que el límite permitido es de 5 archivos o 25 MB en total. Selecciona cuidadosamente los documentos que respalden de manera efectiva tu denuncia.</p>
@@ -551,6 +536,7 @@
                                 placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                                 [(ngModel)]="person.name_inv"
                                 required
+                                maxlength="150"
                                 #nameInput="ngModel"
                               />
                               <div *ngIf="nameInput.invalid && (nameInput.touched || nameInput.dirty)" class="text-danger mt-1">
@@ -639,6 +625,7 @@
                             class="form-control"
                             [class.is-invalid]="witnessNameInput.invalid && (witnessNameInput.touched || witnessNameInput.dirty)"
                             placeholder="Nombre(s) Apellido Paterno Apellido Materno"
+                            maxlength="150"
                             [(ngModel)]="witness.name_wit"
                             required
                             #witnessNameInput="ngModel"
@@ -758,7 +745,6 @@
                         </p>
                       
                         <div class="row">
-                          <!-- Nombre Completo -->
                           <div class="form-group col-md-4">
                             <label class="form-label" for="nombre">Nombre Completo:</label>
                             <span style="color: #F44336;">*</span>
@@ -770,6 +756,7 @@
                               placeholder="Nombre(s) Apellido Paterno Apellido Materno"
                               name="nombre"
                               [(ngModel)]="name"
+                              maxlength="150"
                               required
                               #nameInput="ngModel"
                             />
