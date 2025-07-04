@@ -179,7 +179,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
 
   validateDate(): void {
     if (this.specificDate > this.today) {
-      this.specificDate = ''; // Limpia el campo si la fecha es inválida
+      this.specificDate = ''; 
       Swal.fire({
         title: 'Fecha inválida',
         text: 'La fecha no puede ser posterior a la fecha actual.',
@@ -187,7 +187,7 @@ export class FormWizardComponent implements OnInit, OnDestroy {
         confirmButtonText: 'Aceptar'
       });
     }
-  }s
+  }
 
   ngOnInit() {
     this._authenticationService.currentUser$
@@ -220,16 +220,18 @@ export class FormWizardComponent implements OnInit, OnDestroy {
       });
       return;
     }
+
+    const isNameSelected = this.name_sublocation && !this.getsubLocationId1() && !this.getsubLocationId2() && !this.getsubLocationId3() && !this.getsubLocationId4();
   
     const denunciaData: any = {
       id_user: this.currentUser?.id || null,
       id_via: this.selectedMedio || null,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: this.getsubLocationId1() || this.getsubLocationId2() ||this.getsubLocationId3() || this.getsubLocationId4(),
+      id_sublocation: isNameSelected ? null : (this.getsubLocationId1() || this.getsubLocationId2() || this.getsubLocationId3() || this.getsubLocationId4()),
+      name_sublocation: isNameSelected ? this.name_sublocation : null,
       description: this.description,
       reported: this.previousReportDetails || null,
-      name_sublocation: this.name_sublocation ||  null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
       file: '',

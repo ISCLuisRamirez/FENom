@@ -200,6 +200,10 @@ export class FormCaptComponent implements OnInit {
     this.charCount[field] = maxLength - this[field].length;
   }
 
+  trackByFn(index: number, item: any): number {
+    return index; 
+  }
+
 
   ngOnInit() {
     this._authenticationService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe(user => {
@@ -217,6 +221,18 @@ export class FormCaptComponent implements OnInit {
       icon: 'info',
       confirmButtonText: 'Entendido'
     });
+  }
+
+  validateDate(): void {
+    if (this.specificDate > this.today) {
+      this.specificDate = ''; 
+      Swal.fire({
+        title: 'Fecha inválida',
+        text: 'La fecha no puede ser posterior a la fecha actual.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
   }
 
   validateAndProceed() {
@@ -299,6 +315,7 @@ export class FormCaptComponent implements OnInit {
       });
       return;
     }
+    const isNameSelected = this.name_sublocation && !this.getsubLocationId1() && !this.getsubLocationId2() && !this.getsubLocationId3() && !this.getsubLocationId4();
   
     const denunciaData: any = {
       id_user: this.currentUser?.id || null,
@@ -306,10 +323,10 @@ export class FormCaptComponent implements OnInit {
       via_detail: this.email_medio || this.telefono_medio,
       id_reason: this.motivo?.id || null,
       id_location: this.getLocationId(),
-      id_sublocation: this.getsubLocationId1() || this.getsubLocationId2() ||this.getsubLocationId3() || this.getsubLocationId4(),
+      id_sublocation: isNameSelected ? null : (this.getsubLocationId1() || this.getsubLocationId2() || this.getsubLocationId3() || this.getsubLocationId4()),
+      name_sublocation: isNameSelected ? this.name_sublocation : null,
       description: this.description,
       reported: this.previousReportDetails || null,
-      name_sublocation: this.name_sublocation ||  null,
       date: this.specificDate || null,
       period: this.approximateDatePeriod || null,
       file: '',

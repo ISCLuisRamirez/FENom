@@ -53,7 +53,7 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="calendar" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0 text-break">
                       <strong>Periodo aproximado:</strong> {{ data.period || "No aplica" }}
                     </span>
                   </div>
@@ -62,7 +62,7 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0 text-break">
                       <strong>Descripción del incidente:</strong> {{ data.description }}
                     </span>
                   </div>
@@ -71,7 +71,7 @@
                 <div class="d-flex flex-wrap my-50">
                   <div class="denuncia-info-title">
                     <i data-feather="info" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0 text-break">
                       <strong>Descripción del reporte previo: </strong>{{data.reported  || "No existe reporte previo"}}
                     </span>
                   </div>
@@ -353,14 +353,14 @@
               <hr>
 
               <form [formGroup]="statusForm" (ngSubmit)="actualizarStatus()">
-                <div class="d-flex flex-wrap my-50">
-                  <div class="denuncia-info-title">
-                    <i data-feather="settings" class="mr-1"></i>
-                    <span class="card-text denuncia-info-title font-weight-bold mb-0 p-2">
+                <div class="d-flex flex-wrap my-50 row">
+                  <div class="denuncia-info-title col-7">
+                    <i data-feather="settings"></i>
+                    <span class="card-text denuncia-info-title font-weight-bold mb-0">
                       Cambiar Estatus de la Denuncia:
                     </span>
                   </div>
-                  <div>
+                  <div class="col-5">
                     <select class="form-control" id="denunciaStatus" formControlName="status">
                       <option [ngValue]="1">Registrado</option>
                       <option [ngValue]="2">En proceso</option>
