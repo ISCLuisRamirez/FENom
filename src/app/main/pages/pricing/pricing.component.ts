@@ -141,6 +141,7 @@ export class PricingComponent implements OnInit, OnDestroy, AfterViewInit {
               this.password = '';
               this.isCaptchaValidated = false;
               this.resetCaptchaValidation(); 
+              this.generateCaptcha();
           };
 
 

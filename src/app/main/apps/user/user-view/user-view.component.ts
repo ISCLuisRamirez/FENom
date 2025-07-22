@@ -48,20 +48,15 @@ export class UserViewComponent implements OnInit, OnDestroy {
     this._unsubscribeAll = new Subject();
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
 
-    // Inicializar el formulario reactivo
     this.statusForm = new FormGroup({
-      // Por defecto vacío. Ajusta a 'string' o 'number' según tu lógica
       status: new FormControl('')
     });
   }
 
   ngOnInit(): void {
     this.lastValue = this.url.substr(this.url.lastIndexOf('/') + 1);
-
-    // Reemplazar la URL sin recargar ni afectar la navegación
     history.replaceState({}, '', `/complaint/${this.lastValue}`);
   
-    // Suscribirse al servicio que retorna la data de la denuncia
     this._userViewService.onUserViewChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
@@ -72,19 +67,16 @@ export class UserViewComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Suscribirse al servicio que retorna la data de la denuncia
     this._userViewService.onUserViewChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((response) => {
         this.data = response;
 
-        // Si ya tenemos this.data, asignamos el estado al formulario
         if (this.data?.status) {
           this.statusForm.patchValue({ status: +this.data.status });
         }
 
         if (this.data?.id) {
-          // Obtener información del solicitante
           this.apiService.getSolicitanteInfoFiltrado(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
@@ -96,7 +88,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               }
             );
 
-          // Obtener información de los implicados
           this.apiService.getInvolucrados(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
@@ -108,7 +99,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               }
             );
 
-          // Obtener información de los testigos
           this.apiService.getTestigos(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
@@ -120,7 +110,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
               }
             );
 
-          // Obtener la lista de archivos asociados
           this.apiService.getFile(this.data.id)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(
@@ -195,7 +184,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }
@@ -249,7 +237,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para convertir el estado numérico a texto
   getStatusString(status: number): string {
     switch (status) {
       case 1:
@@ -265,7 +252,6 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para convertir el id_via a un string
   getMedio(id_via: number): string {
     switch (id_via) {
       case 0:
@@ -279,73 +265,71 @@ export class UserViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Método para convertir id_sublocation a texto
   getSublocation(id_sublocation: number): string {
     switch (id_sublocation) {
-      case 0:
-        return ' ' + this.data.name_sublocation;
       case 1:
-        return 'E diaz';
+        return ' - E diaz';
       case 2:
-        return 'Mar Báltico';
+        return ' - Mar Báltico';
       case 3:
-        return 'Podium';
+        return ' - Podium';
       case 4:
-        return 'Pedro Loza';
+        return ' - Pedro Loza';
       case 5:
-        return 'Oficinas de RRHH MTY';
+        return ' - Oficinas de RRHH MTY';
       case 6:
-        return 'Occidente';
+        return ' - Occidente';
       case 7:
-        return 'Noreste';
+        return ' - Noreste';
       case 8:
-        return 'Centro';
+        return ' - Centro';
       case 9:
-        return 'Embotelladora';
+        return ' - Embotelladora';
       case 10:
-        return 'Dispositivos Médicos';
+        return ' - Dispositivos Médicos';
       case 11:
-        return 'Occidente';
+        return ' - Occidente';
       case 12:
-        return 'Noreste';
+        return ' - Noreste';
       case 13:
-        return 'Centro';
+        return ' - Centro';
       case 14:
-        return 'CDA Villahermosa';
+        return ' - CDA Villahermosa';
       case 15:
-        return 'CDA Mérida';
+        return ' - CDA Mérida';
       case 16:
-        return 'CDA Chihuahua';
+        return ' - CDA Chihuahua';
       default:
-        return ' ' + this.data.name_sublocation;
+        if ( id_sublocation === null || id_sublocation === 0 || this.data.name_sublocation === '') {
+          return '';
+        }
+        return ' - ' + this.data.name_sublocation;
     }
   }
 
-  // Método para convertir id_location a texto
   getLocation(id_location: number): string {
     switch (id_location) {
       case 0:
         return 'Ubicación desconocida';
       case 1:
-        return 'Corporativo' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Corporativo' + this.getSublocation(this.data.id_sublocation);
       case 2:
-        return 'Cedis' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Cedis' + this.getSublocation(this.data.id_sublocation);
       case 3:
-        return 'Sucursales' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Sucursales' + this.getSublocation(this.data.id_sublocation);
       case 4:
-        return 'Naves y anexas filiales' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Naves y anexas filiales' + this.getSublocation(this.data.id_sublocation);
       case 5:
-        return 'Innomex' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Innomex' +  this.getSublocation(this.data.id_sublocation);
       case 6:
-        return 'TRATE' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'TRATE' + this.getSublocation(this.data.id_sublocation);
       case 7:
-        return 'Unidad de transporte' + '-' + this.getSublocation(this.data.id_sublocation);
+        return 'Unidad de transporte' + this.getSublocation(this.data.id_sublocation);
       default:
         return 'Ubicación desconocida';
     }
   }
 
-  // Método para convertir el id_reason a texto
   getreason(id_reason: number | null | undefined): string {
     const reasons: any = {
       1: 'Abuso de autoridad',
@@ -376,10 +360,8 @@ export class UserViewComponent implements OnInit, OnDestroy {
   
     this.apiService.Viewfile(file.id).subscribe({
       next: (blob: Blob) => {
-        // Convertir el blob en una URL local
         const objectUrl = URL.createObjectURL(blob);
   
-        // Marcar la URL como “segura” para que Angular no la bloquee
         this.previewURL = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
       },
       error: err => console.error('Error al obtener el archivo:', err)
